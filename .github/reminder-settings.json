@@ -1,6 +1,6 @@
 {
   "enabled": true,
-  "reminderUTCHour": 10,
+  "reminderUTCHour": 6,
   "reminderUTCMinute": 0,
   "tzOffsetMinutes": 360,
   "subscription": {
