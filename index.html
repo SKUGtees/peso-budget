@@ -110,6 +110,26 @@
   </div>
 
   <div class="card">
+    <h2>Log Today's Spending</h2>
+    <div class="entry-form">
+      <input type="date" id="entryDate">
+      <input type="number" id="entrySpent" inputmode="decimal" placeholder="Amount spent (MXN)">
+    </div>
+    <div class="entry-preview">
+      <span>Budget for this day</span>
+      <b id="previewBudget">—</b>
+    </div>
+    <button class="btn-primary" id="addBtn">Add Entry</button>
+  </div>
+
+  <div class="card">
+    <div class="total-banner">
+      <div class="label">Total saved so far</div>
+      <div class="amount" id="totalSaved">$0</div>
+    </div>
+  </div>
+
+  <div class="card">
     <h2>Income Settings</h2>
     <div class="row">
       <label>Monthly income (EUR)</label>
@@ -152,26 +172,6 @@
   </div>
 
   <div class="card">
-    <h2>Log Today's Spending</h2>
-    <div class="entry-form">
-      <input type="date" id="entryDate">
-      <input type="number" id="entrySpent" inputmode="decimal" placeholder="Amount spent (MXN)">
-    </div>
-    <div class="entry-preview">
-      <span>Budget for this day</span>
-      <b id="previewBudget">—</b>
-    </div>
-    <button class="btn-primary" id="addBtn">Add Entry</button>
-  </div>
-
-  <div class="card">
-    <div class="total-banner">
-      <div class="label">Total saved so far</div>
-      <div class="amount" id="totalSaved">$0</div>
-    </div>
-  </div>
-
-  <div class="card">
     <h2>History</h2>
     <div id="historyWrap">
       <div class="empty">No entries yet — add your first day above.</div>
@@ -179,7 +179,7 @@
   </div>
 
   <div class="footer-note">
-    Rate from api.frankfurter.app (ECB reference rates). Each entry stores the rate at the moment you log it, so past days never change when the rate updates. All data is saved on this device only.
+    Exchange rates refresh once every 24 hours (source: exchangerate-api.com), not continuously — that's normal, not a bug. Each entry stores the rate at the moment you log it, so past days never change when the rate updates. All data is saved on this device only.
   </div>
 </div>
 
@@ -196,7 +196,7 @@ function load(){
       return parsed;
     }
   }catch(e){}
-  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null };
+  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null };
 }
 function save(){ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
 
@@ -204,32 +204,33 @@ function fmtMXN(n){
   return 'MXN ' + Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2});
 }
 async function fetchRate(){
-  const rateValueEl = document.getElementById('rateValue');
   const rateMetaEl = document.getElementById('rateMeta');
   rateMetaEl.textContent = 'Fetching latest rate…';
   try{
-    const res = await fetch('https://api.frankfurter.app/latest?from=EUR&to=MXN');
+    const res = await fetch('https://open.er-api.com/v6/latest/EUR', {cache:'no-store'});
     if(!res.ok) throw new Error('bad response');
     const data = await res.json();
     const rate = data.rates && data.rates.MXN;
     if(!rate) throw new Error('no rate in response');
     state.liveRate = rate;
     state.rateTime = new Date().toISOString();
+    state.nextRateUpdate = data.time_next_update_utc || null;
     save();
     renderRate();
-  }catch(e){
-    try{
-      const res2 = await fetch('https://open.er-api.com/v6/latest/EUR');
-      const data2 = await res2.json();
-      const rate2 = data2.rates && data2.rates.MXN;
-      if(rate2){
-        state.liveRate = rate2;
-        state.rateTime = new Date().toISOString();
-        save();
-        renderRate();
-        return;
-      }
-    }catch(e2){}
+    return;
+  }catch(e){}
+  try{
+    const res2 = await fetch('https://api.frankfurter.app/latest?from=EUR&to=MXN', {cache:'no-store'});
+    if(!res2.ok) throw new Error('bad response');
+    const data2 = await res2.json();
+    const rate2 = data2.rates && data2.rates.MXN;
+    if(!rate2) throw new Error('no rate in response');
+    state.liveRate = rate2;
+    state.rateTime = new Date().toISOString();
+    state.nextRateUpdate = null;
+    save();
+    renderRate();
+  }catch(e2){
     renderRate(true);
   }
 }
@@ -241,9 +242,13 @@ function renderRate(failed){
     rateValueEl.textContent = '1 EUR = ' + Number(state.liveRate).toFixed(3) + ' MXN';
     const t = state.rateTime ? new Date(state.rateTime) : null;
     const timeStr = t ? t.toLocaleString() : '';
-    rateMetaEl.textContent = failed
-      ? ('Offline — showing last saved rate from ' + timeStr)
-      : ('Updated ' + timeStr);
+    if(failed){
+      rateMetaEl.textContent = 'Offline — showing last saved rate from ' + timeStr;
+    } else {
+      const next = state.nextRateUpdate ? new Date(state.nextRateUpdate) : null;
+      rateMetaEl.textContent = 'Checked ' + timeStr
+        + (next ? ' · next rate update ~' + next.toLocaleString() : '');
+    }
   } else {
     rateValueEl.textContent = 'No rate available';
     rateMetaEl.textContent = 'Check your connection and tap Refresh';
