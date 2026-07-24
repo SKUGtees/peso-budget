@@ -83,6 +83,15 @@
   .total-banner .label{ color:var(--muted); font-size:0.8rem; }
   .total-banner .amount{ font-size:2rem; font-weight:800; color:var(--accent); }
   .footer-note{ text-align:center; color:var(--muted); font-size:0.72rem; padding:10px 20px; line-height:1.5; }
+  .field{ margin-bottom:4px; }
+  .field label{ display:block; font-size:0.82rem; color:var(--muted); margin-bottom:6px; }
+  .field input{
+    width:100%; background:var(--input-bg); border:1px solid var(--border); color:var(--text);
+    border-radius:8px; padding:10px 12px; font-size:1rem;
+  }
+  .settings-toggle{
+    text-align:center; color:var(--muted); font-size:0.8rem; padding:8px 0 16px; cursor:pointer;
+  }
 </style>
 </head>
 <body>
@@ -120,10 +129,6 @@
     <div class="total-banner">
       <div class="label">Total saved so far</div>
       <div class="amount" id="totalSaved">$0</div>
-    </div>
-    <div class="row" style="margin-top:10px;">
-      <label>Already saved before using this app (MXN)</label>
-      <input type="number" id="startingBalance" inputmode="decimal" placeholder="0">
     </div>
   </div>
 
@@ -173,6 +178,16 @@
     <button class="btn-primary" id="addCostBtn">Add Cost</button>
     <div id="costsWrap" style="margin-top:12px;">
       <div class="empty">No fixed costs added yet.</div>
+    </div>
+  </div>
+
+  <div class="settings-toggle" id="settingsToggle">⚙ Settings</div>
+
+  <div class="card" id="settingsCard" style="display:none;">
+    <h2>Settings</h2>
+    <div class="field">
+      <label>Already saved before using this app (MXN)</label>
+      <input type="number" id="startingBalance" inputmode="decimal" placeholder="0">
     </div>
   </div>
 
@@ -369,6 +384,12 @@ document.getElementById('income').addEventListener('input', e=>{
 document.getElementById('days').addEventListener('input', e=>{
   state.days = e.target.value===''? '' : Number(e.target.value);
   save(); renderAll();
+});
+document.getElementById('settingsToggle').addEventListener('click', ()=>{
+  const card = document.getElementById('settingsCard');
+  const open = card.style.display !== 'none';
+  card.style.display = open ? 'none' : 'block';
+  document.getElementById('settingsToggle').textContent = open ? '⚙ Settings' : '✕ Hide settings';
 });
 document.getElementById('startingBalance').addEventListener('input', e=>{
   state.startingBalance = e.target.value===''? '' : Number(e.target.value);
