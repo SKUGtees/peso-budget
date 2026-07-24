@@ -157,6 +157,7 @@
     <div class="total-banner">
       <div class="label">Total saved so far</div>
       <div class="amount" id="totalSaved">$0</div>
+      <div class="label" style="margin-top:4px;">Available — money added to goals is set aside separately</div>
     </div>
   </div>
 
@@ -279,11 +280,12 @@ function normalize(parsed){
   if(!parsed.goals) parsed.goals = [];
   if(!parsed.widgetOrder) parsed.widgetOrder = [];
   if(!parsed.entries) parsed.entries = [];
+  if(parsed.spentFromSavings==null) parsed.spentFromSavings = 0;
   return parsed;
 }
 
 function defaultState(){
-  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, reminderEnabled:false, reminderTime:'20:00', pushSubscription:null, goals:[], widgetOrder:[] };
+  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, reminderEnabled:false, reminderTime:'20:00', pushSubscription:null, goals:[], widgetOrder:[], spentFromSavings:0 };
 }
 
 function load(){
@@ -437,6 +439,18 @@ function dailyBudgetMXNToday(){
   return left/days;
 }
 
+function totalSavedRaw(){
+  let running = Number(state.startingBalance)||0;
+  state.entries.forEach(e=>{ running += e.saved; });
+  return running;
+}
+function totalAllocatedToGoals(){
+  return state.goals.reduce((sum,g)=> sum + (Number(g.saved)||0), 0);
+}
+function totalSavedAvailable(){
+  return totalSavedRaw() - totalAllocatedToGoals() - (Number(state.spentFromSavings)||0);
+}
+
 function renderSettings(){
   document.getElementById('income').value = state.income ?? '';
   document.getElementById('days').value = state.days ?? '';
@@ -505,16 +519,33 @@ function addToGoal(id){
   if(amount===0) return;
   const goal = state.goals.find(g=>g.id===id);
   if(!goal) return;
+  if(amount>0){
+    const available = totalSavedAvailable();
+    if(amount > available){
+      alert(`You only have ${fmtMXN(available)} available in Total Saved.`);
+      return;
+    }
+  }
   goal.saved = (Number(goal.saved)||0) + amount;
   save();
-  renderGoals();
+  input.value = '';
+  renderAll();
 }
 window.addToGoal = addToGoal;
 
 function deleteGoal(id){
+  const goal = state.goals.find(g=>g.id===id);
+  if(!goal) return;
+  const saved = Number(goal.saved)||0;
+  if(saved > 0){
+    const returnMoney = confirm(`"${goal.name}" has ${fmtMXN(saved)} saved toward it.\n\nReturn that money to Total Saved?\n\nOK = return it to Total Saved\nCancel = it's already spent, don't return it`);
+    if(!returnMoney){
+      state.spentFromSavings = (Number(state.spentFromSavings)||0) + saved;
+    }
+  }
   state.goals = state.goals.filter(g=>g.id!==id);
   save();
-  renderGoals();
+  renderAll();
 }
 window.deleteGoal = deleteGoal;
 
@@ -531,7 +562,7 @@ function renderHistory(){
   let running = Number(state.startingBalance)||0;
   if(entries.length===0){
     wrap.innerHTML = '<div class="empty">No entries yet — add your first day above.</div>';
-    document.getElementById('totalSaved').textContent = fmtMXN(running);
+    document.getElementById('totalSaved').textContent = fmtMXN(totalSavedAvailable());
     return;
   }
   let rows = '';
@@ -550,7 +581,7 @@ function renderHistory(){
     <tr><th>Date</th><th>Spent</th><th>Saved</th><th>Total</th><th></th></tr>
     ${rows}
   </table>`;
-  document.getElementById('totalSaved').textContent = fmtMXN(running);
+  document.getElementById('totalSaved').textContent = fmtMXN(totalSavedAvailable());
 }
 
 function renderReminder(){
