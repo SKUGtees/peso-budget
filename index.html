@@ -29,12 +29,19 @@
   .wrap{ max-width:480px; margin:0 auto; padding:0 14px; }
   .card{
     background:var(--card); border:1px solid var(--border); border-radius:14px;
-    padding:16px; margin-bottom:14px;
+    padding:16px; margin-bottom:14px; position:relative;
   }
   .card h2{
     margin:0 0 12px; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.06em;
-    color:var(--muted); font-weight:600;
+    color:var(--muted); font-weight:600; padding-right:26px;
   }
+  .drag-handle{
+    position:absolute; top:14px; right:14px; color:var(--muted); font-size:1.2rem;
+    cursor:grab; line-height:1; padding:4px; touch-action:none; user-select:none;
+  }
+  .drag-handle:active{ cursor:grabbing; }
+  .sortable-ghost{ opacity:0.35; }
+  .sortable-chosen{ box-shadow:0 10px 26px rgba(0,0,0,0.4); }
   .row{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:10px;}
   .row:last-child{ margin-bottom:0; }
   .row label{ font-size:0.92rem; color:var(--text); flex-shrink:0; }
@@ -118,7 +125,10 @@
 
 <div class="wrap">
 
-  <div class="card">
+<div id="widgetsContainer">
+
+  <div class="card" data-widget-id="rate">
+    <span class="drag-handle" title="Drag to reorder">⠿</span>
     <h2>Live Exchange Rate</h2>
     <div class="rate-row">
       <div>
@@ -128,7 +138,8 @@
     </div>
   </div>
 
-  <div class="card">
+  <div class="card" data-widget-id="logSpending">
+    <span class="drag-handle" title="Drag to reorder">⠿</span>
     <h2>Log Today's Spending</h2>
     <div class="entry-form">
       <input type="date" id="entryDate">
@@ -141,14 +152,16 @@
     <button class="btn-primary" id="addBtn">Add Entry</button>
   </div>
 
-  <div class="card">
+  <div class="card" data-widget-id="totalSaved">
+    <span class="drag-handle" title="Drag to reorder">⠿</span>
     <div class="total-banner">
       <div class="label">Total saved so far</div>
       <div class="amount" id="totalSaved">$0</div>
     </div>
   </div>
 
-  <div class="card">
+  <div class="card" data-widget-id="goals">
+    <span class="drag-handle" title="Drag to reorder">⠿</span>
     <h2>Savings Goals</h2>
     <div class="entry-form">
       <input type="text" id="goalName" placeholder="e.g. New laptop">
@@ -160,14 +173,16 @@
     </div>
   </div>
 
-  <div class="card">
+  <div class="card" data-widget-id="history">
+    <span class="drag-handle" title="Drag to reorder">⠿</span>
     <h2>History</h2>
     <div id="historyWrap">
       <div class="empty">No entries yet — add your first day above.</div>
     </div>
   </div>
 
-  <div class="card">
+  <div class="card" data-widget-id="incomeSettings">
+    <span class="drag-handle" title="Drag to reorder">⠿</span>
     <h2>Income Settings</h2>
     <div class="row">
       <label>Monthly income (EUR)</label>
@@ -197,7 +212,8 @@
     </div>
   </div>
 
-  <div class="card">
+  <div class="card" data-widget-id="monthlyCosts">
+    <span class="drag-handle" title="Drag to reorder">⠿</span>
     <h2>Monthly Fixed Costs (MXN)</h2>
     <div class="entry-form">
       <input type="text" id="costName" placeholder="e.g. Rent">
@@ -208,6 +224,8 @@
       <div class="empty">No fixed costs added yet.</div>
     </div>
   </div>
+
+</div>
 
   <div class="settings-toggle" id="settingsToggle">⚙ Settings</div>
 
@@ -230,6 +248,15 @@
         Turn this on to get a native push notification, right on this device — no other app needed.
       </div>
     </div>
+    <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:14px;">
+      <label style="display:block; font-size:0.82rem; color:var(--muted); margin-bottom:10px;">Backup &amp; Restore</label>
+      <button class="btn-primary" id="exportBtn" style="margin-top:0;">Export backup file</button>
+      <input type="file" id="importFile" accept="application/json" style="display:none;">
+      <button class="btn-primary" id="importBtn" style="background:var(--card2); color:var(--accent); border:1px solid var(--border); margin-top:10px;">Restore from backup file</button>
+      <div class="entry-preview" style="display:block; line-height:1.6; margin-top:10px; margin-bottom:0;">
+        Your data lives only on this device's browser storage. Updates to the app never touch it, but clearing browser data, switching phones, or reinstalling will. Export a backup file now and then to be safe — Restore reads one back in.
+      </div>
+    </div>
   </div>
 
   <div class="footer-note">
@@ -237,27 +264,44 @@
   </div>
 </div>
 
+<script src="sortable.min.js"></script>
 <script>
 const STORE_KEY = 'pesoBudget_v1';
+const BACKUP_KEY = 'pesoBudget_v1_backup';
 let state = load();
+
+function normalize(parsed){
+  if(!parsed.costs) parsed.costs = [];
+  if(parsed.startingBalance==null) parsed.startingBalance = 0;
+  if(parsed.reminderEnabled==null) parsed.reminderEnabled = false;
+  if(!parsed.reminderTime) parsed.reminderTime = '20:00';
+  if(parsed.pushSubscription===undefined) parsed.pushSubscription = null;
+  if(!parsed.goals) parsed.goals = [];
+  if(!parsed.widgetOrder) parsed.widgetOrder = [];
+  if(!parsed.entries) parsed.entries = [];
+  return parsed;
+}
+
+function defaultState(){
+  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, reminderEnabled:false, reminderTime:'20:00', pushSubscription:null, goals:[], widgetOrder:[] };
+}
 
 function load(){
   try{
     const raw = localStorage.getItem(STORE_KEY);
-    if(raw){
-      const parsed = JSON.parse(raw);
-      if(!parsed.costs) parsed.costs = [];
-      if(parsed.startingBalance==null) parsed.startingBalance = 0;
-      if(parsed.reminderEnabled==null) parsed.reminderEnabled = false;
-      if(!parsed.reminderTime) parsed.reminderTime = '20:00';
-      if(parsed.pushSubscription===undefined) parsed.pushSubscription = null;
-      if(!parsed.goals) parsed.goals = [];
-      return parsed;
-    }
+    if(raw) return normalize(JSON.parse(raw));
   }catch(e){}
-  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, reminderEnabled:false, reminderTime:'20:00', pushSubscription:null, goals:[] };
+  try{
+    const backup = localStorage.getItem(BACKUP_KEY);
+    if(backup) return normalize(JSON.parse(backup));
+  }catch(e){}
+  return defaultState();
 }
-function save(){ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+function save(){
+  const json = JSON.stringify(state);
+  localStorage.setItem(STORE_KEY, json);
+  localStorage.setItem(BACKUP_KEY, json);
+}
 
 function fmtMXN(n){
   return 'MXN ' + Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2});
@@ -552,6 +596,44 @@ document.getElementById('settingsToggle').addEventListener('click', ()=>{
   card.style.display = open ? 'none' : 'block';
   document.getElementById('settingsToggle').textContent = open ? '⚙ Settings' : '✕ Hide settings';
 });
+document.getElementById('exportBtn').addEventListener('click', ()=>{
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const stamp = new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = `peso-budget-backup-${stamp}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+});
+document.getElementById('importBtn').addEventListener('click', ()=>{
+  document.getElementById('importFile').click();
+});
+document.getElementById('importFile').addEventListener('change', e=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    let parsed;
+    try{ parsed = JSON.parse(reader.result); }catch(err){
+      alert('That file is not a valid backup (invalid JSON).');
+      return;
+    }
+    if(!Array.isArray(parsed.entries)){
+      alert('That file doesn\'t look like a Peso Budget backup.');
+      return;
+    }
+    if(!confirm('This will replace all current data on this device with the backup file. Continue?')) return;
+    state = normalize(parsed);
+    save();
+    renderAll();
+    publishReminderState();
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
 document.getElementById('startingBalance').addEventListener('input', e=>{
   state.startingBalance = e.target.value===''? '' : Number(e.target.value);
   save(); renderAll();
@@ -631,6 +713,31 @@ document.getElementById('addBtn').addEventListener('click', ()=>{
 });
 
 document.getElementById('entryDate').valueAsDate = new Date();
+
+function applyWidgetOrder(){
+  const container = document.getElementById('widgetsContainer');
+  if(!container || !state.widgetOrder || state.widgetOrder.length===0) return;
+  state.widgetOrder.forEach(id=>{
+    const el = container.querySelector(`[data-widget-id="${id}"]`);
+    if(el) container.appendChild(el);
+  });
+}
+
+function initDragReorder(){
+  const container = document.getElementById('widgetsContainer');
+  if(!container || typeof Sortable === 'undefined') return;
+  Sortable.create(container, {
+    handle: '.drag-handle',
+    animation: 150,
+    onEnd: ()=>{
+      state.widgetOrder = [...container.children].map(el=>el.dataset.widgetId);
+      save();
+    }
+  });
+}
+
+applyWidgetOrder();
+initDragReorder();
 
 renderRate();
 fetchRate();

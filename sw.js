@@ -1,5 +1,5 @@
-const CACHE = 'peso-budget-v2';
-const ASSETS = ['./index.html', './manifest.json'];
+const CACHE = 'peso-budget-v3';
+const ASSETS = ['./index.html', './manifest.json', './sortable.min.js'];
 
 self.addEventListener('install', e=>{
   e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));
