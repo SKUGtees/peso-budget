@@ -1,0 +1,6 @@
+{
+  "enabled": true,
+  "reminderUTCHour": 2,
+  "reminderUTCMinute": 30,
+  "tzOffsetMinutes": 360
+}
