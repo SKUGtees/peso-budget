@@ -121,13 +121,33 @@
     </div>
     <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:12px;">
       <div class="stat">
-        <span class="label">Daily budget (EUR)</span>
-        <span class="value" id="dailyEUR">—</span>
+        <span class="label">Monthly income (MXN)</span>
+        <span class="value" id="incomeMXN">—</span>
       </div>
       <div class="stat">
-        <span class="label">Daily budget today (MXN)</span>
+        <span class="label">Total monthly costs (MXN)</span>
+        <span class="value" id="totalCostsStat">—</span>
+      </div>
+      <div class="stat">
+        <span class="label">Left after costs (MXN)</span>
+        <span class="value" id="moneyLeft">—</span>
+      </div>
+      <div class="stat">
+        <span class="label">Daily spending budget (MXN)</span>
         <span class="value big" id="dailyMXN">—</span>
       </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Monthly Fixed Costs (MXN)</h2>
+    <div class="entry-form">
+      <input type="text" id="costName" placeholder="e.g. Rent">
+      <input type="number" id="costAmount" inputmode="decimal" placeholder="Amount (MXN)">
+    </div>
+    <button class="btn-primary" id="addCostBtn">Add Cost</button>
+    <div id="costsWrap" style="margin-top:12px;">
+      <div class="empty">No fixed costs added yet.</div>
     </div>
   </div>
 
@@ -170,19 +190,19 @@ let state = load();
 function load(){
   try{
     const raw = localStorage.getItem(STORE_KEY);
-    if(raw) return JSON.parse(raw);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if(!parsed.costs) parsed.costs = [];
+      return parsed;
+    }
   }catch(e){}
-  return { income:1500, days:30, entries:[], liveRate:null, rateTime:null };
+  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null };
 }
 function save(){ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
 
 function fmtMXN(n){
   return 'MXN ' + Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2});
 }
-function fmtEUR(n){
-  return '€' + Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2});
-}
-
 async function fetchRate(){
   const rateValueEl = document.getElementById('rateValue');
   const rateMetaEl = document.getElementById('rateMeta');
@@ -231,22 +251,55 @@ function renderRate(failed){
   renderAll();
 }
 
-function dailyBudgetEUR(){
-  const income = Number(state.income)||0;
-  const days = Number(state.days)||1;
-  return income/days;
+function totalMonthlyCosts(){
+  return state.costs.reduce((sum,c)=> sum + (Number(c.amount)||0), 0);
+}
+function monthlyIncomeMXN(){
+  if(!state.liveRate) return null;
+  return (Number(state.income)||0) * state.liveRate;
+}
+function moneyLeftAfterCosts(){
+  const incomeMXN = monthlyIncomeMXN();
+  if(incomeMXN==null) return null;
+  return incomeMXN - totalMonthlyCosts();
 }
 function dailyBudgetMXNToday(){
-  if(!state.liveRate) return null;
-  return dailyBudgetEUR() * state.liveRate;
+  const left = moneyLeftAfterCosts();
+  if(left==null) return null;
+  const days = Number(state.days)||1;
+  return left/days;
 }
 
 function renderSettings(){
   document.getElementById('income').value = state.income ?? '';
   document.getElementById('days').value = state.days ?? '';
-  document.getElementById('dailyEUR').textContent = fmtEUR(dailyBudgetEUR());
+  const incomeMXN = monthlyIncomeMXN();
+  document.getElementById('incomeMXN').textContent = incomeMXN!=null ? fmtMXN(incomeMXN) : '—';
+  document.getElementById('totalCostsStat').textContent = fmtMXN(totalMonthlyCosts());
+  const left = moneyLeftAfterCosts();
+  document.getElementById('moneyLeft').textContent = left!=null ? fmtMXN(left) : '—';
   const mxnToday = dailyBudgetMXNToday();
   document.getElementById('dailyMXN').textContent = mxnToday!=null ? fmtMXN(mxnToday) : '—';
+}
+
+function renderCosts(){
+  const wrap = document.getElementById('costsWrap');
+  if(state.costs.length===0){
+    wrap.innerHTML = '<div class="empty">No fixed costs added yet.</div>';
+    return;
+  }
+  let rows = '';
+  state.costs.forEach(c=>{
+    rows += `<tr>
+      <td>${c.name || '(unnamed)'}</td>
+      <td>${fmtMXN(c.amount)}</td>
+      <td><button class="del-btn" onclick="deleteCost('${c.id}')">✕</button></td>
+    </tr>`;
+  });
+  wrap.innerHTML = `<table>
+    <tr><th>Cost</th><th>Amount</th><th></th></tr>
+    ${rows}
+  </table>`;
 }
 
 function renderPreview(){
@@ -284,6 +337,7 @@ function renderHistory(){
 }
 
 function renderAll(){
+  renderCosts();
   renderSettings();
   renderPreview();
   renderHistory();
@@ -296,6 +350,13 @@ function deleteEntry(id){
 }
 window.deleteEntry = deleteEntry;
 
+function deleteCost(id){
+  state.costs = state.costs.filter(c=>c.id!==id);
+  save();
+  renderAll();
+}
+window.deleteCost = deleteCost;
+
 document.getElementById('income').addEventListener('input', e=>{
   state.income = e.target.value===''? '' : Number(e.target.value);
   save(); renderAll();
@@ -305,6 +366,22 @@ document.getElementById('days').addEventListener('input', e=>{
   save(); renderAll();
 });
 document.getElementById('refreshBtn').addEventListener('click', fetchRate);
+
+document.getElementById('addCostBtn').addEventListener('click', ()=>{
+  const nameEl = document.getElementById('costName');
+  const amountEl = document.getElementById('costAmount');
+  const amount = Number(amountEl.value)||0;
+  if(amount===0 && nameEl.value.trim()==='') return;
+  state.costs.push({
+    id: Date.now().toString(36)+Math.random().toString(36).slice(2,6),
+    name: nameEl.value.trim(),
+    amount
+  });
+  save();
+  nameEl.value = '';
+  amountEl.value = '';
+  renderAll();
+});
 
 document.getElementById('addBtn').addEventListener('click', ()=>{
   const dateEl = document.getElementById('entryDate');
