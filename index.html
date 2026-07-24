@@ -121,6 +121,17 @@
       <div class="label">Total saved so far</div>
       <div class="amount" id="totalSaved">$0</div>
     </div>
+    <div class="row" style="margin-top:10px;">
+      <label>Already saved before using this app (MXN)</label>
+      <input type="number" id="startingBalance" inputmode="decimal" placeholder="0">
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>History</h2>
+    <div id="historyWrap">
+      <div class="empty">No entries yet — add your first day above.</div>
+    </div>
   </div>
 
   <div class="card">
@@ -165,13 +176,6 @@
     </div>
   </div>
 
-  <div class="card">
-    <h2>History</h2>
-    <div id="historyWrap">
-      <div class="empty">No entries yet — add your first day above.</div>
-    </div>
-  </div>
-
   <div class="footer-note">
     Exchange rates refresh once every 24 hours (source: exchangerate-api.com), not continuously — that's normal, not a bug. Each entry stores the rate at the moment you log it, so past days never change when the rate updates. All data is saved on this device only.
   </div>
@@ -187,10 +191,11 @@ function load(){
     if(raw){
       const parsed = JSON.parse(raw);
       if(!parsed.costs) parsed.costs = [];
+      if(parsed.startingBalance==null) parsed.startingBalance = 0;
       return parsed;
     }
   }catch(e){}
-  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null };
+  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0 };
 }
 function save(){ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
 
@@ -309,13 +314,14 @@ function renderPreview(){
 
 function renderHistory(){
   const wrap = document.getElementById('historyWrap');
+  document.getElementById('startingBalance').value = state.startingBalance ?? '';
   const entries = [...state.entries].sort((a,b)=> a.date.localeCompare(b.date));
+  let running = Number(state.startingBalance)||0;
   if(entries.length===0){
     wrap.innerHTML = '<div class="empty">No entries yet — add your first day above.</div>';
-    document.getElementById('totalSaved').textContent = fmtMXN(0);
+    document.getElementById('totalSaved').textContent = fmtMXN(running);
     return;
   }
-  let running = 0;
   let rows = '';
   entries.forEach(e=>{
     running += e.saved;
@@ -362,6 +368,10 @@ document.getElementById('income').addEventListener('input', e=>{
 });
 document.getElementById('days').addEventListener('input', e=>{
   state.days = e.target.value===''? '' : Number(e.target.value);
+  save(); renderAll();
+});
+document.getElementById('startingBalance').addEventListener('input', e=>{
+  state.startingBalance = e.target.value===''? '' : Number(e.target.value);
   save(); renderAll();
 });
 document.getElementById('addCostBtn').addEventListener('click', ()=>{
