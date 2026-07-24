@@ -16,7 +16,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - name: Install dependencies
+        run: npm install --no-save web-push
       - name: Check reminder and send if due
+        env:
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
         run: node .github/scripts/reminder-check.mjs
       - name: Commit updated state (if changed)
         run: |

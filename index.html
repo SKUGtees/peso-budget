@@ -198,9 +198,8 @@
         <label>Reminder time</label>
         <input type="time" id="reminderTime" value="20:00">
       </div>
-      <div class="entry-preview" style="display:block; line-height:1.6;">
-        To receive it, install the free <b>ntfy</b> app (iOS/Android) and subscribe to this topic:<br>
-        <span style="color:var(--accent); word-break:break-all; font-family:monospace;">peso-budget-remind-702cef40ec5d2051</span>
+      <div class="entry-preview" id="reminderStatus" style="display:block; line-height:1.6;">
+        Turn this on to get a native push notification, right on this device — no other app needed.
       </div>
     </div>
   </div>
@@ -223,10 +222,11 @@ function load(){
       if(parsed.startingBalance==null) parsed.startingBalance = 0;
       if(parsed.reminderEnabled==null) parsed.reminderEnabled = false;
       if(!parsed.reminderTime) parsed.reminderTime = '20:00';
+      if(parsed.pushSubscription===undefined) parsed.pushSubscription = null;
       return parsed;
     }
   }catch(e){}
-  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, reminderEnabled:false, reminderTime:'20:00' };
+  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, reminderEnabled:false, reminderTime:'20:00', pushSubscription:null };
 }
 function save(){ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
 
@@ -240,8 +240,42 @@ function localDateStr(d){
   return new Date(d.getTime()-off).toISOString().slice(0,10);
 }
 
+const VAPID_PUBLIC_KEY = 'BGYA4vPwkdBF12PthEeJYXCpOAt5n3IseuhPmcK-eyd21B2EJ9zu5DIOMsUJ5MiZor4mt-6OyLXXFM3DC_NeIMI';
+
+function urlBase64ToUint8Array(base64String){
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g,'+').replace(/_/g,'/');
+  const raw = atob(base64);
+  const arr = new Uint8Array(raw.length);
+  for(let i=0;i<raw.length;i++) arr[i] = raw.charCodeAt(i);
+  return arr;
+}
+
+async function subscribeToPush(){
+  const statusEl = document.getElementById('reminderStatus');
+  if(!('serviceWorker' in navigator) || !('PushManager' in window)){
+    statusEl.textContent = 'Push notifications aren\'t supported in this browser.';
+    return null;
+  }
+  const permission = await Notification.requestPermission();
+  if(permission !== 'granted'){
+    statusEl.textContent = 'Notification permission was not granted.';
+    return null;
+  }
+  const reg = await navigator.serviceWorker.ready;
+  let sub = await reg.pushManager.getSubscription();
+  if(!sub){
+    sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+    });
+  }
+  statusEl.textContent = 'Notifications enabled on this device.';
+  return sub.toJSON();
+}
+
 function publishReminderState(){
-  if(!state.reminderEnabled) return;
+  if(!state.reminderEnabled || !state.pushSubscription) return;
   const [hh,mm] = (state.reminderTime||'20:00').split(':').map(Number);
   const target = new Date();
   target.setHours(hh, mm, 0, 0);
@@ -253,7 +287,8 @@ function publishReminderState(){
     reminderUTCMinute: target.getUTCMinutes(),
     tzOffsetMinutes: target.getTimezoneOffset(),
     todayLocalDate,
-    loggedToday
+    loggedToday,
+    subscription: state.pushSubscription
   });
   fetch('https://ntfy.sh/peso-budget-state-702cef40ec5d2051', {method:'POST', body: payload}).catch(()=>{});
 }
@@ -442,10 +477,23 @@ document.getElementById('startingBalance').addEventListener('input', e=>{
   state.startingBalance = e.target.value===''? '' : Number(e.target.value);
   save(); renderAll();
 });
-document.getElementById('reminderEnabled').addEventListener('change', e=>{
+document.getElementById('reminderEnabled').addEventListener('change', async e=>{
   state.reminderEnabled = e.target.checked;
-  save();
-  if(state.reminderEnabled) publishReminderState();
+  if(state.reminderEnabled){
+    const sub = await subscribeToPush();
+    if(!sub){
+      state.reminderEnabled = false;
+      e.target.checked = false;
+      save();
+      return;
+    }
+    state.pushSubscription = sub;
+    save();
+    publishReminderState();
+  } else {
+    save();
+    document.getElementById('reminderStatus').textContent = 'Turn this on to get a native push notification, right on this device — no other app needed.';
+  }
 });
 document.getElementById('reminderTime').addEventListener('change', e=>{
   state.reminderTime = e.target.value;

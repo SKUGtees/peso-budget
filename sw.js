@@ -15,6 +15,28 @@ self.addEventListener('activate', e=>{
   self.clients.claim();
 });
 
+self.addEventListener('push', e=>{
+  let data = {};
+  try{ data = e.data ? e.data.json() : {}; }catch(err){}
+  const title = data.title || 'Peso Budget';
+  const body = data.body || "Don't forget to log today's spending!";
+  e.waitUntil(self.registration.showNotification(title, {
+    body,
+    icon: './icon.png',
+    tag: 'peso-budget-reminder'
+  }));
+});
+
+self.addEventListener('notificationclick', e=>{
+  e.notification.close();
+  e.waitUntil(
+    self.clients.matchAll({type:'window'}).then(list=>{
+      for(const client of list){ if('focus' in client) return client.focus(); }
+      if(self.clients.openWindow) return self.clients.openWindow('./');
+    })
+  );
+});
+
 self.addEventListener('fetch', e=>{
   if(e.request.method !== 'GET') return;
   const url = new URL(e.request.url);
