@@ -189,6 +189,20 @@
       <label>Already saved before using this app (MXN)</label>
       <input type="number" id="startingBalance" inputmode="decimal" placeholder="0">
     </div>
+    <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:14px;">
+      <div class="row" style="margin-bottom:12px;">
+        <label>Daily reminder</label>
+        <input type="checkbox" id="reminderEnabled" style="width:22px; height:22px; accent-color:var(--accent);">
+      </div>
+      <div class="field">
+        <label>Reminder time</label>
+        <input type="time" id="reminderTime" value="20:00">
+      </div>
+      <div class="entry-preview" style="display:block; line-height:1.6;">
+        To receive it, install the free <b>ntfy</b> app (iOS/Android) and subscribe to this topic:<br>
+        <span style="color:var(--accent); word-break:break-all; font-family:monospace;">peso-budget-remind-702cef40ec5d2051</span>
+      </div>
+    </div>
   </div>
 
   <div class="footer-note">
@@ -207,15 +221,41 @@ function load(){
       const parsed = JSON.parse(raw);
       if(!parsed.costs) parsed.costs = [];
       if(parsed.startingBalance==null) parsed.startingBalance = 0;
+      if(parsed.reminderEnabled==null) parsed.reminderEnabled = false;
+      if(!parsed.reminderTime) parsed.reminderTime = '20:00';
       return parsed;
     }
   }catch(e){}
-  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0 };
+  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, reminderEnabled:false, reminderTime:'20:00' };
 }
 function save(){ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
 
 function fmtMXN(n){
   return 'MXN ' + Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+function localDateStr(d){
+  d = d || new Date();
+  const off = d.getTimezoneOffset()*60000;
+  return new Date(d.getTime()-off).toISOString().slice(0,10);
+}
+
+function publishReminderState(){
+  if(!state.reminderEnabled) return;
+  const [hh,mm] = (state.reminderTime||'20:00').split(':').map(Number);
+  const target = new Date();
+  target.setHours(hh, mm, 0, 0);
+  const todayLocalDate = localDateStr();
+  const loggedToday = state.entries.some(e=>e.date===todayLocalDate);
+  const payload = JSON.stringify({
+    enabled: true,
+    reminderUTCHour: target.getUTCHours(),
+    reminderUTCMinute: target.getUTCMinutes(),
+    tzOffsetMinutes: target.getTimezoneOffset(),
+    todayLocalDate,
+    loggedToday
+  });
+  fetch('https://ntfy.sh/peso-budget-state-702cef40ec5d2051', {method:'POST', body: payload}).catch(()=>{});
 }
 async function fetchRate(){
   const rateMetaEl = document.getElementById('rateMeta');
@@ -356,17 +396,24 @@ function renderHistory(){
   document.getElementById('totalSaved').textContent = fmtMXN(running);
 }
 
+function renderReminder(){
+  document.getElementById('reminderEnabled').checked = !!state.reminderEnabled;
+  document.getElementById('reminderTime').value = state.reminderTime || '20:00';
+}
+
 function renderAll(){
   renderCosts();
   renderSettings();
   renderPreview();
   renderHistory();
+  renderReminder();
 }
 
 function deleteEntry(id){
   state.entries = state.entries.filter(e=>e.id!==id);
   save();
   renderAll();
+  publishReminderState();
 }
 window.deleteEntry = deleteEntry;
 
@@ -394,6 +441,16 @@ document.getElementById('settingsToggle').addEventListener('click', ()=>{
 document.getElementById('startingBalance').addEventListener('input', e=>{
   state.startingBalance = e.target.value===''? '' : Number(e.target.value);
   save(); renderAll();
+});
+document.getElementById('reminderEnabled').addEventListener('change', e=>{
+  state.reminderEnabled = e.target.checked;
+  save();
+  if(state.reminderEnabled) publishReminderState();
+});
+document.getElementById('reminderTime').addEventListener('change', e=>{
+  state.reminderTime = e.target.value;
+  save();
+  publishReminderState();
 });
 document.getElementById('addCostBtn').addEventListener('click', ()=>{
   const nameEl = document.getElementById('costName');
@@ -426,12 +483,14 @@ document.getElementById('addBtn').addEventListener('click', ()=>{
   save();
   spentEl.value = '';
   renderAll();
+  publishReminderState();
 });
 
 document.getElementById('entryDate').valueAsDate = new Date();
 
 renderRate();
 fetchRate();
+publishReminderState();
 
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js').catch(()=>{});
