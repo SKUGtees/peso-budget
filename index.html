@@ -115,6 +115,14 @@
     background:var(--card2); color:var(--accent); border:1px solid var(--border);
     padding:8px 14px; font-size:0.85rem; font-weight:600; white-space:nowrap;
   }
+  .save-btn{
+    background:none; color:var(--accent); font-size:1.05rem; padding:2px 6px; line-height:1;
+  }
+  .actions-cell{ white-space:nowrap; }
+  .inline-edit-input{
+    width:100%; background:var(--input-bg); border:1px solid var(--border); color:var(--text);
+    border-radius:6px; padding:5px 7px; font-size:0.85rem;
+  }
 </style>
 </head>
 <body>
@@ -309,6 +317,14 @@ function fmtMXN(n){
   return 'MXN ' + Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2});
 }
 
+function escapeAttr(s){
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+}
+
+let editingCostId = null;
+let editingGoalId = null;
+let editingEntryId = null;
+
 function localDateStr(d){
   d = d || new Date();
   const off = d.getTimezoneOffset()*60000;
@@ -471,17 +487,48 @@ function renderCosts(){
   }
   let rows = '';
   state.costs.forEach(c=>{
-    rows += `<tr>
-      <td>${c.name || '(unnamed)'}</td>
-      <td>${fmtMXN(c.amount)}</td>
-      <td><button class="del-btn" onclick="deleteCost('${c.id}')">✕</button></td>
-    </tr>`;
+    if(editingCostId === c.id){
+      rows += `<tr>
+        <td><input type="text" class="inline-edit-input" id="editCostName-${c.id}" value="${escapeAttr(c.name)}"></td>
+        <td><input type="number" class="inline-edit-input" id="editCostAmount-${c.id}" value="${c.amount}"></td>
+        <td class="actions-cell">
+          <button class="save-btn" onclick="saveCostEdit('${c.id}')">✓</button>
+          <button class="del-btn" onclick="cancelCostEdit()">✕</button>
+        </td>
+      </tr>`;
+    } else {
+      rows += `<tr>
+        <td>${c.name || '(unnamed)'}</td>
+        <td>${fmtMXN(c.amount)}</td>
+        <td class="actions-cell">
+          <button class="del-btn" onclick="startCostEdit('${c.id}')">✏️</button>
+          <button class="del-btn" onclick="deleteCost('${c.id}')">✕</button>
+        </td>
+      </tr>`;
+    }
   });
   wrap.innerHTML = `<table>
     <tr><th>Cost</th><th>Amount</th><th></th></tr>
     ${rows}
   </table>`;
 }
+
+function startCostEdit(id){ editingCostId = id; renderCosts(); }
+window.startCostEdit = startCostEdit;
+function cancelCostEdit(){ editingCostId = null; renderCosts(); }
+window.cancelCostEdit = cancelCostEdit;
+function saveCostEdit(id){
+  const cost = state.costs.find(c=>c.id===id);
+  if(!cost) return;
+  const name = document.getElementById('editCostName-'+id).value.trim();
+  const amount = Number(document.getElementById('editCostAmount-'+id).value)||0;
+  cost.name = name;
+  cost.amount = amount;
+  editingCostId = null;
+  save();
+  renderAll();
+}
+window.saveCostEdit = saveCostEdit;
 
 function renderGoals(){
   const wrap = document.getElementById('goalsWrap');
@@ -494,24 +541,60 @@ function renderGoals(){
     const target = Number(g.target)||0;
     const saved = Number(g.saved)||0;
     const pct = target>0 ? Math.min(100, (saved/target)*100) : 0;
-    html += `<div class="goal-item">
-      <div class="goal-header">
-        <span class="goal-name">${g.name}</span>
-        <button class="del-btn" onclick="deleteGoal('${g.id}')">✕</button>
-      </div>
-      <div class="goal-bar-track"><div class="goal-bar-fill" style="width:${pct}%"></div></div>
-      <div class="goal-stats">
-        <span>${fmtMXN(saved)} / ${fmtMXN(target)}</span>
-        <span>${pct.toFixed(0)}%</span>
-      </div>
-      <div class="goal-add-row">
-        <input type="number" inputmode="decimal" placeholder="Add amount (MXN)" id="goalAdd-${g.id}">
-        <button class="btn-small" onclick="addToGoal('${g.id}')">Add</button>
-      </div>
-    </div>`;
+    if(editingGoalId === g.id){
+      html += `<div class="goal-item">
+        <div class="goal-header">
+          <input type="text" class="inline-edit-input" style="max-width:60%;" id="editGoalName-${g.id}" value="${escapeAttr(g.name)}">
+          <span class="actions-cell">
+            <button class="save-btn" onclick="saveGoalEdit('${g.id}')">✓</button>
+            <button class="del-btn" onclick="cancelGoalEdit()">✕</button>
+          </span>
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <label>Target amount (MXN)</label>
+          <input type="number" class="inline-edit-input" id="editGoalTarget-${g.id}" value="${target}">
+        </div>
+      </div>`;
+    } else {
+      html += `<div class="goal-item">
+        <div class="goal-header">
+          <span class="goal-name">${g.name}</span>
+          <span class="actions-cell">
+            <button class="del-btn" onclick="startGoalEdit('${g.id}')">✏️</button>
+            <button class="del-btn" onclick="deleteGoal('${g.id}')">✕</button>
+          </span>
+        </div>
+        <div class="goal-bar-track"><div class="goal-bar-fill" style="width:${pct}%"></div></div>
+        <div class="goal-stats">
+          <span>${fmtMXN(saved)} / ${fmtMXN(target)}</span>
+          <span>${pct.toFixed(0)}%</span>
+        </div>
+        <div class="goal-add-row">
+          <input type="number" inputmode="decimal" placeholder="Add amount (MXN)" id="goalAdd-${g.id}">
+          <button class="btn-small" onclick="addToGoal('${g.id}')">Add</button>
+        </div>
+      </div>`;
+    }
   });
   wrap.innerHTML = html;
 }
+
+function startGoalEdit(id){ editingGoalId = id; renderGoals(); }
+window.startGoalEdit = startGoalEdit;
+function cancelGoalEdit(){ editingGoalId = null; renderGoals(); }
+window.cancelGoalEdit = cancelGoalEdit;
+function saveGoalEdit(id){
+  const goal = state.goals.find(g=>g.id===id);
+  if(!goal) return;
+  const name = document.getElementById('editGoalName-'+id).value.trim();
+  const target = Number(document.getElementById('editGoalTarget-'+id).value)||0;
+  if(name) goal.name = name;
+  goal.target = target;
+  editingGoalId = null;
+  save();
+  renderAll();
+}
+window.saveGoalEdit = saveGoalEdit;
 
 function addToGoal(id){
   const input = document.getElementById('goalAdd-'+id);
@@ -568,14 +651,29 @@ function renderHistory(){
   let rows = '';
   entries.forEach(e=>{
     running += e.saved;
-    const cls = e.saved>=0 ? 'saved-pos' : 'saved-neg';
-    rows += `<tr>
-      <td>${e.date}</td>
-      <td>${fmtMXN(e.spent)}</td>
-      <td class="${cls}">${fmtMXN(e.saved)}</td>
-      <td>${fmtMXN(running)}</td>
-      <td><button class="del-btn" onclick="deleteEntry('${e.id}')">✕</button></td>
-    </tr>`;
+    if(editingEntryId === e.id){
+      rows += `<tr>
+        <td><input type="date" class="inline-edit-input" id="editEntryDate-${e.id}" value="${e.date}"></td>
+        <td><input type="number" class="inline-edit-input" id="editEntrySpent-${e.id}" value="${e.spent}"></td>
+        <td colspan="2" style="text-align:center; color:var(--muted); font-size:0.78rem;">will recalculate</td>
+        <td class="actions-cell">
+          <button class="save-btn" onclick="saveEntryEdit('${e.id}')">✓</button>
+          <button class="del-btn" onclick="cancelEntryEdit()">✕</button>
+        </td>
+      </tr>`;
+    } else {
+      const cls = e.saved>=0 ? 'saved-pos' : 'saved-neg';
+      rows += `<tr>
+        <td>${e.date}</td>
+        <td>${fmtMXN(e.spent)}</td>
+        <td class="${cls}">${fmtMXN(e.saved)}</td>
+        <td>${fmtMXN(running)}</td>
+        <td class="actions-cell">
+          <button class="del-btn" onclick="startEntryEdit('${e.id}')">✏️</button>
+          <button class="del-btn" onclick="deleteEntry('${e.id}')">✕</button>
+        </td>
+      </tr>`;
+    }
   });
   wrap.innerHTML = `<table>
     <tr><th>Date</th><th>Spent</th><th>Saved</th><th>Total</th><th></th></tr>
@@ -583,6 +681,25 @@ function renderHistory(){
   </table>`;
   document.getElementById('totalSaved').textContent = fmtMXN(totalSavedAvailable());
 }
+
+function startEntryEdit(id){ editingEntryId = id; renderHistory(); }
+window.startEntryEdit = startEntryEdit;
+function cancelEntryEdit(){ editingEntryId = null; renderHistory(); }
+window.cancelEntryEdit = cancelEntryEdit;
+function saveEntryEdit(id){
+  const entry = state.entries.find(e=>e.id===id);
+  if(!entry) return;
+  const date = document.getElementById('editEntryDate-'+id).value || entry.date;
+  const spent = Number(document.getElementById('editEntrySpent-'+id).value)||0;
+  entry.date = date;
+  entry.spent = spent;
+  entry.saved = entry.budget - spent;
+  editingEntryId = null;
+  save();
+  renderAll();
+  publishReminderState();
+}
+window.saveEntryEdit = saveEntryEdit;
 
 function renderReminder(){
   document.getElementById('reminderEnabled').checked = !!state.reminderEnabled;
