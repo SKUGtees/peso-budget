@@ -92,6 +92,22 @@
   .settings-toggle{
     text-align:center; color:var(--muted); font-size:0.8rem; padding:8px 0 16px; cursor:pointer;
   }
+  .goal-item{ padding:14px 0; border-top:1px solid var(--border); }
+  .goal-item:first-child{ border-top:none; padding-top:0; }
+  .goal-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+  .goal-name{ font-weight:600; }
+  .goal-bar-track{ background:var(--input-bg); border-radius:8px; height:10px; overflow:hidden; margin-bottom:6px; }
+  .goal-bar-fill{ background:var(--accent); height:100%; border-radius:8px; }
+  .goal-stats{ display:flex; justify-content:space-between; font-size:0.82rem; color:var(--muted); margin-bottom:10px; }
+  .goal-add-row{ display:flex; gap:8px; }
+  .goal-add-row input{
+    flex:1; min-width:0; background:var(--input-bg); border:1px solid var(--border); color:var(--text);
+    border-radius:8px; padding:8px 10px; font-size:0.9rem;
+  }
+  .btn-small{
+    background:var(--card2); color:var(--accent); border:1px solid var(--border);
+    padding:8px 14px; font-size:0.85rem; font-weight:600; white-space:nowrap;
+  }
 </style>
 </head>
 <body>
@@ -129,6 +145,18 @@
     <div class="total-banner">
       <div class="label">Total saved so far</div>
       <div class="amount" id="totalSaved">$0</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Savings Goals</h2>
+    <div class="entry-form">
+      <input type="text" id="goalName" placeholder="e.g. New laptop">
+      <input type="number" id="goalTarget" inputmode="decimal" placeholder="Target amount (MXN)">
+    </div>
+    <button class="btn-primary" id="addGoalBtn">Add Goal</button>
+    <div id="goalsWrap" style="margin-top:12px;">
+      <div class="empty">No savings goals yet.</div>
     </div>
   </div>
 
@@ -223,10 +251,11 @@ function load(){
       if(parsed.reminderEnabled==null) parsed.reminderEnabled = false;
       if(!parsed.reminderTime) parsed.reminderTime = '20:00';
       if(parsed.pushSubscription===undefined) parsed.pushSubscription = null;
+      if(!parsed.goals) parsed.goals = [];
       return parsed;
     }
   }catch(e){}
-  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, reminderEnabled:false, reminderTime:'20:00', pushSubscription:null };
+  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, reminderEnabled:false, reminderTime:'20:00', pushSubscription:null, goals:[] };
 }
 function save(){ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
 
@@ -396,6 +425,55 @@ function renderCosts(){
   </table>`;
 }
 
+function renderGoals(){
+  const wrap = document.getElementById('goalsWrap');
+  if(state.goals.length===0){
+    wrap.innerHTML = '<div class="empty">No savings goals yet.</div>';
+    return;
+  }
+  let html = '';
+  state.goals.forEach(g=>{
+    const target = Number(g.target)||0;
+    const saved = Number(g.saved)||0;
+    const pct = target>0 ? Math.min(100, (saved/target)*100) : 0;
+    html += `<div class="goal-item">
+      <div class="goal-header">
+        <span class="goal-name">${g.name}</span>
+        <button class="del-btn" onclick="deleteGoal('${g.id}')">✕</button>
+      </div>
+      <div class="goal-bar-track"><div class="goal-bar-fill" style="width:${pct}%"></div></div>
+      <div class="goal-stats">
+        <span>${fmtMXN(saved)} / ${fmtMXN(target)}</span>
+        <span>${pct.toFixed(0)}%</span>
+      </div>
+      <div class="goal-add-row">
+        <input type="number" inputmode="decimal" placeholder="Add amount (MXN)" id="goalAdd-${g.id}">
+        <button class="btn-small" onclick="addToGoal('${g.id}')">Add</button>
+      </div>
+    </div>`;
+  });
+  wrap.innerHTML = html;
+}
+
+function addToGoal(id){
+  const input = document.getElementById('goalAdd-'+id);
+  const amount = Number(input.value)||0;
+  if(amount===0) return;
+  const goal = state.goals.find(g=>g.id===id);
+  if(!goal) return;
+  goal.saved = (Number(goal.saved)||0) + amount;
+  save();
+  renderGoals();
+}
+window.addToGoal = addToGoal;
+
+function deleteGoal(id){
+  state.goals = state.goals.filter(g=>g.id!==id);
+  save();
+  renderGoals();
+}
+window.deleteGoal = deleteGoal;
+
 function renderPreview(){
   const mxnToday = dailyBudgetMXNToday();
   document.getElementById('previewBudget').textContent = mxnToday!=null ? fmtMXN(mxnToday) : 'rate unavailable';
@@ -442,6 +520,7 @@ function renderAll(){
   renderPreview();
   renderHistory();
   renderReminder();
+  renderGoals();
 }
 
 function deleteEntry(id){
@@ -514,6 +593,23 @@ document.getElementById('addCostBtn').addEventListener('click', ()=>{
   nameEl.value = '';
   amountEl.value = '';
   renderAll();
+});
+
+document.getElementById('addGoalBtn').addEventListener('click', ()=>{
+  const nameEl = document.getElementById('goalName');
+  const targetEl = document.getElementById('goalTarget');
+  const target = Number(targetEl.value)||0;
+  if(target<=0 || nameEl.value.trim()==='') return;
+  state.goals.push({
+    id: Date.now().toString(36)+Math.random().toString(36).slice(2,6),
+    name: nameEl.value.trim(),
+    target,
+    saved: 0
+  });
+  save();
+  nameEl.value = '';
+  targetEl.value = '';
+  renderGoals();
 });
 
 document.getElementById('addBtn').addEventListener('click', ()=>{
