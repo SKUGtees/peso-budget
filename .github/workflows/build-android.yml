@@ -39,6 +39,9 @@ jobs:
           fi
           echo "NEW_PLATFORM=$NEW_PLATFORM" >> "$GITHUB_ENV"
 
+      - name: Generate app icon (from assets/logo.png)
+        run: npx @capacitor/assets generate --android --iconBackgroundColor '#34d399' --iconBackgroundColorDark '#34d399'
+
       - name: Wire up AdMob (real App ID)
         env:
           ADMOB_APP_ID: 'ca-app-pub-2619577988675093~8684512633'
