@@ -938,12 +938,11 @@ if('serviceWorker' in navigator){
 
 // Ads only run inside the native Android app (Capacitor). On the regular
 // website/PWA, window.Capacitor doesn't exist, so this quietly does nothing.
-// TODO: swap this test ad unit ID for a real one once the AdMob account is set up.
 if(window.Capacitor && Capacitor.isNativePlatform()){
   const { AdMob } = Capacitor.Plugins;
   AdMob.initialize().then(()=>{
     return AdMob.showBanner({
-      adId: 'ca-app-pub-3940256099942544/6300978111',
+      adId: 'ca-app-pub-2619577988675093/7974066196',
       adSize: 'BANNER',
       position: 'BOTTOM_CENTER',
       margin: 0
