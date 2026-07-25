@@ -123,9 +123,20 @@
     width:100%; background:var(--input-bg); border:1px solid var(--border); color:var(--text);
     border-radius:6px; padding:5px 7px; font-size:0.85rem;
   }
+  .privacy-toggle{
+    position:fixed; top:14px; right:14px; z-index:50;
+    width:38px; height:38px; border-radius:50%;
+    background:var(--card2); border:1px solid var(--border); color:var(--text);
+    display:flex; align-items:center; justify-content:center; font-size:1.1rem;
+  }
+  .privacy-toggle.active{ background:var(--accent); }
+  .costs-more-toggle{
+    text-align:center; color:var(--muted); font-size:0.8rem; padding:10px 0 0; cursor:pointer;
+  }
 </style>
 </head>
 <body>
+<button class="privacy-toggle" id="privacyToggle" title="Hide amounts">👁️</button>
 <header>
   <h1>💸 Peso Budget</h1>
   <p>Euro income, daily peso spending, tracked automatically</p>
@@ -289,11 +300,12 @@ function normalize(parsed){
   if(!parsed.widgetOrder) parsed.widgetOrder = [];
   if(!parsed.entries) parsed.entries = [];
   if(parsed.spentFromSavings==null) parsed.spentFromSavings = 0;
+  if(parsed.privacyMode==null) parsed.privacyMode = false;
   return parsed;
 }
 
 function defaultState(){
-  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, reminderEnabled:false, reminderTime:'20:00', pushSubscription:null, goals:[], widgetOrder:[], spentFromSavings:0 };
+  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, reminderEnabled:false, reminderTime:'20:00', pushSubscription:null, goals:[], widgetOrder:[], spentFromSavings:0, privacyMode:false };
 }
 
 function load(){
@@ -314,6 +326,7 @@ function save(){
 }
 
 function fmtMXN(n){
+  if(state.privacyMode) return 'MXN •••••';
   return 'MXN ' + Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2});
 }
 
@@ -479,14 +492,19 @@ function renderSettings(){
   document.getElementById('dailyMXN').textContent = mxnToday!=null ? fmtMXN(mxnToday) : '—';
 }
 
+const COSTS_COLLAPSED_LIMIT = 2;
+let costsExpanded = false;
+
 function renderCosts(){
   const wrap = document.getElementById('costsWrap');
   if(state.costs.length===0){
     wrap.innerHTML = '<div class="empty">No fixed costs added yet.</div>';
     return;
   }
+  const showAll = costsExpanded || editingCostId!=null || state.costs.length<=COSTS_COLLAPSED_LIMIT;
+  const visible = showAll ? state.costs : state.costs.slice(0, COSTS_COLLAPSED_LIMIT);
   let rows = '';
-  state.costs.forEach(c=>{
+  visible.forEach(c=>{
     if(editingCostId === c.id){
       rows += `<tr>
         <td><input type="text" class="inline-edit-input" id="editCostName-${c.id}" value="${escapeAttr(c.name)}"></td>
@@ -507,11 +525,22 @@ function renderCosts(){
       </tr>`;
     }
   });
+  const hiddenCount = state.costs.length - COSTS_COLLAPSED_LIMIT;
+  let toggleHtml = '';
+  if(state.costs.length > COSTS_COLLAPSED_LIMIT && editingCostId==null){
+    toggleHtml = `<div class="costs-more-toggle" onclick="toggleCostsExpanded()">${costsExpanded ? '▲ Show less' : `▼ Show ${hiddenCount} more`}</div>`;
+  }
   wrap.innerHTML = `<table>
     <tr><th>Cost</th><th>Amount</th><th></th></tr>
     ${rows}
-  </table>`;
+  </table>${toggleHtml}`;
 }
+
+function toggleCostsExpanded(){
+  costsExpanded = !costsExpanded;
+  renderCosts();
+}
+window.toggleCostsExpanded = toggleCostsExpanded;
 
 function startCostEdit(id){ editingCostId = id; renderCosts(); }
 window.startCostEdit = startCostEdit;
@@ -706,6 +735,12 @@ function renderReminder(){
   document.getElementById('reminderTime').value = state.reminderTime || '20:00';
 }
 
+function renderPrivacyToggle(){
+  const btn = document.getElementById('privacyToggle');
+  btn.classList.toggle('active', !!state.privacyMode);
+  btn.title = state.privacyMode ? 'Show amounts' : 'Hide amounts';
+}
+
 function renderAll(){
   renderCosts();
   renderSettings();
@@ -713,6 +748,7 @@ function renderAll(){
   renderHistory();
   renderReminder();
   renderGoals();
+  renderPrivacyToggle();
 }
 
 function deleteEntry(id){
@@ -743,6 +779,11 @@ document.getElementById('settingsToggle').addEventListener('click', ()=>{
   const open = card.style.display !== 'none';
   card.style.display = open ? 'none' : 'block';
   document.getElementById('settingsToggle').textContent = open ? '⚙ Settings' : '✕ Hide settings';
+});
+document.getElementById('privacyToggle').addEventListener('click', ()=>{
+  state.privacyMode = !state.privacyMode;
+  save();
+  renderAll();
 });
 document.getElementById('exportBtn').addEventListener('click', ()=>{
   const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
