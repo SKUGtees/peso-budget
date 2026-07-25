@@ -39,8 +39,7 @@ jobs:
           fi
           echo "NEW_PLATFORM=$NEW_PLATFORM" >> "$GITHUB_ENV"
 
-      - name: Wire up AdMob (first run only, uses Google's public TEST App ID until real one is set)
-        if: env.NEW_PLATFORM == 'true'
+      - name: Wire up AdMob (uses Google's public TEST App ID until ADMOB_APP_ID secret is set)
         env:
           ADMOB_APP_ID: ${{ secrets.ADMOB_APP_ID || 'ca-app-pub-3940256099942544~3347511713' }}
         run: |
@@ -77,14 +76,13 @@ jobs:
             -Pandroid.injected.signing.key.alias=pesobudget \
             -Pandroid.injected.signing.key.password="${{ secrets.KEYSTORE_PASSWORD }}"
 
-      - name: Commit generated android/ project (first run only)
-        if: env.NEW_PLATFORM == 'true'
+      - name: Commit android/ project changes, if any
         run: |
           git config user.name "build-bot"
           git config user.email "actions@users.noreply.github.com"
           git add android/
-          git commit -m "Add generated Capacitor Android project [skip ci]"
-          git push
+          git diff --cached --quiet || git commit -m "Update generated Capacitor Android project [skip ci]"
+          git push || true
 
       - name: Upload signed AAB
         uses: actions/upload-artifact@v4
