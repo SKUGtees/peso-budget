@@ -133,9 +133,45 @@
   .costs-more-toggle{
     text-align:center; color:var(--muted); font-size:0.8rem; padding:10px 0 0; cursor:pointer;
   }
+  .onboarding-overlay{
+    position:fixed; inset:0; background:rgba(15,23,42,0.97); z-index:200;
+    display:flex; align-items:center; justify-content:center; padding:20px; overflow-y:auto;
+  }
+  .onboarding-card{
+    background:var(--card); border:1px solid var(--border); border-radius:16px;
+    padding:28px 22px; max-width:400px; width:100%; text-align:center;
+  }
+  .onboarding-emoji{ font-size:2.6rem; margin-bottom:10px; }
+  .onboarding-card h2{ margin:0 0 14px; font-size:1.3rem; }
+  .onboarding-card ol{
+    text-align:left; color:var(--text); font-size:0.88rem; line-height:1.7;
+    padding-left:20px; margin:0 0 22px;
+  }
+  .onboarding-card .field{ text-align:left; margin-bottom:14px; }
 </style>
 </head>
 <body>
+<div class="onboarding-overlay" id="onboardingOverlay" style="display:none;">
+  <div class="onboarding-card">
+    <div class="onboarding-emoji">💸</div>
+    <h2>Welcome to Peso Budget</h2>
+    <ol>
+      <li>Enter your <b>monthly income in euros</b></li>
+      <li>It's converted to a <b>daily peso budget</b> using the live exchange rate</li>
+      <li>Log what you spend each day and watch your savings add up</li>
+    </ol>
+    <div class="field">
+      <label>Monthly income (EUR)</label>
+      <input type="number" id="onboardingIncome" inputmode="decimal">
+    </div>
+    <div class="field">
+      <label>Days in period</label>
+      <input type="number" id="onboardingDays" inputmode="numeric">
+    </div>
+    <button class="btn-primary" id="onboardingStartBtn">Get Started</button>
+    <div class="settings-toggle" id="onboardingSkipBtn" style="padding-top:14px; padding-bottom:0;">Skip for now</div>
+  </div>
+</div>
 <button class="privacy-toggle" id="privacyToggle" title="Hide amounts">👁️</button>
 <header>
   <h1>💸 Peso Budget</h1>
@@ -285,11 +321,12 @@ function normalize(parsed){
   if(!parsed.entries) parsed.entries = [];
   if(parsed.spentFromSavings==null) parsed.spentFromSavings = 0;
   if(parsed.privacyMode==null) parsed.privacyMode = false;
+  if(parsed.onboardingComplete==null) parsed.onboardingComplete = true;
   return parsed;
 }
 
 function defaultState(){
-  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:[], spentFromSavings:0, privacyMode:false };
+  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:[], spentFromSavings:0, privacyMode:false, onboardingComplete:false };
 }
 
 function load(){
@@ -818,8 +855,32 @@ function initDragReorder(){
   });
 }
 
+function initOnboarding(){
+  if(state.onboardingComplete) return;
+  document.getElementById('onboardingIncome').value = state.income ?? 1500;
+  document.getElementById('onboardingDays').value = state.days ?? 30;
+  document.getElementById('onboardingOverlay').style.display = 'flex';
+}
+
+document.getElementById('onboardingStartBtn').addEventListener('click', ()=>{
+  const income = Number(document.getElementById('onboardingIncome').value)||0;
+  const days = Number(document.getElementById('onboardingDays').value)||30;
+  state.income = income;
+  state.days = days;
+  state.onboardingComplete = true;
+  save();
+  renderAll();
+  document.getElementById('onboardingOverlay').style.display = 'none';
+});
+document.getElementById('onboardingSkipBtn').addEventListener('click', ()=>{
+  state.onboardingComplete = true;
+  save();
+  document.getElementById('onboardingOverlay').style.display = 'none';
+});
+
 applyWidgetOrder();
 initDragReorder();
+initOnboarding();
 
 renderRate();
 fetchRate();
