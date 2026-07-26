@@ -256,19 +256,6 @@
       <input type="number" id="startingBalance" inputmode="decimal" placeholder="0">
     </div>
     <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:14px;">
-      <div class="row" style="margin-bottom:12px;">
-        <label>Daily reminder</label>
-        <input type="checkbox" id="reminderEnabled" style="width:22px; height:22px; accent-color:var(--accent);">
-      </div>
-      <div class="field">
-        <label>Reminder time</label>
-        <input type="time" id="reminderTime" value="20:00">
-      </div>
-      <div class="entry-preview" id="reminderStatus" style="display:block; line-height:1.6;">
-        Turn this on to get a native push notification, right on this device — no other app needed.
-      </div>
-    </div>
-    <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:14px;">
       <label style="display:block; font-size:0.82rem; color:var(--muted); margin-bottom:10px;">Backup &amp; Restore</label>
       <button class="btn-primary" id="exportBtn" style="margin-top:0;">Export backup file</button>
       <input type="file" id="importFile" accept="application/json" style="display:none;">
@@ -293,9 +280,6 @@ let state = load();
 function normalize(parsed){
   if(!parsed.costs) parsed.costs = [];
   if(parsed.startingBalance==null) parsed.startingBalance = 0;
-  if(parsed.reminderEnabled==null) parsed.reminderEnabled = false;
-  if(!parsed.reminderTime) parsed.reminderTime = '20:00';
-  if(parsed.pushSubscription===undefined) parsed.pushSubscription = null;
   if(!parsed.goals) parsed.goals = [];
   if(!parsed.widgetOrder) parsed.widgetOrder = [];
   if(!parsed.entries) parsed.entries = [];
@@ -305,7 +289,7 @@ function normalize(parsed){
 }
 
 function defaultState(){
-  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, reminderEnabled:false, reminderTime:'20:00', pushSubscription:null, goals:[], widgetOrder:[], spentFromSavings:0, privacyMode:false };
+  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:[], spentFromSavings:0, privacyMode:false };
 }
 
 function load(){
@@ -338,64 +322,6 @@ let editingCostId = null;
 let editingGoalId = null;
 let editingEntryId = null;
 
-function localDateStr(d){
-  d = d || new Date();
-  const off = d.getTimezoneOffset()*60000;
-  return new Date(d.getTime()-off).toISOString().slice(0,10);
-}
-
-const VAPID_PUBLIC_KEY = 'BGYA4vPwkdBF12PthEeJYXCpOAt5n3IseuhPmcK-eyd21B2EJ9zu5DIOMsUJ5MiZor4mt-6OyLXXFM3DC_NeIMI';
-
-function urlBase64ToUint8Array(base64String){
-  const padding = '='.repeat((4 - base64String.length % 4) % 4);
-  const base64 = (base64String + padding).replace(/-/g,'+').replace(/_/g,'/');
-  const raw = atob(base64);
-  const arr = new Uint8Array(raw.length);
-  for(let i=0;i<raw.length;i++) arr[i] = raw.charCodeAt(i);
-  return arr;
-}
-
-async function subscribeToPush(){
-  const statusEl = document.getElementById('reminderStatus');
-  if(!('serviceWorker' in navigator) || !('PushManager' in window)){
-    statusEl.textContent = 'Push notifications aren\'t supported in this browser.';
-    return null;
-  }
-  const permission = await Notification.requestPermission();
-  if(permission !== 'granted'){
-    statusEl.textContent = 'Notification permission was not granted.';
-    return null;
-  }
-  const reg = await navigator.serviceWorker.ready;
-  let sub = await reg.pushManager.getSubscription();
-  if(!sub){
-    sub = await reg.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
-    });
-  }
-  statusEl.textContent = 'Notifications enabled on this device.';
-  return sub.toJSON();
-}
-
-function publishReminderState(){
-  if(!state.reminderEnabled || !state.pushSubscription) return;
-  const [hh,mm] = (state.reminderTime||'20:00').split(':').map(Number);
-  const target = new Date();
-  target.setHours(hh, mm, 0, 0);
-  const todayLocalDate = localDateStr();
-  const loggedToday = state.entries.some(e=>e.date===todayLocalDate);
-  const payload = JSON.stringify({
-    enabled: true,
-    reminderUTCHour: target.getUTCHours(),
-    reminderUTCMinute: target.getUTCMinutes(),
-    tzOffsetMinutes: target.getTimezoneOffset(),
-    todayLocalDate,
-    loggedToday,
-    subscription: state.pushSubscription
-  });
-  fetch('https://ntfy.sh/peso-budget-state-702cef40ec5d2051', {method:'POST', body: payload}).catch(()=>{});
-}
 async function fetchRate(){
   const rateMetaEl = document.getElementById('rateMeta');
   rateMetaEl.textContent = 'Fetching latest rate…';
@@ -726,14 +652,8 @@ function saveEntryEdit(id){
   editingEntryId = null;
   save();
   renderAll();
-  publishReminderState();
 }
 window.saveEntryEdit = saveEntryEdit;
-
-function renderReminder(){
-  document.getElementById('reminderEnabled').checked = !!state.reminderEnabled;
-  document.getElementById('reminderTime').value = state.reminderTime || '20:00';
-}
 
 function renderPrivacyToggle(){
   const btn = document.getElementById('privacyToggle');
@@ -746,7 +666,6 @@ function renderAll(){
   renderSettings();
   renderPreview();
   renderHistory();
-  renderReminder();
   renderGoals();
   renderPrivacyToggle();
 }
@@ -755,7 +674,6 @@ function deleteEntry(id){
   state.entries = state.entries.filter(e=>e.id!==id);
   save();
   renderAll();
-  publishReminderState();
 }
 window.deleteEntry = deleteEntry;
 
@@ -818,7 +736,6 @@ document.getElementById('importFile').addEventListener('change', e=>{
     state = normalize(parsed);
     save();
     renderAll();
-    publishReminderState();
   };
   reader.readAsText(file);
   e.target.value = '';
@@ -826,29 +743,6 @@ document.getElementById('importFile').addEventListener('change', e=>{
 document.getElementById('startingBalance').addEventListener('input', e=>{
   state.startingBalance = e.target.value===''? '' : Number(e.target.value);
   save(); renderAll();
-});
-document.getElementById('reminderEnabled').addEventListener('change', async e=>{
-  state.reminderEnabled = e.target.checked;
-  if(state.reminderEnabled){
-    const sub = await subscribeToPush();
-    if(!sub){
-      state.reminderEnabled = false;
-      e.target.checked = false;
-      save();
-      return;
-    }
-    state.pushSubscription = sub;
-    save();
-    publishReminderState();
-  } else {
-    save();
-    document.getElementById('reminderStatus').textContent = 'Turn this on to get a native push notification, right on this device — no other app needed.';
-  }
-});
-document.getElementById('reminderTime').addEventListener('change', e=>{
-  state.reminderTime = e.target.value;
-  save();
-  publishReminderState();
 });
 document.getElementById('addCostBtn').addEventListener('click', ()=>{
   const nameEl = document.getElementById('costName');
@@ -898,7 +792,6 @@ document.getElementById('addBtn').addEventListener('click', ()=>{
   save();
   spentEl.value = '';
   renderAll();
-  publishReminderState();
 });
 
 document.getElementById('entryDate').valueAsDate = new Date();
@@ -930,7 +823,6 @@ initDragReorder();
 
 renderRate();
 fetchRate();
-publishReminderState();
 
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js').catch(()=>{});
