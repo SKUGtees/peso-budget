@@ -130,7 +130,7 @@
     display:flex; align-items:center; justify-content:center; font-size:1.1rem;
   }
   .privacy-toggle.active{ background:var(--accent); }
-  .costs-more-toggle{
+  .list-more-toggle{
     text-align:center; color:var(--muted); font-size:0.8rem; padding:10px 0 0; cursor:pointer;
   }
   .onboarding-overlay{
@@ -491,7 +491,7 @@ function renderCosts(){
   const hiddenCount = state.costs.length - COSTS_COLLAPSED_LIMIT;
   let toggleHtml = '';
   if(state.costs.length > COSTS_COLLAPSED_LIMIT && editingCostId==null){
-    toggleHtml = `<div class="costs-more-toggle" onclick="toggleCostsExpanded()">${costsExpanded ? '▲ Show less' : `▼ Show ${hiddenCount} more`}</div>`;
+    toggleHtml = `<div class="list-more-toggle" onclick="toggleCostsExpanded()">${costsExpanded ? '▲ Show less' : `▼ Show ${hiddenCount} more`}</div>`;
   }
   wrap.innerHTML = `<table>
     <tr><th>Cost</th><th>Amount</th><th></th></tr>
@@ -630,6 +630,9 @@ function renderPreview(){
   document.getElementById('addBtn').disabled = mxnToday==null;
 }
 
+const HISTORY_COLLAPSED_LIMIT = 7;
+let historyExpanded = false;
+
 function renderHistory(){
   const wrap = document.getElementById('historyWrap');
   document.getElementById('startingBalance').value = state.startingBalance ?? '';
@@ -640,11 +643,12 @@ function renderHistory(){
     document.getElementById('totalSaved').textContent = fmtMXN(totalSavedAvailable());
     return;
   }
-  let rows = '';
+  const showAll = historyExpanded || editingEntryId!=null || entries.length<=HISTORY_COLLAPSED_LIMIT;
+  const allRows = [];
   entries.forEach(e=>{
     running += e.saved;
     if(editingEntryId === e.id){
-      rows += `<tr>
+      allRows.push(`<tr>
         <td><input type="date" class="inline-edit-input" id="editEntryDate-${e.id}" value="${e.date}"></td>
         <td><input type="number" class="inline-edit-input" id="editEntrySpent-${e.id}" value="${e.spent}"></td>
         <td colspan="2" style="text-align:center; color:var(--muted); font-size:0.78rem;">will recalculate</td>
@@ -652,10 +656,10 @@ function renderHistory(){
           <button class="save-btn" onclick="saveEntryEdit('${e.id}')">✓</button>
           <button class="del-btn" onclick="cancelEntryEdit()">✕</button>
         </td>
-      </tr>`;
+      </tr>`);
     } else {
       const cls = e.saved>=0 ? 'saved-pos' : 'saved-neg';
-      rows += `<tr>
+      allRows.push(`<tr>
         <td>${e.date}</td>
         <td>${fmtMXN(e.spent)}</td>
         <td class="${cls}">${fmtMXN(e.saved)}</td>
@@ -664,15 +668,27 @@ function renderHistory(){
           <button class="del-btn" onclick="startEntryEdit('${e.id}')">✏️</button>
           <button class="del-btn" onclick="deleteEntry('${e.id}')">✕</button>
         </td>
-      </tr>`;
+      </tr>`);
     }
   });
+  const visibleRows = showAll ? allRows : allRows.slice(-HISTORY_COLLAPSED_LIMIT);
+  const hiddenCount = entries.length - HISTORY_COLLAPSED_LIMIT;
+  let toggleHtml = '';
+  if(entries.length > HISTORY_COLLAPSED_LIMIT && editingEntryId==null){
+    toggleHtml = `<div class="list-more-toggle" onclick="toggleHistoryExpanded()">${historyExpanded ? '▲ Show less' : `▼ Show ${hiddenCount} more`}</div>`;
+  }
   wrap.innerHTML = `<table>
     <tr><th>Date</th><th>Spent</th><th>Saved</th><th>Total</th><th></th></tr>
-    ${rows}
-  </table>`;
+    ${visibleRows.join('')}
+  </table>${toggleHtml}`;
   document.getElementById('totalSaved').textContent = fmtMXN(totalSavedAvailable());
 }
+
+function toggleHistoryExpanded(){
+  historyExpanded = !historyExpanded;
+  renderHistory();
+}
+window.toggleHistoryExpanded = toggleHistoryExpanded;
 
 function startEntryEdit(id){ editingEntryId = id; renderHistory(); }
 window.startEntryEdit = startEntryEdit;
