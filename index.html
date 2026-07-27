@@ -92,7 +92,7 @@
   .footer-note{ text-align:center; color:var(--muted); font-size:0.72rem; padding:10px 20px; line-height:1.5; }
   .field{ margin-bottom:4px; }
   .field label{ display:block; font-size:0.82rem; color:var(--muted); margin-bottom:6px; }
-  .field input{
+  .field input, .field select{
     width:100%; background:var(--input-bg); border:1px solid var(--border); color:var(--text);
     border-radius:8px; padding:10px 12px; font-size:1rem;
   }
@@ -156,12 +156,12 @@
     <div class="onboarding-emoji">💸</div>
     <h2>Welcome to Peso Budget</h2>
     <ol>
-      <li>Enter your <b>monthly income in euros</b></li>
+      <li>Enter your <b>monthly income</b> (EUR, USD, or CAD — pick your currency in Settings)</li>
       <li>It's converted to a <b>daily peso budget</b> using the live exchange rate</li>
       <li>Log what you spend each day and watch your savings add up</li>
     </ol>
     <div class="field">
-      <label>Monthly income (EUR)</label>
+      <label>Monthly income</label>
       <input type="number" id="onboardingIncome" inputmode="decimal">
     </div>
     <div class="field">
@@ -175,7 +175,7 @@
 <button class="privacy-toggle" id="privacyToggle" title="Hide amounts">👁️</button>
 <header>
   <h1>💸 Peso Budget</h1>
-  <p>Euro income, daily peso spending, tracked automatically</p>
+  <p>Foreign income, daily peso spending, tracked automatically</p>
 </header>
 
 <div class="wrap">
@@ -241,7 +241,7 @@
     <span class="drag-handle" title="Drag to reorder">⠿</span>
     <h2>Income Settings</h2>
     <div class="row">
-      <label>Monthly income (EUR)</label>
+      <label>Monthly income (<span id="incomeCurrencyLabel">EUR</span>)</label>
       <input type="number" id="income" inputmode="decimal" placeholder="1500">
     </div>
     <div class="row">
@@ -288,6 +288,14 @@
   <div class="card" id="settingsCard" style="display:none;">
     <h2>Settings</h2>
     <div class="field">
+      <label>Income currency</label>
+      <select id="incomeCurrency">
+        <option value="EUR">Euro (EUR)</option>
+        <option value="USD">US Dollar (USD)</option>
+        <option value="CAD">Canadian Dollar (CAD)</option>
+      </select>
+    </div>
+    <div class="field">
       <label>Already saved before using this app (MXN)</label>
       <input type="number" id="startingBalance" inputmode="decimal" placeholder="0">
     </div>
@@ -322,11 +330,12 @@ function normalize(parsed){
   if(parsed.spentFromSavings==null) parsed.spentFromSavings = 0;
   if(parsed.privacyMode==null) parsed.privacyMode = false;
   if(parsed.onboardingComplete==null) parsed.onboardingComplete = true;
+  if(!parsed.incomeCurrency) parsed.incomeCurrency = 'EUR';
   return parsed;
 }
 
 function defaultState(){
-  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:[], spentFromSavings:0, privacyMode:false, onboardingComplete:false };
+  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:[], spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR' };
 }
 
 function load(){
@@ -362,13 +371,15 @@ let editingEntryId = null;
 async function fetchRate(){
   const rateMetaEl = document.getElementById('rateMeta');
   rateMetaEl.textContent = 'Fetching latest rate…';
+  const currency = state.incomeCurrency || 'EUR';
   try{
-    const res = await fetch('https://open.er-api.com/v6/latest/EUR', {cache:'no-store'});
+    const res = await fetch('https://open.er-api.com/v6/latest/' + currency, {cache:'no-store'});
     if(!res.ok) throw new Error('bad response');
     const data = await res.json();
     const rate = data.rates && data.rates.MXN;
     if(!rate) throw new Error('no rate in response');
     state.liveRate = rate;
+    state.liveRateCurrency = currency;
     state.rateTime = new Date().toISOString();
     state.nextRateUpdate = data.time_next_update_utc || null;
     save();
@@ -376,12 +387,13 @@ async function fetchRate(){
     return;
   }catch(e){}
   try{
-    const res2 = await fetch('https://api.frankfurter.app/latest?from=EUR&to=MXN', {cache:'no-store'});
+    const res2 = await fetch('https://api.frankfurter.app/latest?from=' + currency + '&to=MXN', {cache:'no-store'});
     if(!res2.ok) throw new Error('bad response');
     const data2 = await res2.json();
     const rate2 = data2.rates && data2.rates.MXN;
     if(!rate2) throw new Error('no rate in response');
     state.liveRate = rate2;
+    state.liveRateCurrency = currency;
     state.rateTime = new Date().toISOString();
     state.nextRateUpdate = null;
     save();
@@ -395,7 +407,7 @@ function renderRate(failed){
   const rateValueEl = document.getElementById('rateValue');
   const rateMetaEl = document.getElementById('rateMeta');
   if(state.liveRate){
-    rateValueEl.textContent = '1 EUR = ' + Number(state.liveRate).toFixed(3) + ' MXN';
+    rateValueEl.textContent = '1 ' + (state.liveRateCurrency || state.incomeCurrency || 'EUR') + ' = ' + Number(state.liveRate).toFixed(3) + ' MXN';
     const t = state.rateTime ? new Date(state.rateTime) : null;
     const timeStr = t ? t.toLocaleString() : '';
     if(failed){
@@ -446,6 +458,8 @@ function totalSavedAvailable(){
 function renderSettings(){
   document.getElementById('income').value = state.income ?? '';
   document.getElementById('days').value = state.days ?? '';
+  document.getElementById('incomeCurrency').value = state.incomeCurrency || 'EUR';
+  document.getElementById('incomeCurrencyLabel').textContent = state.incomeCurrency || 'EUR';
   const incomeMXN = monthlyIncomeMXN();
   document.getElementById('incomeMXN').textContent = incomeMXN!=null ? fmtMXN(incomeMXN) : '—';
   document.getElementById('totalCostsStat').textContent = fmtMXN(totalMonthlyCosts());
@@ -744,6 +758,13 @@ document.getElementById('income').addEventListener('input', e=>{
 document.getElementById('days').addEventListener('input', e=>{
   state.days = e.target.value===''? '' : Number(e.target.value);
   save(); renderAll();
+});
+document.getElementById('incomeCurrency').addEventListener('change', e=>{
+  state.incomeCurrency = e.target.value;
+  state.liveRate = null;
+  save();
+  renderSettings();
+  fetchRate();
 });
 document.getElementById('settingsToggle').addEventListener('click', ()=>{
   const card = document.getElementById('settingsCard');
