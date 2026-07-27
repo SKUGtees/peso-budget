@@ -746,6 +746,7 @@ function renderAll(){
 }
 
 function deleteEntry(id){
+  if(!confirm('Delete this entry? This cannot be undone.')) return;
   state.entries = state.entries.filter(e=>e.id!==id);
   save();
   renderAll();
@@ -753,6 +754,7 @@ function deleteEntry(id){
 window.deleteEntry = deleteEntry;
 
 function deleteCost(id){
+  if(!confirm('Delete this fixed cost? This cannot be undone.')) return;
   state.costs = state.costs.filter(c=>c.id!==id);
   save();
   renderAll();
