@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Peso Budget</string>
-    <string name="title_activity_main">Peso Budget</string>
+    <string name="app_name">Nomad Pesos</string>
+    <string name="title_activity_main">Nomad Pesos</string>
     <string name="package_name">com.skugtees.pesobudget</string>
     <string name="custom_url_scheme">com.skugtees.pesobudget</string>
     <string name="admob_app_id">ca-app-pub-2619577988675093~8684512633</string>

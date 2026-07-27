@@ -2,7 +2,7 @@
   "name": "peso-budget-app",
   "version": "1.0.0",
   "private": true,
-  "description": "Native Android wrapper (Capacitor) for the Peso Budget PWA, with AdMob ads.",
+  "description": "Native Android wrapper (Capacitor) for the Nomad Pesos PWA, with AdMob ads.",
   "scripts": {
     "prepare-www": "node scripts/prepare-www.js"
   },

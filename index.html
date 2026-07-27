@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Peso Budget</title>
+<title>Nomad Pesos</title>
 <link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Peso Budget">
+<meta name="apple-mobile-web-app-title" content="Nomad Pesos">
 <meta name="theme-color" content="#0f172a">
 <link rel="apple-touch-icon" href="icon.png">
 <style>
@@ -154,7 +154,7 @@
 <div class="onboarding-overlay" id="onboardingOverlay" style="display:none;">
   <div class="onboarding-card">
     <div class="onboarding-emoji">💸</div>
-    <h2>Welcome to Peso Budget</h2>
+    <h2>Welcome to Nomad Pesos</h2>
     <ol>
       <li>Enter your <b>monthly income</b> and pick your currency</li>
       <li>It's converted to a <b>daily peso budget</b> using the live exchange rate</li>
@@ -182,7 +182,7 @@
 </div>
 <button class="privacy-toggle" id="privacyToggle" title="Hide amounts">👁️</button>
 <header>
-  <h1>💸 Peso Budget</h1>
+  <h1>💸 Nomad Pesos</h1>
   <p>Foreign income, daily peso spending, tracked automatically</p>
 </header>
 
@@ -813,7 +813,7 @@ document.getElementById('importFile').addEventListener('change', e=>{
       return;
     }
     if(!Array.isArray(parsed.entries)){
-      alert('That file doesn\'t look like a Peso Budget backup.');
+      alert('That file doesn\'t look like a Nomad Pesos backup.');
       return;
     }
     if(!confirm('This will replace all current data on this device with the backup file. Continue?')) return;
