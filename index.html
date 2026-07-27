@@ -156,10 +156,18 @@
     <div class="onboarding-emoji">💸</div>
     <h2>Welcome to Peso Budget</h2>
     <ol>
-      <li>Enter your <b>monthly income</b> (EUR, USD, or CAD — pick your currency in Settings)</li>
+      <li>Enter your <b>monthly income</b> and pick your currency</li>
       <li>It's converted to a <b>daily peso budget</b> using the live exchange rate</li>
       <li>Log what you spend each day and watch your savings add up</li>
     </ol>
+    <div class="field">
+      <label>What currency do you get paid in?</label>
+      <select id="onboardingCurrency">
+        <option value="EUR">Euro (EUR)</option>
+        <option value="USD">US Dollar (USD)</option>
+        <option value="CAD">Canadian Dollar (CAD)</option>
+      </select>
+    </div>
     <div class="field">
       <label>Monthly income</label>
       <input type="number" id="onboardingIncome" inputmode="decimal">
@@ -894,6 +902,7 @@ function initDragReorder(){
 
 function initOnboarding(){
   if(state.onboardingComplete) return;
+  document.getElementById('onboardingCurrency').value = state.incomeCurrency || 'EUR';
   document.getElementById('onboardingIncome').value = state.income ?? 1500;
   document.getElementById('onboardingDays').value = state.days ?? 30;
   document.getElementById('onboardingOverlay').style.display = 'flex';
@@ -902,11 +911,16 @@ function initOnboarding(){
 document.getElementById('onboardingStartBtn').addEventListener('click', ()=>{
   const income = Number(document.getElementById('onboardingIncome').value)||0;
   const days = Number(document.getElementById('onboardingDays').value)||30;
+  const currency = document.getElementById('onboardingCurrency').value;
+  const currencyChanged = currency !== state.incomeCurrency;
   state.income = income;
   state.days = days;
+  state.incomeCurrency = currency;
   state.onboardingComplete = true;
+  if(currencyChanged) state.liveRate = null;
   save();
   renderAll();
+  if(currencyChanged) fetchRate();
   document.getElementById('onboardingOverlay').style.display = 'none';
 });
 document.getElementById('onboardingSkipBtn').addEventListener('click', ()=>{
