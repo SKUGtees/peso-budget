@@ -83,6 +83,7 @@
   .del-btn{
     background:none; color:var(--muted); font-size:1rem; padding:2px 6px; line-height:1;
   }
+  .icon-svg{ width:1em; height:1em; display:inline-block; vertical-align:-0.15em; }
   .empty{ color:var(--muted); font-size:0.85rem; text-align:center; padding:16px 0; }
   .total-banner{
     text-align:center; padding:6px 0 2px;
@@ -153,7 +154,7 @@
 <body>
 <div class="onboarding-overlay" id="onboardingOverlay" style="display:none;">
   <div class="onboarding-card">
-    <div class="onboarding-emoji">💸</div>
+    <div class="onboarding-emoji"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg></div>
     <h2>Welcome to Nomad Pesos</h2>
     <ol>
       <li>Enter your <b>monthly income</b> and pick your currency</li>
@@ -180,9 +181,9 @@
     <div class="settings-toggle" id="onboardingSkipBtn" style="padding-top:14px; padding-bottom:0;">Skip for now</div>
   </div>
 </div>
-<button class="privacy-toggle" id="privacyToggle" title="Hide amounts">👁️</button>
+<button class="privacy-toggle" id="privacyToggle" title="Hide amounts"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
 <header>
-  <h1>💸 Nomad Pesos</h1>
+  <h1><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em;"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg> Nomad Pesos</h1>
   <p>Foreign income, daily peso spending, tracked automatically</p>
 </header>
 
@@ -291,7 +292,7 @@
 
 </div>
 
-  <div class="settings-toggle" id="settingsToggle">⚙ Settings</div>
+  <div class="settings-toggle" id="settingsToggle"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> Settings</div>
 
   <div class="card" id="settingsCard" style="display:none;">
     <h2>Settings</h2>
@@ -327,6 +328,14 @@
 <script>
 const STORE_KEY = 'pesoBudget_v1';
 const BACKUP_KEY = 'pesoBudget_v1_backup';
+
+const ICON_CHECK = '<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+const ICON_X = '<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+const ICON_PENCIL = '<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>';
+const ICON_CHEVRON_UP = '<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>';
+const ICON_CHEVRON_DOWN = '<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+const ICON_GEAR = '<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>';
+
 let state = load();
 
 function normalize(parsed){
@@ -495,8 +504,8 @@ function renderCosts(){
         <td><input type="text" class="inline-edit-input" id="editCostName-${c.id}" value="${escapeAttr(c.name)}"></td>
         <td><input type="number" class="inline-edit-input" id="editCostAmount-${c.id}" value="${c.amount}"></td>
         <td class="actions-cell">
-          <button class="save-btn" onclick="saveCostEdit('${c.id}')">✓</button>
-          <button class="del-btn" onclick="cancelCostEdit()">✕</button>
+          <button class="save-btn" onclick="saveCostEdit('${c.id}')">${ICON_CHECK}</button>
+          <button class="del-btn" onclick="cancelCostEdit()">${ICON_X}</button>
         </td>
       </tr>`;
     } else {
@@ -504,8 +513,8 @@ function renderCosts(){
         <td>${c.name || '(unnamed)'}</td>
         <td>${fmtMXN(c.amount)}</td>
         <td class="actions-cell">
-          <button class="del-btn" onclick="startCostEdit('${c.id}')">✏️</button>
-          <button class="del-btn" onclick="deleteCost('${c.id}')">✕</button>
+          <button class="del-btn" onclick="startCostEdit('${c.id}')">${ICON_PENCIL}</button>
+          <button class="del-btn" onclick="deleteCost('${c.id}')">${ICON_X}</button>
         </td>
       </tr>`;
     }
@@ -513,7 +522,7 @@ function renderCosts(){
   const hiddenCount = state.costs.length - COSTS_COLLAPSED_LIMIT;
   let toggleHtml = '';
   if(state.costs.length > COSTS_COLLAPSED_LIMIT && editingCostId==null){
-    toggleHtml = `<div class="list-more-toggle" onclick="toggleCostsExpanded()">${costsExpanded ? '▲ Show less' : `▼ Show ${hiddenCount} more`}</div>`;
+    toggleHtml = `<div class="list-more-toggle" onclick="toggleCostsExpanded()">${costsExpanded ? (ICON_CHEVRON_UP + ' Show less') : (ICON_CHEVRON_DOWN + ` Show ${hiddenCount} more`)}</div>`;
   }
   wrap.innerHTML = `<table>
     <tr><th>Cost</th><th>Amount</th><th></th></tr>
@@ -560,8 +569,8 @@ function renderGoals(){
         <div class="goal-header">
           <input type="text" class="inline-edit-input" style="max-width:60%;" id="editGoalName-${g.id}" value="${escapeAttr(g.name)}">
           <span class="actions-cell">
-            <button class="save-btn" onclick="saveGoalEdit('${g.id}')">✓</button>
-            <button class="del-btn" onclick="cancelGoalEdit()">✕</button>
+            <button class="save-btn" onclick="saveGoalEdit('${g.id}')">${ICON_CHECK}</button>
+            <button class="del-btn" onclick="cancelGoalEdit()">${ICON_X}</button>
           </span>
         </div>
         <div class="field" style="margin-bottom:0;">
@@ -574,8 +583,8 @@ function renderGoals(){
         <div class="goal-header">
           <span class="goal-name">${g.name}</span>
           <span class="actions-cell">
-            <button class="del-btn" onclick="startGoalEdit('${g.id}')">✏️</button>
-            <button class="del-btn" onclick="deleteGoal('${g.id}')">✕</button>
+            <button class="del-btn" onclick="startGoalEdit('${g.id}')">${ICON_PENCIL}</button>
+            <button class="del-btn" onclick="deleteGoal('${g.id}')">${ICON_X}</button>
           </span>
         </div>
         <div class="goal-bar-track"><div class="goal-bar-fill" style="width:${pct}%"></div></div>
@@ -675,8 +684,8 @@ function renderHistory(){
         <td><input type="number" class="inline-edit-input" id="editEntrySpent-${e.id}" value="${e.spent}"></td>
         <td colspan="2" style="text-align:center; color:var(--muted); font-size:0.78rem;">will recalculate</td>
         <td class="actions-cell">
-          <button class="save-btn" onclick="saveEntryEdit('${e.id}')">✓</button>
-          <button class="del-btn" onclick="cancelEntryEdit()">✕</button>
+          <button class="save-btn" onclick="saveEntryEdit('${e.id}')">${ICON_CHECK}</button>
+          <button class="del-btn" onclick="cancelEntryEdit()">${ICON_X}</button>
         </td>
       </tr>`);
     } else {
@@ -687,8 +696,8 @@ function renderHistory(){
         <td class="${cls}">${fmtMXN(e.saved)}</td>
         <td>${fmtMXN(running)}</td>
         <td class="actions-cell">
-          <button class="del-btn" onclick="startEntryEdit('${e.id}')">✏️</button>
-          <button class="del-btn" onclick="deleteEntry('${e.id}')">✕</button>
+          <button class="del-btn" onclick="startEntryEdit('${e.id}')">${ICON_PENCIL}</button>
+          <button class="del-btn" onclick="deleteEntry('${e.id}')">${ICON_X}</button>
         </td>
       </tr>`);
     }
@@ -697,7 +706,7 @@ function renderHistory(){
   const hiddenCount = entries.length - HISTORY_COLLAPSED_LIMIT;
   let toggleHtml = '';
   if(entries.length > HISTORY_COLLAPSED_LIMIT && editingEntryId==null){
-    toggleHtml = `<div class="list-more-toggle" onclick="toggleHistoryExpanded()">${historyExpanded ? '▲ Show less' : `▼ Show ${hiddenCount} more`}</div>`;
+    toggleHtml = `<div class="list-more-toggle" onclick="toggleHistoryExpanded()">${historyExpanded ? (ICON_CHEVRON_UP + ' Show less') : (ICON_CHEVRON_DOWN + ` Show ${hiddenCount} more`)}</div>`;
   }
   wrap.innerHTML = `<table>
     <tr><th>Date</th><th>Spent</th><th>Saved</th><th>Total</th><th></th></tr>
@@ -780,7 +789,7 @@ document.getElementById('settingsToggle').addEventListener('click', ()=>{
   const card = document.getElementById('settingsCard');
   const open = card.style.display !== 'none';
   card.style.display = open ? 'none' : 'block';
-  document.getElementById('settingsToggle').textContent = open ? '⚙ Settings' : '✕ Hide settings';
+  document.getElementById('settingsToggle').innerHTML = open ? (ICON_GEAR + ' Settings') : (ICON_X + ' Hide settings');
 });
 document.getElementById('privacyToggle').addEventListener('click', ()=>{
   state.privacyMode = !state.privacyMode;
