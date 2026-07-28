@@ -42,6 +42,7 @@
   .drag-handle:active{ cursor:grabbing; }
   .sortable-ghost{ opacity:0.35; }
   .sortable-chosen{ box-shadow:0 10px 26px rgba(0,0,0,0.4); }
+  .drag-locked .drag-handle{ opacity:0.25; cursor:default; }
   .row{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:10px;}
   .row:last-child{ margin-bottom:0; }
   .row label{ font-size:0.92rem; color:var(--text); flex-shrink:0; }
@@ -308,6 +309,15 @@
       <label>Already saved before using this app (MXN)</label>
       <input type="number" id="startingBalance" inputmode="decimal" placeholder="0">
     </div>
+    <div class="field">
+      <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; margin-bottom:0;">
+        <span>Rearrange widgets</span>
+        <input type="checkbox" id="dragModeToggle" style="width:18px; height:18px; accent-color:var(--accent); cursor:pointer;">
+      </label>
+      <div class="entry-preview" style="display:block; margin-top:6px;">
+        Turn this on to drag widgets into a new order, then off again to lock them in place and stop them moving by accident.
+      </div>
+    </div>
     <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:14px;">
       <label style="display:block; font-size:0.82rem; color:var(--muted); margin-bottom:10px;">Backup &amp; Restore</label>
       <button class="btn-primary" id="exportBtn" style="margin-top:0;">Export backup file</button>
@@ -348,11 +358,12 @@ function normalize(parsed){
   if(parsed.privacyMode==null) parsed.privacyMode = false;
   if(parsed.onboardingComplete==null) parsed.onboardingComplete = true;
   if(!parsed.incomeCurrency) parsed.incomeCurrency = 'EUR';
+  if(parsed.dragModeEnabled==null) parsed.dragModeEnabled = false;
   return parsed;
 }
 
 function defaultState(){
-  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:[], spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR' };
+  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:[], spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR', dragModeEnabled:false };
 }
 
 function load(){
@@ -477,6 +488,7 @@ function renderSettings(){
   document.getElementById('days').value = state.days ?? '';
   document.getElementById('incomeCurrency').value = state.incomeCurrency || 'EUR';
   document.getElementById('incomeCurrencyLabel').textContent = state.incomeCurrency || 'EUR';
+  document.getElementById('dragModeToggle').checked = !!state.dragModeEnabled;
   const incomeMXN = monthlyIncomeMXN();
   document.getElementById('incomeMXN').textContent = incomeMXN!=null ? fmtMXN(incomeMXN) : '—';
   document.getElementById('totalCostsStat').textContent = fmtMXN(totalMonthlyCosts());
@@ -898,18 +910,34 @@ function applyWidgetOrder(){
   });
 }
 
+let sortableInstance = null;
+
+function updateDragModeUI(){
+  const container = document.getElementById('widgetsContainer');
+  if(sortableInstance) sortableInstance.option('disabled', !state.dragModeEnabled);
+  if(container) container.classList.toggle('drag-locked', !state.dragModeEnabled);
+}
+
 function initDragReorder(){
   const container = document.getElementById('widgetsContainer');
   if(!container || typeof Sortable === 'undefined') return;
-  Sortable.create(container, {
+  sortableInstance = Sortable.create(container, {
     handle: '.drag-handle',
     animation: 150,
+    disabled: !state.dragModeEnabled,
     onEnd: ()=>{
       state.widgetOrder = [...container.children].map(el=>el.dataset.widgetId);
       save();
     }
   });
+  updateDragModeUI();
 }
+
+document.getElementById('dragModeToggle').addEventListener('change', e=>{
+  state.dragModeEnabled = e.target.checked;
+  save();
+  updateDragModeUI();
+});
 
 function initOnboarding(){
   if(state.onboardingComplete) return;
