@@ -8,7 +8,8 @@
   },
   "dependencies": {
     "@capacitor/core": "latest",
-    "@capacitor-community/admob": "latest"
+    "@capacitor-community/admob": "latest",
+    "@capacitor/splash-screen": "latest"
   },
   "devDependencies": {
     "@capacitor/cli": "latest",
