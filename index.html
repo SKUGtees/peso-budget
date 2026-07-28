@@ -329,6 +329,18 @@
         Turn this on to drag widgets into a new order, then off again to lock them in place and stop them moving by accident.
       </div>
     </div>
+    <div class="field">
+      <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; margin-bottom:0;">
+        <span>Auto-save towards a goal</span>
+        <input type="checkbox" id="autoSaveToggle" style="width:18px; height:18px; accent-color:var(--accent); cursor:pointer;">
+      </label>
+      <div class="entry-preview" style="display:block; margin-top:6px; margin-bottom:8px;">
+        Automatically move newly saved money into the goal below, up to its target. You'll get a message once it's fully funded.
+      </div>
+      <select id="autoSaveGoalSelect">
+        <option value="">Select a goal…</option>
+      </select>
+    </div>
     <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:14px;">
       <label style="display:block; font-size:0.82rem; color:var(--muted); margin-bottom:10px;">Backup &amp; Restore</label>
       <button class="btn-primary" id="exportBtn" style="margin-top:0;">Export backup file</button>
@@ -371,11 +383,13 @@ function normalize(parsed){
   if(parsed.onboardingComplete==null) parsed.onboardingComplete = true;
   if(!parsed.incomeCurrency) parsed.incomeCurrency = 'EUR';
   if(parsed.dragModeEnabled==null) parsed.dragModeEnabled = false;
+  if(parsed.autoSaveEnabled==null) parsed.autoSaveEnabled = false;
+  if(parsed.autoSaveGoalId==null) parsed.autoSaveGoalId = '';
   return parsed;
 }
 
 function defaultState(){
-  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:[], spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR', dragModeEnabled:false };
+  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:[], spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR', dragModeEnabled:false, autoSaveEnabled:false, autoSaveGoalId:'' };
 }
 
 function load(){
@@ -495,12 +509,41 @@ function totalSavedAvailable(){
   return totalSavedRaw() - totalAllocatedToGoals() - (Number(state.spentFromSavings)||0);
 }
 
+function autoAllocateSavings(){
+  if(!state.autoSaveEnabled || !state.autoSaveGoalId) return;
+  const goal = state.goals.find(g=>g.id===state.autoSaveGoalId);
+  if(!goal) return;
+  const target = Number(goal.target)||0;
+  const currentSaved = Number(goal.saved)||0;
+  if(target>0 && currentSaved>=target) return;
+  const available = totalSavedAvailable();
+  if(available<=0) return;
+  const remaining = target>0 ? (target-currentSaved) : available;
+  const amountToMove = Math.min(available, remaining);
+  if(amountToMove<=0) return;
+  goal.saved = currentSaved + amountToMove;
+  save();
+  if(target>0 && goal.saved>=target){
+    alert(`Goal reached! "${goal.name}" is fully funded.`);
+  }
+}
+
 function renderSettings(){
   document.getElementById('income').value = state.income ?? '';
   document.getElementById('days').value = state.days ?? '';
   document.getElementById('incomeCurrency').value = state.incomeCurrency || 'EUR';
   document.getElementById('incomeCurrencyLabel').textContent = state.incomeCurrency || 'EUR';
   document.getElementById('dragModeToggle').checked = !!state.dragModeEnabled;
+  if(state.autoSaveGoalId && !state.goals.some(g=>g.id===state.autoSaveGoalId)){
+    state.autoSaveGoalId = '';
+    save();
+  }
+  document.getElementById('autoSaveToggle').checked = !!state.autoSaveEnabled;
+  const goalSelect = document.getElementById('autoSaveGoalSelect');
+  goalSelect.innerHTML = '<option value="">Select a goal…</option>' +
+    state.goals.map(g=>`<option value="${g.id}">${escapeAttr(g.name)}</option>`).join('');
+  goalSelect.value = state.autoSaveGoalId || '';
+  goalSelect.disabled = !state.autoSaveEnabled;
   const incomeMXN = monthlyIncomeMXN();
   document.getElementById('incomeMXN').textContent = incomeMXN!=null ? fmtMXN(incomeMXN) : '—';
   document.getElementById('totalCostsStat').textContent = fmtMXN(totalMonthlyCosts());
@@ -759,6 +802,7 @@ function saveEntryEdit(id){
   entry.saved = entry.budget - spent;
   editingEntryId = null;
   save();
+  autoAllocateSavings();
   renderAll();
 }
 window.saveEntryEdit = saveEntryEdit;
@@ -859,7 +903,21 @@ document.getElementById('importFile').addEventListener('change', e=>{
 });
 document.getElementById('startingBalance').addEventListener('input', e=>{
   state.startingBalance = e.target.value===''? '' : Number(e.target.value);
-  save(); renderAll();
+  save();
+  autoAllocateSavings();
+  renderAll();
+});
+document.getElementById('autoSaveToggle').addEventListener('change', e=>{
+  state.autoSaveEnabled = e.target.checked;
+  save();
+  autoAllocateSavings();
+  renderAll();
+});
+document.getElementById('autoSaveGoalSelect').addEventListener('change', e=>{
+  state.autoSaveGoalId = e.target.value;
+  save();
+  autoAllocateSavings();
+  renderAll();
 });
 document.getElementById('addCostBtn').addEventListener('click', ()=>{
   const nameEl = document.getElementById('costName');
@@ -907,6 +965,7 @@ document.getElementById('addBtn').addEventListener('click', ()=>{
     date, rate: state.liveRate, budget: budgetMXN, spent, saved
   });
   save();
+  autoAllocateSavings();
   spentEl.value = '';
   renderAll();
 });
