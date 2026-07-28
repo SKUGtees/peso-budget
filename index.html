@@ -43,6 +43,16 @@
   .sortable-ghost{ opacity:0.35; }
   .sortable-chosen{ box-shadow:0 10px 26px rgba(0,0,0,0.4); }
   .drag-locked .drag-handle{ opacity:0.25; cursor:default; }
+  /* When a native AdMob banner overlays the bottom of the screen, it doesn't scroll
+     with the page — it stays fixed to the screen. Padding the end of the page only
+     protects content once scrolled all the way down, so instead we shrink the
+     scrollable area itself by the banner's height, keeping that strip permanently
+     clear at every scroll position. */
+  body.native-ads-active{ height:100vh; height:100dvh; overflow:hidden; }
+  body.native-ads-active #scrollArea{
+    height:calc(100vh - var(--ad-banner-height, 0px)); height:calc(100dvh - var(--ad-banner-height, 0px));
+    overflow-y:auto; -webkit-overflow-scrolling:touch;
+  }
   .row{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:10px;}
   .row:last-child{ margin-bottom:0; }
   .row label{ font-size:0.92rem; color:var(--text); flex-shrink:0; }
@@ -183,6 +193,7 @@
   </div>
 </div>
 <button class="privacy-toggle" id="privacyToggle" title="Hide amounts"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+<div id="scrollArea">
 <header>
   <h1><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em;"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg> Nomad Pesos</h1>
   <p>Foreign income, daily peso spending, tracked automatically</p>
@@ -332,6 +343,7 @@
   <div class="footer-note">
     Exchange rates refresh once every 24 hours (source: exchangerate-api.com), not continuously — that's normal, not a bug. Each entry stores the rate at the moment you log it, so past days never change when the rate updates. All data is saved on this device only.
   </div>
+</div>
 </div>
 
 <script src="sortable.min.js"></script>
@@ -991,7 +1003,8 @@ if(window.Capacitor && Capacitor.isNativePlatform()){
       margin: 0
     });
   }).then(()=>{
-    document.body.style.paddingBottom = '90px';
+    document.documentElement.style.setProperty('--ad-banner-height', '90px');
+    document.body.classList.add('native-ads-active');
   }).catch(err=>{
     console.log('AdMob banner failed to show:', err);
   });
