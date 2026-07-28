@@ -57,6 +57,11 @@ jobs:
           fi
           echo "AdMob App ID wired into manifest: $ADMOB_APP_ID"
 
+      - name: Set version code (must increase for every Play Console release)
+        run: |
+          sed -i "s/versionCode [0-9]\+/versionCode ${{ github.run_number }}/" android/app/build.gradle
+          grep versionCode android/app/build.gradle
+
       - name: Sync Capacitor (copies web assets + plugins into native project)
         run: npx cap sync android
 
