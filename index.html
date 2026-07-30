@@ -196,37 +196,106 @@
     padding-left:20px; margin:0 0 22px;
   }
   .onboarding-card .field{ text-align:left; margin-bottom:14px; }
+  .onboarding-step{ display:none; }
+  .onboarding-step.active{ display:block; }
+  .onboarding-intro{ text-align:left; color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 18px; }
+  .tour-list{ text-align:left; margin:0 0 20px; }
+  .tour-item{ display:flex; gap:12px; align-items:flex-start; margin-bottom:14px; }
+  .tour-item .icon-svg{ width:22px; height:22px; flex-shrink:0; margin-top:2px; color:var(--accent); }
+  .tour-item b{ display:block; color:var(--text); font-size:0.92rem; margin-bottom:2px; }
+  .tour-item span{ font-size:0.85rem; color:var(--muted); line-height:1.5; }
+  .onboarding-dots{ display:flex; justify-content:center; gap:6px; margin-bottom:18px; }
+  .onboarding-dot{ width:7px; height:7px; border-radius:50%; background:var(--border); }
+  .onboarding-dot.active{ background:var(--accent); }
+  .onboarding-nav{ display:flex; gap:10px; }
+  .onboarding-nav .btn-primary, .onboarding-nav .btn-secondary{ margin-top:0; }
+  .btn-secondary{
+    width:100%; background:var(--card2); color:var(--text); border:1px solid var(--border);
+    font-weight:700; font-size:1rem; padding:14px;
+  }
 </style>
 </head>
 <body>
 <div class="onboarding-overlay" id="onboardingOverlay" style="display:none;">
   <div class="onboarding-card">
-    <div class="onboarding-emoji"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg></div>
-    <h2>Welcome to Saving Pesos</h2>
-    <ol>
-      <li>Enter your <b>monthly income</b> and pick your currency</li>
-      <li>It's converted to a <b>daily peso budget</b> using the live exchange rate</li>
-      <li>Log what you spend each day and watch your savings add up</li>
-    </ol>
-    <div class="field">
-      <label>What currency do you get paid in?</label>
-      <select id="onboardingCurrency">
-        <option value="EUR">Euro (EUR)</option>
-        <option value="USD">US Dollar (USD)</option>
-        <option value="CAD">Canadian Dollar (CAD)</option>
-        <option value="MXN">Mexican Peso (MXN) — no conversion</option>
-      </select>
+
+    <div class="onboarding-dots">
+      <span class="onboarding-dot" data-dot="1"></span>
+      <span class="onboarding-dot" data-dot="2"></span>
+      <span class="onboarding-dot" data-dot="3"></span>
     </div>
-    <div class="field">
-      <label>Monthly income</label>
-      <input type="number" id="onboardingIncome" inputmode="decimal">
+
+    <div class="onboarding-step" data-step="1">
+      <div class="onboarding-emoji"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg></div>
+      <h2>Welcome to Saving Pesos</h2>
+      <p class="onboarding-intro">Here's a quick look at where everything lives. You can always come back to this guide from Settings.</p>
+      <div class="tour-list">
+        <div class="tour-item">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"></path><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"></path></svg>
+          <div><b>Home</b><span>Log what you spend today, check the exchange rate, and see your weekly streak.</span></div>
+        </div>
+        <div class="tour-item">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
+          <div><b>Budget</b><span>Set your monthly income and any fixed costs (rent, subscriptions) that come out first.</span></div>
+        </div>
+        <div class="tour-item">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"></circle></svg>
+          <div><b>Goals</b><span>Set money aside for things you're saving toward, separate from your everyday savings.</span></div>
+        </div>
+        <div class="tour-item">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 16 14"></polyline></svg>
+          <div><b>History</b><span>Every day you've logged, with running totals.</span></div>
+        </div>
+        <div class="tour-item">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <div><b>Settings</b><span>Currency, app color, backups, and this guide if you ever want to see it again.</span></div>
+        </div>
+      </div>
+      <button class="btn-primary" id="onboardingNext1" type="button">Next</button>
+      <div class="settings-toggle" id="onboardingSkipBtn1" style="padding-top:14px; padding-bottom:0;">Skip for now</div>
     </div>
-    <div class="field">
-      <label>Days in period</label>
-      <input type="number" id="onboardingDays" inputmode="numeric">
+
+    <div class="onboarding-step" data-step="2">
+      <h2>What currency do you get paid in?</h2>
+      <p class="onboarding-intro">
+        If you earn money in Euros, US Dollars, or Canadian Dollars but spend Mexican Pesos day to day, pick your currency below —
+        we'll convert it to pesos automatically using live exchange rates.<br><br>
+        If you're paid directly in Mexican Pesos, pick <b>Mexican Peso (MXN)</b> — the app skips all conversion and just becomes a simple peso savings tracker.
+      </p>
+      <div class="field">
+        <label>What currency do you get paid in?</label>
+        <select id="onboardingCurrency">
+          <option value="EUR">Euro (EUR)</option>
+          <option value="USD">US Dollar (USD)</option>
+          <option value="CAD">Canadian Dollar (CAD)</option>
+          <option value="MXN">Mexican Peso (MXN) — no conversion</option>
+        </select>
+      </div>
+      <div class="onboarding-nav">
+        <button class="btn-secondary" id="onboardingBack2" type="button">Back</button>
+        <button class="btn-primary" id="onboardingNext2" type="button">Next</button>
+      </div>
+      <div class="settings-toggle" id="onboardingSkipBtn2" style="padding-top:14px; padding-bottom:0;">Skip for now</div>
     </div>
-    <button class="btn-primary" id="onboardingStartBtn">Get Started</button>
-    <div class="settings-toggle" id="onboardingSkipBtn" style="padding-top:14px; padding-bottom:0;">Skip for now</div>
+
+    <div class="onboarding-step" data-step="3">
+      <h2>Set your budget</h2>
+      <p class="onboarding-intro">Tell us your income and how many days it needs to cover — we'll split it into a daily spending budget for you automatically.</p>
+      <div class="field">
+        <label>Monthly income</label>
+        <input type="number" id="onboardingIncome" inputmode="decimal">
+      </div>
+      <div class="field">
+        <label>Days in period</label>
+        <input type="number" id="onboardingDays" inputmode="numeric">
+      </div>
+      <div class="onboarding-nav">
+        <button class="btn-secondary" id="onboardingBack3" type="button">Back</button>
+        <button class="btn-primary" id="onboardingStartBtn" type="button">Get Started</button>
+      </div>
+      <div class="settings-toggle" id="onboardingSkipBtn3" style="padding-top:14px; padding-bottom:0;">Skip for now</div>
+    </div>
+
   </div>
 </div>
 <button class="privacy-toggle" id="privacyToggle" title="Hide amounts"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
@@ -428,6 +497,9 @@
         <input type="number" id="manualRateValue" inputmode="decimal" placeholder="1 EUR = ? MXN" step="0.001">
         <button class="btn-small" id="applyManualRateBtn">Apply</button>
       </div>
+    </div>
+    <div class="field">
+      <button class="btn-primary" id="showOnboardingBtn" style="background:var(--card2); color:var(--accent); border:1px solid var(--border);">View app guide</button>
     </div>
     <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:14px;">
       <label style="display:block; font-size:0.82rem; color:var(--muted); margin-bottom:10px;">Backup &amp; Restore</label>
@@ -1227,13 +1299,41 @@ document.getElementById('dragModeToggle').addEventListener('change', e=>{
   updateDragModeUI();
 });
 
-function initOnboarding(){
-  if(state.onboardingComplete) return;
+let onboardingStep = 1;
+
+function showOnboardingStep(step){
+  onboardingStep = step;
+  document.querySelectorAll('.onboarding-step').forEach(s=>{
+    s.classList.toggle('active', Number(s.dataset.step)===step);
+  });
+  document.querySelectorAll('.onboarding-dot').forEach(d=>{
+    d.classList.toggle('active', Number(d.dataset.dot)===step);
+  });
+}
+
+function openOnboarding(){
   document.getElementById('onboardingCurrency').value = state.incomeCurrency || 'EUR';
   document.getElementById('onboardingIncome').value = state.income ?? 1500;
   document.getElementById('onboardingDays').value = state.days ?? 30;
+  showOnboardingStep(1);
   document.getElementById('onboardingOverlay').style.display = 'flex';
 }
+
+function initOnboarding(){
+  if(state.onboardingComplete) return;
+  openOnboarding();
+}
+
+function closeOnboarding(){
+  state.onboardingComplete = true;
+  save();
+  document.getElementById('onboardingOverlay').style.display = 'none';
+}
+
+document.getElementById('onboardingNext1').addEventListener('click', ()=> showOnboardingStep(2));
+document.getElementById('onboardingBack2').addEventListener('click', ()=> showOnboardingStep(1));
+document.getElementById('onboardingNext2').addEventListener('click', ()=> showOnboardingStep(3));
+document.getElementById('onboardingBack3').addEventListener('click', ()=> showOnboardingStep(2));
 
 document.getElementById('onboardingStartBtn').addEventListener('click', ()=>{
   const income = Number(document.getElementById('onboardingIncome').value)||0;
@@ -1243,18 +1343,15 @@ document.getElementById('onboardingStartBtn').addEventListener('click', ()=>{
   state.income = income;
   state.days = days;
   state.incomeCurrency = currency;
-  state.onboardingComplete = true;
   if(currencyChanged) state.liveRate = null;
-  save();
+  closeOnboarding();
   renderAll();
   if(currencyChanged) fetchRate();
-  document.getElementById('onboardingOverlay').style.display = 'none';
 });
-document.getElementById('onboardingSkipBtn').addEventListener('click', ()=>{
-  state.onboardingComplete = true;
-  save();
-  document.getElementById('onboardingOverlay').style.display = 'none';
+['onboardingSkipBtn1','onboardingSkipBtn2','onboardingSkipBtn3'].forEach(id=>{
+  document.getElementById(id).addEventListener('click', closeOnboarding);
 });
+document.getElementById('showOnboardingBtn').addEventListener('click', openOnboarding);
 
 function switchTab(tab){
   document.querySelectorAll('.tab-panel').forEach(p=>{
