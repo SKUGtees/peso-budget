@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Nomad Pesos</title>
+<title>Saving Pesos</title>
 <link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Nomad Pesos">
+<meta name="apple-mobile-web-app-title" content="Saving Pesos">
 <meta name="theme-color" content="#0f172a">
 <link rel="apple-touch-icon" href="icon.png">
 <style>
@@ -181,7 +181,7 @@
 <div class="onboarding-overlay" id="onboardingOverlay" style="display:none;">
   <div class="onboarding-card">
     <div class="onboarding-emoji"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg></div>
-    <h2>Welcome to Nomad Pesos</h2>
+    <h2>Welcome to Saving Pesos</h2>
     <ol>
       <li>Enter your <b>monthly income</b> and pick your currency</li>
       <li>It's converted to a <b>daily peso budget</b> using the live exchange rate</li>
@@ -210,7 +210,7 @@
 <button class="privacy-toggle" id="privacyToggle" title="Hide amounts"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
 <div id="scrollArea">
 <header>
-  <h1><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em;"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg> Nomad Pesos</h1>
+  <h1><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.1em;"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg> Saving Pesos</h1>
   <p>Foreign income, daily peso spending, tracked automatically</p>
 </header>
 
@@ -969,7 +969,7 @@ document.getElementById('importFile').addEventListener('change', e=>{
       return;
     }
     if(!Array.isArray(parsed.entries)){
-      alert('That file doesn\'t look like a Nomad Pesos backup.');
+      alert('That file doesn\'t look like a Saving Pesos backup.');
       return;
     }
     if(!confirm('This will replace all current data on this device with the backup file. Continue?')) return;

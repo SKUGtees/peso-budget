@@ -1,6 +1,6 @@
 {
   "appId": "com.skugtees.pesobudget",
-  "appName": "Nomad Pesos",
+  "appName": "Saving Pesos",
   "webDir": "www",
   "plugins": {
     "SplashScreen": {
