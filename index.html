@@ -205,6 +205,7 @@
         <option value="EUR">Euro (EUR)</option>
         <option value="USD">US Dollar (USD)</option>
         <option value="CAD">Canadian Dollar (CAD)</option>
+        <option value="MXN">Mexican Peso (MXN) — no conversion</option>
       </select>
     </div>
     <div class="field">
@@ -366,6 +367,7 @@
         <option value="EUR">Euro (EUR)</option>
         <option value="USD">US Dollar (USD)</option>
         <option value="CAD">Canadian Dollar (CAD)</option>
+        <option value="MXN">Mexican Peso (MXN) — no conversion</option>
       </select>
     </div>
     <div class="field">
@@ -393,7 +395,7 @@
         <option value="">Select a goal…</option>
       </select>
     </div>
-    <div class="field">
+    <div class="field" id="manualRateField">
       <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; margin-bottom:0;">
         <span>Use a manual exchange rate</span>
         <input type="checkbox" id="manualRateToggle" style="width:18px; height:18px; accent-color:var(--accent); cursor:pointer;">
@@ -497,13 +499,22 @@ let editingGoalId = null;
 let editingEntryId = null;
 
 async function fetchRate(){
+  const currency = state.incomeCurrency || 'EUR';
+  if(currency === 'MXN'){
+    state.liveRate = 1;
+    state.liveRateCurrency = 'MXN';
+    state.rateTime = new Date().toISOString();
+    state.nextRateUpdate = null;
+    save();
+    renderRate();
+    return;
+  }
   if(state.manualRateOverride){
     renderRate();
     return;
   }
   const rateMetaEl = document.getElementById('rateMeta');
   rateMetaEl.textContent = 'Fetching latest rate…';
-  const currency = state.incomeCurrency || 'EUR';
   try{
     const res = await fetch('https://open.er-api.com/v6/latest/' + currency, {cache:'no-store'});
     if(!res.ok) throw new Error('bad response');
@@ -540,7 +551,10 @@ async function fetchRate(){
 function renderRate(failed){
   const rateValueEl = document.getElementById('rateValue');
   const rateMetaEl = document.getElementById('rateMeta');
-  if(state.liveRate){
+  if((state.incomeCurrency || 'EUR') === 'MXN'){
+    rateValueEl.textContent = 'No conversion needed';
+    rateMetaEl.textContent = "You're budgeting directly in pesos.";
+  } else if(state.liveRate){
     rateValueEl.textContent = '1 ' + (state.liveRateCurrency || state.incomeCurrency || 'EUR') + ' = ' + Number(state.liveRate).toFixed(3) + ' MXN';
     const t = state.rateTime ? new Date(state.rateTime) : null;
     const timeStr = t ? t.toLocaleString() : '';
@@ -626,6 +640,8 @@ function renderSettings(){
     state.goals.map(g=>`<option value="${g.id}">${escapeAttr(g.name)}</option>`).join('');
   goalSelect.value = state.autoSaveGoalId || '';
   goalSelect.disabled = !state.autoSaveEnabled;
+  const isMXN = (state.incomeCurrency || 'EUR') === 'MXN';
+  document.getElementById('manualRateField').style.display = isMXN ? 'none' : 'block';
   document.getElementById('manualRateToggle').checked = !!state.manualRateOverride;
   document.getElementById('manualRateFields').style.display = state.manualRateOverride ? 'flex' : 'none';
   document.getElementById('manualRateValue').placeholder = `1 ${state.incomeCurrency || 'EUR'} = ? MXN`;
