@@ -85,6 +85,21 @@
     font-size:0.85rem; color:var(--muted); display:flex; justify-content:space-between;
   }
   .entry-preview b{ color:var(--accent); }
+  .streak-wrap{
+    display:flex; justify-content:space-between; gap:6px;
+    background:var(--input-bg); border-radius:999px; padding:12px 10px;
+  }
+  .streak-day{ display:flex; flex-direction:column; align-items:center; gap:6px; flex:1; }
+  .streak-label{ font-size:0.68rem; font-weight:700; color:var(--muted); letter-spacing:0.03em; }
+  .streak-circle{
+    width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-size:0.8rem; font-weight:700; box-sizing:border-box;
+  }
+  .streak-circle .icon-svg{ width:0.95em; height:0.95em; }
+  .streak-circle.pending{ background:var(--card2); border:1px solid var(--border); color:var(--muted); }
+  .streak-circle.missed{ background:var(--danger); color:#3a0d0d; }
+  .streak-circle.filled{ background:var(--accent); color:#04351f; }
+  .streak-circle.today{ box-shadow:0 0 0 2px var(--text); }
   table{ width:100%; border-collapse:collapse; font-size:0.83rem; }
   th{ text-align:right; color:var(--muted); font-weight:600; padding:6px 4px; font-size:0.72rem; text-transform:uppercase;}
   th:first-child, td:first-child{ text-align:left; }
@@ -226,6 +241,12 @@
       <b id="previewBudget">—</b>
     </div>
     <button class="btn-primary" id="addBtn">Add Entry</button>
+  </div>
+
+  <div class="card" data-widget-id="streak">
+    <span class="drag-handle" title="Drag to reorder">⠿</span>
+    <h2>This Week</h2>
+    <div class="streak-wrap" id="streakWrap"></div>
   </div>
 
   <div class="card" data-widget-id="totalSaved">
@@ -722,6 +743,37 @@ function deleteGoal(id){
 }
 window.deleteGoal = deleteGoal;
 
+function localDateStr(d){
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+
+function renderStreak(){
+  const wrap = document.getElementById('streakWrap');
+  const loggedDates = new Set(state.entries.map(e=>e.date));
+  const todayStr = localDateStr(new Date());
+  const dayLetters = ['S','M','T','W','T','F','S'];
+  let html = '';
+  for(let i=6;i>=0;i--){
+    const d = new Date();
+    d.setDate(d.getDate()-i);
+    const dateStr = localDateStr(d);
+    const isToday = dateStr===todayStr;
+    const filled = loggedDates.has(dateStr);
+    let cls = 'pending';
+    if(filled) cls = 'filled';
+    else if(dateStr<todayStr) cls = 'missed';
+    const inner = filled ? ICON_CHECK : String(d.getDate());
+    html += `<div class="streak-day">
+      <span class="streak-label">${dayLetters[d.getDay()]}</span>
+      <div class="streak-circle ${cls}${isToday ? ' today' : ''}">${inner}</div>
+    </div>`;
+  }
+  wrap.innerHTML = html;
+}
+
 function renderPreview(){
   const mxnToday = dailyBudgetMXNToday();
   document.getElementById('previewBudget').textContent = mxnToday!=null ? fmtMXN(mxnToday) : 'rate unavailable';
@@ -820,6 +872,7 @@ function renderAll(){
   renderHistory();
   renderGoals();
   renderPrivacyToggle();
+  renderStreak();
 }
 
 function deleteEntry(id){
