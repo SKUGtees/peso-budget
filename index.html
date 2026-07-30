@@ -19,7 +19,7 @@
   *{box-sizing:border-box;}
   body{
     margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-    background:var(--bg); color:var(--text); padding-bottom:40px;
+    background:var(--bg); color:var(--text);
   }
   header{
     padding:20px 16px 12px; text-align:center;
@@ -43,16 +43,28 @@
   .sortable-ghost{ opacity:0.35; }
   .sortable-chosen{ box-shadow:0 10px 26px rgba(0,0,0,0.4); }
   .drag-locked .drag-handle{ opacity:0.25; cursor:default; }
-  /* When a native AdMob banner overlays the bottom of the screen, it doesn't scroll
-     with the page — it stays fixed to the screen. Padding the end of the page only
-     protects content once scrolled all the way down, so instead we shrink the
-     scrollable area itself by the banner's height, keeping that strip permanently
-     clear at every scroll position. */
-  body.native-ads-active{ height:100vh; height:100dvh; overflow:hidden; }
-  body.native-ads-active #scrollArea{
-    height:calc(100vh - var(--ad-banner-height, 0px)); height:calc(100dvh - var(--ad-banner-height, 0px));
+  /* The bottom tab bar is fixed to the screen and doesn't scroll with the page, and
+     a native AdMob banner (when shown) stacks on top of it the same way. Padding the
+     end of the page only protects content once scrolled all the way down, so instead
+     we shrink the scrollable area itself by their combined height, keeping that strip
+     permanently clear at every scroll position. */
+  :root{ --tabbar-height:64px; --ad-banner-height:0px; }
+  body{ height:100vh; height:100dvh; overflow:hidden; }
+  #scrollArea{
+    height:calc(100vh - var(--tabbar-height) - var(--ad-banner-height)); height:calc(100dvh - var(--tabbar-height) - var(--ad-banner-height));
     overflow-y:auto; -webkit-overflow-scrolling:touch;
   }
+  .tab-bar{
+    position:fixed; left:0; right:0; bottom:var(--ad-banner-height); height:var(--tabbar-height);
+    background:var(--card); border-top:1px solid var(--border);
+    display:flex; z-index:45;
+  }
+  .tab-bar-btn{
+    flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+    background:none; border:none; color:var(--muted); font-size:0.68rem; font-weight:600; padding:6px 0;
+  }
+  .tab-bar-btn .icon-svg{ width:22px; height:22px; }
+  .tab-bar-btn.active{ color:var(--accent); }
   .row{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:10px;}
   .row:last-child{ margin-bottom:0; }
   .row label{ font-size:0.92rem; color:var(--text); flex-shrink:0; }
@@ -216,7 +228,8 @@
 
 <div class="wrap">
 
-<div id="widgetsContainer">
+<div class="tab-panel" data-tab="home" style="display:block;">
+<div id="tab-home-widgets" class="widgets-list">
 
   <div class="card" data-widget-id="rate">
     <span class="drag-handle" title="Drag to reorder">⠿</span>
@@ -258,6 +271,12 @@
     </div>
   </div>
 
+</div>
+</div>
+
+<div class="tab-panel" data-tab="goals" style="display:none;">
+<div id="tab-goals-widgets" class="widgets-list">
+
   <div class="card" data-widget-id="goals">
     <span class="drag-handle" title="Drag to reorder">⠿</span>
     <h2>Savings Goals</h2>
@@ -271,6 +290,12 @@
     </div>
   </div>
 
+</div>
+</div>
+
+<div class="tab-panel" data-tab="history" style="display:none;">
+<div id="tab-history-widgets" class="widgets-list">
+
   <div class="card" data-widget-id="history">
     <span class="drag-handle" title="Drag to reorder">⠿</span>
     <h2>History</h2>
@@ -278,6 +303,12 @@
       <div class="empty">No entries yet — add your first day above.</div>
     </div>
   </div>
+
+</div>
+</div>
+
+<div class="tab-panel" data-tab="settings" style="display:none;">
+<div id="tab-settings-widgets" class="widgets-list">
 
   <div class="card" data-widget-id="incomeSettings">
     <span class="drag-handle" title="Drag to reorder">⠿</span>
@@ -390,7 +421,15 @@
     Exchange rates refresh once every 24 hours (source: exchangerate-api.com), not continuously — that's normal, not a bug. Each entry stores the rate at the moment you log it, so past days never change when the rate updates. All data is saved on this device only.
   </div>
 </div>
+
 </div>
+
+<nav class="tab-bar" id="tabBar">
+  <button class="tab-bar-btn active" data-tab="home"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"></path><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"></path></svg><span>Home</span></button>
+  <button class="tab-bar-btn" data-tab="goals"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"></circle></svg><span>Goals</span></button>
+  <button class="tab-bar-btn" data-tab="history"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 16 14"></polyline></svg><span>History</span></button>
+  <button class="tab-bar-btn" data-tab="settings"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg><span>Settings</span></button>
+</nav>
 
 <script src="sortable.min.js"></script>
 <script>
@@ -410,7 +449,7 @@ function normalize(parsed){
   if(!parsed.costs) parsed.costs = [];
   if(parsed.startingBalance==null) parsed.startingBalance = 0;
   if(!parsed.goals) parsed.goals = [];
-  if(!parsed.widgetOrder) parsed.widgetOrder = [];
+  if(!parsed.widgetOrder || Array.isArray(parsed.widgetOrder)) parsed.widgetOrder = {};
   if(!parsed.entries) parsed.entries = [];
   if(parsed.spentFromSavings==null) parsed.spentFromSavings = 0;
   if(parsed.privacyMode==null) parsed.privacyMode = false;
@@ -424,7 +463,7 @@ function normalize(parsed){
 }
 
 function defaultState(){
-  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:[], spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR', dragModeEnabled:false, autoSaveEnabled:false, autoSaveGoalId:'', manualRateOverride:false };
+  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:{}, spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR', dragModeEnabled:false, autoSaveEnabled:false, autoSaveGoalId:'', manualRateOverride:false };
 }
 
 function load(){
@@ -1075,34 +1114,46 @@ document.getElementById('addBtn').addEventListener('click', ()=>{
 
 document.getElementById('entryDate').valueAsDate = new Date();
 
+const DRAGGABLE_TABS = ['home','settings'];
+
 function applyWidgetOrder(){
-  const container = document.getElementById('widgetsContainer');
-  if(!container || !state.widgetOrder || state.widgetOrder.length===0) return;
-  state.widgetOrder.forEach(id=>{
-    const el = container.querySelector(`[data-widget-id="${id}"]`);
-    if(el) container.appendChild(el);
+  DRAGGABLE_TABS.forEach(tab=>{
+    const container = document.getElementById('tab-'+tab+'-widgets');
+    const order = state.widgetOrder && state.widgetOrder[tab];
+    if(!container || !order || order.length===0) return;
+    order.forEach(id=>{
+      const el = container.querySelector(`[data-widget-id="${id}"]`);
+      if(el) container.appendChild(el);
+    });
   });
 }
 
-let sortableInstance = null;
+let sortableInstances = [];
 
 function updateDragModeUI(){
-  const container = document.getElementById('widgetsContainer');
-  if(sortableInstance) sortableInstance.option('disabled', !state.dragModeEnabled);
-  if(container) container.classList.toggle('drag-locked', !state.dragModeEnabled);
+  sortableInstances.forEach(inst=> inst.option('disabled', !state.dragModeEnabled));
+  DRAGGABLE_TABS.forEach(tab=>{
+    const container = document.getElementById('tab-'+tab+'-widgets');
+    if(container) container.classList.toggle('drag-locked', !state.dragModeEnabled);
+  });
 }
 
 function initDragReorder(){
-  const container = document.getElementById('widgetsContainer');
-  if(!container || typeof Sortable === 'undefined') return;
-  sortableInstance = Sortable.create(container, {
-    handle: '.drag-handle',
-    animation: 150,
-    disabled: !state.dragModeEnabled,
-    onEnd: ()=>{
-      state.widgetOrder = [...container.children].map(el=>el.dataset.widgetId);
-      save();
-    }
+  if(typeof Sortable === 'undefined') return;
+  DRAGGABLE_TABS.forEach(tab=>{
+    const container = document.getElementById('tab-'+tab+'-widgets');
+    if(!container) return;
+    const inst = Sortable.create(container, {
+      handle: '.drag-handle',
+      animation: 150,
+      disabled: !state.dragModeEnabled,
+      onEnd: ()=>{
+        if(!state.widgetOrder) state.widgetOrder = {};
+        state.widgetOrder[tab] = [...container.children].map(el=>el.dataset.widgetId);
+        save();
+      }
+    });
+    sortableInstances.push(inst);
   });
   updateDragModeUI();
 }
@@ -1142,6 +1193,19 @@ document.getElementById('onboardingSkipBtn').addEventListener('click', ()=>{
   document.getElementById('onboardingOverlay').style.display = 'none';
 });
 
+function switchTab(tab){
+  document.querySelectorAll('.tab-panel').forEach(p=>{
+    p.style.display = p.dataset.tab===tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab-bar-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.tab===tab);
+  });
+  document.getElementById('scrollArea').scrollTop = 0;
+}
+document.querySelectorAll('.tab-bar-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=> switchTab(btn.dataset.tab));
+});
+
 applyWidgetOrder();
 initDragReorder();
 initOnboarding();
@@ -1169,7 +1233,6 @@ if(ADS_ENABLED && window.Capacitor && Capacitor.isNativePlatform()){
     });
   }).then(()=>{
     document.documentElement.style.setProperty('--ad-banner-height', '90px');
-    document.body.classList.add('native-ads-active');
   }).catch(err=>{
     console.log('AdMob banner failed to show:', err);
   });
