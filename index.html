@@ -13,7 +13,7 @@
 <style>
   :root{
     --bg:#0f172a; --card:#1a2436; --card2:#212d42;
-    --text:#f1f5f9; --muted:#94a3b8; --accent:#34d399; --accent2:#22c55e;
+    --text:#f1f5f9; --muted:#94a3b8; --accent:#34d399; --accent2:#22c55e; --accent-text:#04321f;
     --danger:#f87171; --border:#2b3854; --input-bg:#0f1729;
   }
   *{box-sizing:border-box;}
@@ -83,7 +83,7 @@
     font-family:inherit; border:none; cursor:pointer; border-radius:10px;
   }
   .btn-primary{
-    width:100%; background:var(--accent); color:#04321f; font-weight:700; font-size:1rem;
+    width:100%; background:var(--accent); color:var(--accent-text); font-weight:700; font-size:1rem;
     padding:14px; margin-top:6px;
   }
   .btn-primary:active{ transform:scale(0.98); }
@@ -110,8 +110,17 @@
   .streak-circle .icon-svg{ width:0.95em; height:0.95em; }
   .streak-circle.pending{ background:var(--card2); border:1px solid var(--border); color:var(--muted); }
   .streak-circle.missed{ background:var(--danger); color:#3a0d0d; }
-  .streak-circle.filled{ background:var(--accent); color:#04351f; }
+  .streak-circle.filled{ background:var(--accent); color:var(--accent-text); }
   .streak-circle.today{ box-shadow:0 0 0 2px var(--text); }
+  .color-swatch-row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .color-swatch{
+    width:32px; height:32px; border-radius:50%; border:2px solid transparent; cursor:pointer; padding:0;
+  }
+  .color-swatch.active{ border-color:var(--text); }
+  .custom-color-input{
+    width:32px; height:32px; padding:0; border:2px solid var(--border); border-radius:50%;
+    background:none; cursor:pointer; overflow:hidden;
+  }
   table{ width:100%; border-collapse:collapse; font-size:0.83rem; }
   th{ text-align:right; color:var(--muted); font-weight:600; padding:6px 4px; font-size:0.72rem; text-transform:uppercase;}
   th:first-child, td:first-child{ text-align:left; }
@@ -168,7 +177,7 @@
     background:var(--card2); border:1px solid var(--border); color:var(--text);
     display:flex; align-items:center; justify-content:center; font-size:1.1rem;
   }
-  .privacy-toggle.active{ background:var(--accent); }
+  .privacy-toggle.active{ background:var(--accent); color:var(--accent-text); }
   .list-more-toggle{
     text-align:center; color:var(--muted); font-size:0.8rem; padding:10px 0 0; cursor:pointer;
   }
@@ -371,6 +380,17 @@
       </select>
     </div>
     <div class="field">
+      <label style="display:block; margin-bottom:8px;">App color</label>
+      <div class="color-swatch-row" id="colorSwatches">
+        <button type="button" class="color-swatch" data-color="#34d399" style="background:#34d399;" title="Green (default)"></button>
+        <button type="button" class="color-swatch" data-color="#c084fc" style="background:#c084fc;" title="Lilac"></button>
+        <button type="button" class="color-swatch" data-color="#60a5fa" style="background:#60a5fa;" title="Blue"></button>
+        <button type="button" class="color-swatch" data-color="#f472b6" style="background:#f472b6;" title="Pink"></button>
+        <button type="button" class="color-swatch" data-color="#fb923c" style="background:#fb923c;" title="Orange"></button>
+        <input type="color" id="customAccentColor" class="custom-color-input" value="#34d399" title="Custom color">
+      </div>
+    </div>
+    <div class="field">
       <label>Already saved before using this app (MXN)</label>
       <input type="number" id="startingBalance" inputmode="decimal" placeholder="0">
     </div>
@@ -446,6 +466,7 @@ const ICON_CHEVRON_DOWN = '<svg class="icon-svg" viewBox="0 0 24 24" fill="none"
 const ICON_GEAR = '<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>';
 
 let state = load();
+applyAccentColor(state.accentColor);
 
 function normalize(parsed){
   if(!parsed.costs) parsed.costs = [];
@@ -461,11 +482,12 @@ function normalize(parsed){
   if(parsed.autoSaveEnabled==null) parsed.autoSaveEnabled = false;
   if(parsed.autoSaveGoalId==null) parsed.autoSaveGoalId = '';
   if(parsed.manualRateOverride==null) parsed.manualRateOverride = false;
+  if(!parsed.accentColor) parsed.accentColor = '#34d399';
   return parsed;
 }
 
 function defaultState(){
-  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:{}, spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR', dragModeEnabled:false, autoSaveEnabled:false, autoSaveGoalId:'', manualRateOverride:false };
+  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:{}, spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR', dragModeEnabled:false, autoSaveEnabled:false, autoSaveGoalId:'', manualRateOverride:false, accentColor:'#34d399' };
 }
 
 function load(){
@@ -483,6 +505,18 @@ function save(){
   const json = JSON.stringify(state);
   localStorage.setItem(STORE_KEY, json);
   localStorage.setItem(BACKUP_KEY, json);
+}
+
+function getContrastTextColor(hex){
+  const c = hex.replace('#','');
+  const r = parseInt(c.substring(0,2),16), g = parseInt(c.substring(2,4),16), b = parseInt(c.substring(4,6),16);
+  const luminance = (0.299*r + 0.587*g + 0.114*b) / 255;
+  return luminance > 0.55 ? '#0f172a' : '#ffffff';
+}
+
+function applyAccentColor(color){
+  document.documentElement.style.setProperty('--accent', color);
+  document.documentElement.style.setProperty('--accent-text', getContrastTextColor(color));
 }
 
 function fmtMXN(n){
@@ -640,6 +674,10 @@ function renderSettings(){
     state.goals.map(g=>`<option value="${g.id}">${escapeAttr(g.name)}</option>`).join('');
   goalSelect.value = state.autoSaveGoalId || '';
   goalSelect.disabled = !state.autoSaveEnabled;
+  document.getElementById('customAccentColor').value = state.accentColor || '#34d399';
+  document.querySelectorAll('.color-swatch').forEach(sw=>{
+    sw.classList.toggle('active', sw.dataset.color.toLowerCase() === (state.accentColor||'').toLowerCase());
+  });
   const isMXN = (state.incomeCurrency || 'EUR') === 'MXN';
   document.getElementById('manualRateField').style.display = isMXN ? 'none' : 'block';
   document.getElementById('manualRateToggle').checked = !!state.manualRateOverride;
@@ -986,6 +1024,20 @@ document.getElementById('incomeCurrency').addEventListener('change', e=>{
   save();
   renderSettings();
   fetchRate();
+});
+document.querySelectorAll('.color-swatch').forEach(sw=>{
+  sw.addEventListener('click', ()=>{
+    state.accentColor = sw.dataset.color;
+    applyAccentColor(state.accentColor);
+    save();
+    renderSettings();
+  });
+});
+document.getElementById('customAccentColor').addEventListener('input', e=>{
+  state.accentColor = e.target.value;
+  applyAccentColor(state.accentColor);
+  save();
+  renderSettings();
 });
 document.getElementById('settingsToggle').addEventListener('click', ()=>{
   const card = document.getElementById('settingsCard');
