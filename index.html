@@ -362,6 +362,19 @@
         <option value="">Select a goal…</option>
       </select>
     </div>
+    <div class="field">
+      <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; margin-bottom:0;">
+        <span>Use a manual exchange rate</span>
+        <input type="checkbox" id="manualRateToggle" style="width:18px; height:18px; accent-color:var(--accent); cursor:pointer;">
+      </label>
+      <div class="entry-preview" style="display:block; margin-top:6px; margin-bottom:8px;">
+        Overrides the live rate for entries you log from now on. Entries you already logged keep the rate they were logged with. Turn this off to go back to the live rate.
+      </div>
+      <div class="goal-add-row" id="manualRateFields" style="display:none;">
+        <input type="number" id="manualRateValue" inputmode="decimal" placeholder="1 EUR = ? MXN" step="0.001">
+        <button class="btn-small" id="applyManualRateBtn">Apply</button>
+      </div>
+    </div>
     <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:14px;">
       <label style="display:block; font-size:0.82rem; color:var(--muted); margin-bottom:10px;">Backup &amp; Restore</label>
       <button class="btn-primary" id="exportBtn" style="margin-top:0;">Export backup file</button>
@@ -406,11 +419,12 @@ function normalize(parsed){
   if(parsed.dragModeEnabled==null) parsed.dragModeEnabled = false;
   if(parsed.autoSaveEnabled==null) parsed.autoSaveEnabled = false;
   if(parsed.autoSaveGoalId==null) parsed.autoSaveGoalId = '';
+  if(parsed.manualRateOverride==null) parsed.manualRateOverride = false;
   return parsed;
 }
 
 function defaultState(){
-  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:[], spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR', dragModeEnabled:false, autoSaveEnabled:false, autoSaveGoalId:'' };
+  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:[], spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR', dragModeEnabled:false, autoSaveEnabled:false, autoSaveGoalId:'', manualRateOverride:false };
 }
 
 function load(){
@@ -444,6 +458,10 @@ let editingGoalId = null;
 let editingEntryId = null;
 
 async function fetchRate(){
+  if(state.manualRateOverride){
+    renderRate();
+    return;
+  }
   const rateMetaEl = document.getElementById('rateMeta');
   rateMetaEl.textContent = 'Fetching latest rate…';
   const currency = state.incomeCurrency || 'EUR';
@@ -453,6 +471,7 @@ async function fetchRate(){
     const data = await res.json();
     const rate = data.rates && data.rates.MXN;
     if(!rate) throw new Error('no rate in response');
+    if(state.manualRateOverride) return;
     state.liveRate = rate;
     state.liveRateCurrency = currency;
     state.rateTime = new Date().toISOString();
@@ -467,6 +486,7 @@ async function fetchRate(){
     const data2 = await res2.json();
     const rate2 = data2.rates && data2.rates.MXN;
     if(!rate2) throw new Error('no rate in response');
+    if(state.manualRateOverride) return;
     state.liveRate = rate2;
     state.liveRateCurrency = currency;
     state.rateTime = new Date().toISOString();
@@ -485,7 +505,9 @@ function renderRate(failed){
     rateValueEl.textContent = '1 ' + (state.liveRateCurrency || state.incomeCurrency || 'EUR') + ' = ' + Number(state.liveRate).toFixed(3) + ' MXN';
     const t = state.rateTime ? new Date(state.rateTime) : null;
     const timeStr = t ? t.toLocaleString() : '';
-    if(failed){
+    if(state.manualRateOverride){
+      rateMetaEl.textContent = 'Manually set on ' + timeStr + ' · new entries will use this rate';
+    } else if(failed){
       rateMetaEl.textContent = 'Offline — showing last saved rate from ' + timeStr;
     } else {
       const next = state.nextRateUpdate ? new Date(state.nextRateUpdate) : null;
@@ -565,6 +587,9 @@ function renderSettings(){
     state.goals.map(g=>`<option value="${g.id}">${escapeAttr(g.name)}</option>`).join('');
   goalSelect.value = state.autoSaveGoalId || '';
   goalSelect.disabled = !state.autoSaveEnabled;
+  document.getElementById('manualRateToggle').checked = !!state.manualRateOverride;
+  document.getElementById('manualRateFields').style.display = state.manualRateOverride ? 'flex' : 'none';
+  document.getElementById('manualRateValue').placeholder = `1 ${state.incomeCurrency || 'EUR'} = ? MXN`;
   const incomeMXN = monthlyIncomeMXN();
   document.getElementById('incomeMXN').textContent = incomeMXN!=null ? fmtMXN(incomeMXN) : '—';
   document.getElementById('totalCostsStat').textContent = fmtMXN(totalMonthlyCosts());
@@ -902,6 +927,7 @@ document.getElementById('days').addEventListener('input', e=>{
 document.getElementById('incomeCurrency').addEventListener('change', e=>{
   state.incomeCurrency = e.target.value;
   state.liveRate = null;
+  state.manualRateOverride = false;
   save();
   renderSettings();
   fetchRate();
@@ -971,6 +997,30 @@ document.getElementById('autoSaveGoalSelect').addEventListener('change', e=>{
   save();
   autoAllocateSavings();
   renderAll();
+});
+document.getElementById('manualRateToggle').addEventListener('change', e=>{
+  state.manualRateOverride = e.target.checked;
+  save();
+  if(state.manualRateOverride){
+    renderRate();
+  } else {
+    fetchRate();
+  }
+});
+document.getElementById('applyManualRateBtn').addEventListener('click', ()=>{
+  const input = document.getElementById('manualRateValue');
+  const rate = Number(input.value);
+  if(!rate || rate<=0){
+    alert('Enter a valid rate greater than 0.');
+    return;
+  }
+  state.liveRate = rate;
+  state.liveRateCurrency = state.incomeCurrency || 'EUR';
+  state.rateTime = new Date().toISOString();
+  state.nextRateUpdate = null;
+  save();
+  input.value = '';
+  renderRate();
 });
 document.getElementById('addCostBtn').addEventListener('click', ()=>{
   const nameEl = document.getElementById('costName');
