@@ -511,6 +511,13 @@
         Your data lives only on this device's browser storage. Updates to the app never touch it, but clearing browser data, switching phones, or reinstalling will. Export a backup file now and then to be safe — Restore reads one back in.
       </div>
     </div>
+    <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:14px;">
+      <label style="display:block; font-size:0.82rem; color:var(--muted); margin-bottom:10px;">Danger Zone</label>
+      <button class="btn-primary" id="resetDataBtn" style="background:var(--danger); color:#3a0d0d;">Reset all data</button>
+      <div class="entry-preview" style="display:block; line-height:1.6; margin-top:10px; margin-bottom:0;">
+        Permanently erases every entry, goal, cost, and setting on this device and starts over from scratch. This cannot be undone — export a backup first if you want to keep a copy.
+      </div>
+    </div>
   </div>
 
   <div class="footer-note">
@@ -1154,6 +1161,17 @@ document.getElementById('importFile').addEventListener('change', e=>{
   };
   reader.readAsText(file);
   e.target.value = '';
+});
+document.getElementById('resetDataBtn').addEventListener('click', ()=>{
+  if(!confirm('Are you sure? This will permanently erase every entry, goal, cost, and setting on this device. This cannot be undone.')) return;
+  localStorage.removeItem(STORE_KEY);
+  localStorage.removeItem(BACKUP_KEY);
+  state = defaultState();
+  save();
+  applyAccentColor(state.accentColor);
+  renderAll();
+  fetchRate();
+  openOnboarding();
 });
 document.getElementById('startingBalance').addEventListener('input', e=>{
   state.startingBalance = e.target.value===''? '' : Number(e.target.value);
