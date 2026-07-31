@@ -754,6 +754,20 @@ function autoAllocateSavings(){
   }
 }
 
+function toggleGoalAutoSave(id, checked){
+  if(checked){
+    state.autoSaveEnabled = true;
+    state.autoSaveGoalId = id;
+  } else if(state.autoSaveGoalId === id){
+    state.autoSaveEnabled = false;
+    state.autoSaveGoalId = '';
+  }
+  save();
+  autoAllocateSavings();
+  renderGoals();
+  renderSettings();
+}
+
 function renderSettings(){
   document.getElementById('income').value = state.income ?? '';
   document.getElementById('days').value = state.days ?? '';
@@ -898,6 +912,10 @@ function renderGoals(){
           <input type="number" inputmode="decimal" placeholder="Add amount (MXN)" id="goalAdd-${g.id}">
           <button class="btn-small" onclick="addToGoal('${g.id}')">Add</button>
         </div>
+        <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; margin-top:10px; margin-bottom:0;">
+          <span style="font-size:0.85rem; color:var(--muted);">Automatically add money towards this goal</span>
+          <input type="checkbox" onchange="toggleGoalAutoSave('${g.id}', this.checked)" style="width:18px; height:18px; accent-color:var(--accent); cursor:pointer; flex-shrink:0;" ${(state.autoSaveEnabled && state.autoSaveGoalId===g.id) ? 'checked' : ''}>
+        </label>
       </div>`;
     }
   });
