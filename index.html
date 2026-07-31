@@ -578,11 +578,12 @@ function normalize(parsed){
   if(parsed.autoSaveGoalId==null) parsed.autoSaveGoalId = '';
   if(parsed.manualRateOverride==null) parsed.manualRateOverride = false;
   if(!parsed.accentColor) parsed.accentColor = '#34d399';
+  if(!parsed.firstUseDate) parsed.firstUseDate = localDateStr(new Date());
   return parsed;
 }
 
 function defaultState(){
-  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:{}, spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR', dragModeEnabled:false, autoSaveEnabled:false, autoSaveGoalId:'', manualRateOverride:false, accentColor:'#34d399' };
+  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:{}, spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR', dragModeEnabled:false, autoSaveEnabled:false, autoSaveGoalId:'', manualRateOverride:false, accentColor:'#34d399', firstUseDate:localDateStr(new Date()) };
 }
 
 function load(){
@@ -977,7 +978,7 @@ function renderStreak(){
     const filled = loggedDates.has(dateStr);
     let cls = 'pending';
     if(filled) cls = 'filled';
-    else if(dateStr<todayStr) cls = 'missed';
+    else if(dateStr<todayStr && dateStr>=state.firstUseDate) cls = 'missed';
     const inner = filled ? ICON_CHECK : String(d.getDate());
     html += `<div class="streak-day">
       <span class="streak-label">${dayLetters[d.getDay()]}</span>
