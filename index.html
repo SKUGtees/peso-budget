@@ -299,6 +299,17 @@
 
   </div>
 </div>
+
+<div class="onboarding-overlay" id="goalDeleteOverlay" style="display:none;">
+  <div class="onboarding-card" style="text-align:left;">
+    <h2 id="goalDeleteTitle" style="margin:0 0 10px; font-size:1.15rem;">Delete goal?</h2>
+    <p id="goalDeleteMsg" style="color:var(--muted); font-size:0.9rem; line-height:1.55; margin:0 0 20px;"></p>
+    <button class="btn-primary" id="goalDeleteReturnBtn" style="margin-top:0;">Return money to Total Saved</button>
+    <button class="btn-secondary" id="goalDeleteSpentBtn" style="margin-top:10px;">It was already spent, don't return it</button>
+    <button id="goalDeleteCancelBtn" style="margin-top:10px; width:100%; background:transparent; border:none; color:var(--muted); font-size:0.9rem; padding:10px; cursor:pointer;">Cancel</button>
+  </div>
+</div>
+
 <button class="privacy-toggle" id="privacyToggle" title="Hide amounts"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
 <div id="scrollArea">
 <header>
@@ -959,21 +970,52 @@ function addToGoal(id){
 }
 window.addToGoal = addToGoal;
 
+let pendingDeleteGoalId = null;
+
 function deleteGoal(id){
   const goal = state.goals.find(g=>g.id===id);
   if(!goal) return;
   const saved = Number(goal.saved)||0;
   if(saved > 0){
-    const returnMoney = confirm(`"${goal.name}" has ${fmtMXN(saved)} saved toward it.\n\nReturn that money to Total Saved?\n\nOK = return it to Total Saved\nCancel = it's already spent, don't return it`);
-    if(!returnMoney){
-      state.spentFromSavings = (Number(state.spentFromSavings)||0) + saved;
-    }
+    pendingDeleteGoalId = id;
+    document.getElementById('goalDeleteTitle').textContent = `Delete "${goal.name}"?`;
+    document.getElementById('goalDeleteMsg').textContent = `This goal has ${fmtMXN(saved)} saved toward it. What should happen to that money?`;
+    document.getElementById('goalDeleteOverlay').style.display = 'flex';
+    return;
   }
   state.goals = state.goals.filter(g=>g.id!==id);
   save();
   renderAll();
 }
 window.deleteGoal = deleteGoal;
+
+function closeGoalDeleteModal(){
+  document.getElementById('goalDeleteOverlay').style.display = 'none';
+  pendingDeleteGoalId = null;
+}
+
+document.getElementById('goalDeleteReturnBtn').addEventListener('click', ()=>{
+  if(pendingDeleteGoalId){
+    state.goals = state.goals.filter(g=>g.id!==pendingDeleteGoalId);
+    save();
+    renderAll();
+  }
+  closeGoalDeleteModal();
+});
+
+document.getElementById('goalDeleteSpentBtn').addEventListener('click', ()=>{
+  const goal = state.goals.find(g=>g.id===pendingDeleteGoalId);
+  if(goal){
+    const saved = Number(goal.saved)||0;
+    state.spentFromSavings = (Number(state.spentFromSavings)||0) + saved;
+    state.goals = state.goals.filter(g=>g.id!==pendingDeleteGoalId);
+    save();
+    renderAll();
+  }
+  closeGoalDeleteModal();
+});
+
+document.getElementById('goalDeleteCancelBtn').addEventListener('click', closeGoalDeleteModal);
 
 function localDateStr(d){
   const y = d.getFullYear();
