@@ -502,6 +502,15 @@
     <div class="field">
       <button class="btn-primary" id="showOnboardingBtn" style="background:var(--card2); color:var(--accent); border:1px solid var(--border);">View app guide</button>
     </div>
+    <div class="field" id="testerFeedbackField" style="display:none;">
+      <label>Send feedback to the developer</label>
+      <div class="entry-preview" style="display:block; margin-bottom:8px;">
+        Thanks for testing! Found a bug, have an idea, or just want to say something? Drop a note below.
+      </div>
+      <textarea id="testerFeedbackText" rows="4" placeholder="Your feedback…" style="width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--border); background:var(--input-bg); color:var(--text); font-family:inherit; font-size:0.95rem; resize:vertical;"></textarea>
+      <button class="btn-primary" id="testerFeedbackSubmitBtn" style="margin-top:10px;">Send feedback</button>
+      <div class="entry-preview" id="testerFeedbackMsg" style="display:none; margin-top:8px; color:var(--accent);">Thank you! Your feedback has been sent. 🙏</div>
+    </div>
     <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:14px;">
       <label style="display:block; font-size:0.82rem; color:var(--muted); margin-bottom:10px;">Backup &amp; Restore</label>
       <button class="btn-primary" id="exportBtn" style="margin-top:0;">Export backup file</button>
@@ -539,6 +548,11 @@
 <script>
 const STORE_KEY = 'pesoBudget_v1';
 const BACKUP_KEY = 'pesoBudget_v1_backup';
+
+// Only true while running in closed testing — flip to false before applying for production.
+const IS_TESTING_BUILD = true;
+const TESTER_FEEDBACK_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdemv1Q9b7PtFen3OOsTiFeJxPZxdQvIupL44HVsgaYaY3WAw/formResponse';
+const TESTER_FEEDBACK_ENTRY_ID = 'entry.678498490';
 
 const ICON_CHECK = '<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
 const ICON_X = '<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
@@ -1173,6 +1187,31 @@ document.getElementById('resetDataBtn').addEventListener('click', ()=>{
   fetchRate();
   openOnboarding();
 });
+if(IS_TESTING_BUILD){
+  document.getElementById('testerFeedbackField').style.display = 'block';
+  document.getElementById('testerFeedbackSubmitBtn').addEventListener('click', async ()=>{
+    const textEl = document.getElementById('testerFeedbackText');
+    const text = textEl.value.trim();
+    if(!text) return;
+    const btn = document.getElementById('testerFeedbackSubmitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    try{
+      await fetch(TESTER_FEEDBACK_FORM_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: TESTER_FEEDBACK_ENTRY_ID + '=' + encodeURIComponent(text)
+      });
+    }catch(e){}
+    textEl.value = '';
+    btn.disabled = false;
+    btn.textContent = 'Send feedback';
+    const msg = document.getElementById('testerFeedbackMsg');
+    msg.style.display = 'block';
+    setTimeout(()=>{ msg.style.display = 'none'; }, 5000);
+  });
+}
 document.getElementById('startingBalance').addEventListener('input', e=>{
   state.startingBalance = e.target.value===''? '' : Number(e.target.value);
   save();
