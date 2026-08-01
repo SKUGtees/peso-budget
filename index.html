@@ -113,6 +113,25 @@
   .streak-circle.missed{ background:var(--danger); color:#3a0d0d; }
   .streak-circle.filled{ background:var(--accent); color:var(--accent-text); }
   .streak-circle.today{ box-shadow:0 0 0 2px var(--text); }
+  #celebrationOverlay{ position:fixed; inset:0; pointer-events:none; z-index:150; overflow:hidden; }
+  .confetti-piece{
+    position:absolute; top:-20px; width:8px; height:14px; opacity:0.95;
+    animation:confetti-fall linear forwards;
+  }
+  @keyframes confetti-fall{
+    0%{ transform:translateY(0) rotate(0deg); opacity:0.95; }
+    100%{ transform:translateY(110vh) rotate(540deg); opacity:0; }
+  }
+  .celebration-toast{
+    position:fixed; top:16px; left:50%; transform:translateX(-50%) translateY(-30px);
+    background:var(--card); border:1px solid var(--border); border-radius:14px;
+    padding:14px 20px; box-shadow:0 12px 30px rgba(0,0,0,0.4); z-index:151;
+    display:flex; align-items:center; gap:10px; opacity:0; transition:opacity .25s, transform .25s;
+    max-width:88%; pointer-events:none;
+  }
+  .celebration-toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+  .celebration-toast .emoji{ font-size:1.5rem; flex-shrink:0; }
+  .celebration-toast .text{ font-size:0.92rem; font-weight:700; color:var(--text); line-height:1.35; }
   .color-swatch-row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
   .color-swatch{
     width:32px; height:32px; border-radius:50%; border:2px solid transparent; cursor:pointer; padding:0;
@@ -311,6 +330,7 @@
 </div>
 
 <button class="privacy-toggle" id="privacyToggle" title="Hide amounts"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+<div id="celebrationOverlay"></div>
 <div id="scrollArea">
 <header>
   <h1>Saving <span>Pesos</span></h1>
@@ -1348,6 +1368,51 @@ document.getElementById('addGoalBtn').addEventListener('click', ()=>{
   renderGoals();
 });
 
+const SAVINGS_CELEBRATION_TIERS = [
+  { min: 1.0, emoji: '💯', message: 'Perfect day! You spent nothing of today\'s budget.', confetti: 50 },
+  { min: 0.9, emoji: '🔥', message: 'Incredible! You saved {pct}% of today\'s budget.', confetti: 36 },
+  { min: 0.8, emoji: '🎉', message: 'Great job! You saved {pct}% today.', confetti: 22 },
+  { min: 0.6, emoji: '✨', message: 'Nice save! {pct}% left unspent today.', confetti: 10 }
+];
+const CONFETTI_COLORS = ['#34d399','#fbbf24','#60a5fa','#f472b6','#c084fc','#fb923c'];
+
+function spawnConfetti(count){
+  const overlay = document.getElementById('celebrationOverlay');
+  for(let i=0;i<count;i++){
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = (Math.random()*100) + 'vw';
+    piece.style.background = CONFETTI_COLORS[Math.floor(Math.random()*CONFETTI_COLORS.length)];
+    piece.style.animationDuration = (2.2 + Math.random()*1.4) + 's';
+    piece.style.animationDelay = (Math.random()*0.4) + 's';
+    piece.style.borderRadius = Math.random()<0.5 ? '50%' : '2px';
+    overlay.appendChild(piece);
+    setTimeout(()=> piece.remove(), 4200);
+  }
+}
+
+function showCelebrationToast(emoji, text){
+  const toast = document.createElement('div');
+  toast.className = 'celebration-toast';
+  toast.innerHTML = `<span class="emoji">${emoji}</span><span class="text">${text}</span>`;
+  document.body.appendChild(toast);
+  requestAnimationFrame(()=> toast.classList.add('show'));
+  setTimeout(()=>{
+    toast.classList.remove('show');
+    setTimeout(()=> toast.remove(), 300);
+  }, 3200);
+}
+
+function celebrateSavings(saved, budget){
+  if(!budget || budget<=0 || saved<=0) return;
+  const pct = saved/budget;
+  const tier = SAVINGS_CELEBRATION_TIERS.find(t=>pct>=t.min);
+  if(!tier) return;
+  const pctRounded = Math.round(Math.min(pct,1)*100);
+  showCelebrationToast(tier.emoji, tier.message.replace('{pct}', pctRounded));
+  spawnConfetti(tier.confetti);
+}
+
 document.getElementById('addBtn').addEventListener('click', ()=>{
   const dateEl = document.getElementById('entryDate');
   const spentEl = document.getElementById('entrySpent');
@@ -1364,6 +1429,7 @@ document.getElementById('addBtn').addEventListener('click', ()=>{
   autoAllocateSavings();
   spentEl.value = '';
   renderAll();
+  celebrateSavings(saved, budgetMXN);
 });
 
 document.getElementById('entryDate').valueAsDate = new Date();
