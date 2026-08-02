@@ -1416,7 +1416,7 @@ function celebrateSavings(saved, budget){
 document.getElementById('addBtn').addEventListener('click', ()=>{
   const dateEl = document.getElementById('entryDate');
   const spentEl = document.getElementById('entrySpent');
-  const date = dateEl.value || new Date().toISOString().slice(0,10);
+  const date = dateEl.value || localDateStr(new Date());
   const spent = Number(spentEl.value)||0;
   const budgetMXN = dailyBudgetMXNToday();
   if(budgetMXN==null) return;
@@ -1432,7 +1432,7 @@ document.getElementById('addBtn').addEventListener('click', ()=>{
   celebrateSavings(saved, budgetMXN);
 });
 
-document.getElementById('entryDate').valueAsDate = new Date();
+document.getElementById('entryDate').value = localDateStr(new Date());
 
 const DRAGGABLE_TABS = ['home','budget'];
 
