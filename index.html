@@ -289,18 +289,12 @@
     <div class="onboarding-step" data-step="3">
       <h2 data-i18n="ob_currency_title">What currency do you get paid in?</h2>
       <p class="onboarding-intro" data-i18n-html="ob_currency_desc">
-        If you earn money in Euros, US Dollars, or Canadian Dollars but spend Mexican Pesos day to day, pick your currency below —
-        we'll convert it to pesos automatically using live exchange rates.<br><br>
-        If you're paid directly in Mexican Pesos, pick <b>Mexican Peso (MXN)</b> — the app skips all conversion and just becomes a simple peso savings tracker.
+        Pick the currency you get paid in. We'll automatically convert it into your local spending currency (set anytime in Settings) using live exchange rates.<br><br>
+        If you're already paid directly in your local currency, the app skips conversion entirely and just becomes a simple savings tracker.
       </p>
       <div class="field">
         <label data-i18n="ob_currency_title">What currency do you get paid in?</label>
-        <select id="onboardingCurrency">
-          <option value="EUR" data-i18n="cur_eur">Euro (EUR)</option>
-          <option value="USD" data-i18n="cur_usd">US Dollar (USD)</option>
-          <option value="CAD" data-i18n="cur_cad">Canadian Dollar (CAD)</option>
-          <option value="MXN" data-i18n="cur_mxn">Mexican Peso (MXN) — no conversion</option>
-        </select>
+        <select id="onboardingCurrency"></select>
       </div>
       <div class="onboarding-nav">
         <button class="btn-secondary" id="onboardingBack2" type="button" data-i18n="ob_back">Back</button>
@@ -369,7 +363,7 @@
     <h2 data-i18n="card_log_spending">Log Today's Spending</h2>
     <div class="entry-form">
       <input type="date" id="entryDate">
-      <input type="number" id="entrySpent" inputmode="decimal" data-i18n-ph="amount_spent_ph" placeholder="Amount spent (MXN)">
+      <input type="number" id="entrySpent" inputmode="decimal" placeholder="Amount spent">
     </div>
     <div class="entry-preview">
       <span data-i18n="budget_for_day">Budget for this day</span>
@@ -404,7 +398,7 @@
     <h2 data-i18n="card_savings_goals">Savings Goals</h2>
     <div class="entry-form">
       <input type="text" id="goalName" data-i18n-ph="goal_name_ph" placeholder="e.g. New laptop">
-      <input type="number" id="goalTarget" inputmode="decimal" data-i18n-ph="goal_target_ph" placeholder="Target amount (MXN)">
+      <input type="number" id="goalTarget" inputmode="decimal" placeholder="Target amount">
     </div>
     <button class="btn-primary" id="addGoalBtn" data-i18n="add_goal">Add Goal</button>
     <div id="goalsWrap" style="margin-top:12px;">
@@ -451,19 +445,19 @@
     </div>
     <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:12px;">
       <div class="stat">
-        <span class="label" data-i18n="monthly_income_mxn">Monthly income (MXN)</span>
+        <span class="label" id="incomeMxnLabel">Monthly income</span>
         <span class="value" id="incomeMXN">—</span>
       </div>
       <div class="stat">
-        <span class="label" data-i18n="total_monthly_costs_mxn">Total monthly costs (MXN)</span>
+        <span class="label" id="totalCostsLabel">Total monthly costs</span>
         <span class="value" id="totalCostsStat">—</span>
       </div>
       <div class="stat">
-        <span class="label" data-i18n="left_after_costs_mxn">Left after costs (MXN)</span>
+        <span class="label" id="moneyLeftLabel">Left after costs</span>
         <span class="value" id="moneyLeft">—</span>
       </div>
       <div class="stat">
-        <span class="label" data-i18n="daily_spending_budget_mxn">Daily spending budget (MXN)</span>
+        <span class="label" id="dailyMxnLabel">Daily spending budget</span>
         <span class="value big" id="dailyMXN">—</span>
       </div>
     </div>
@@ -471,10 +465,10 @@
 
   <div class="card" data-widget-id="monthlyCosts">
     <span class="drag-handle" title="Drag to reorder">⠿</span>
-    <h2 data-i18n="card_monthly_costs">Monthly Fixed Costs (MXN)</h2>
+    <h2 id="monthlyCostsTitle">Monthly Fixed Costs</h2>
     <div class="entry-form">
       <input type="text" id="costName" data-i18n-ph="cost_name_ph" placeholder="e.g. Rent">
-      <input type="number" id="costAmount" inputmode="decimal" data-i18n-ph="cost_amount_ph" placeholder="Amount (MXN)">
+      <input type="number" id="costAmount" inputmode="decimal" placeholder="Amount">
     </div>
     <button class="btn-primary" id="addCostBtn" data-i18n="add_cost">Add Cost</button>
     <div id="costsWrap" style="margin-top:12px;">
@@ -494,13 +488,15 @@
       <select id="languageSelect"></select>
     </div>
     <div class="field">
+      <label id="localCurrencyLabel" data-i18n="local_currency_label">Local currency</label>
+      <select id="localCurrencySelect"></select>
+      <div class="entry-preview" style="display:block; margin-top:6px;" id="localCurrencyDesc" data-i18n="local_currency_desc">
+        The currency you spend day-to-day and track your budget and savings in. Changing this does not convert past entries.
+      </div>
+    </div>
+    <div class="field">
       <label data-i18n="income_currency">Income currency</label>
-      <select id="incomeCurrency">
-        <option value="EUR" data-i18n="cur_eur">Euro (EUR)</option>
-        <option value="USD" data-i18n="cur_usd">US Dollar (USD)</option>
-        <option value="CAD" data-i18n="cur_cad">Canadian Dollar (CAD)</option>
-        <option value="MXN" data-i18n="cur_mxn">Mexican Peso (MXN) — no conversion</option>
-      </select>
+      <select id="incomeCurrency"></select>
     </div>
     <div class="field">
       <label style="display:block; margin-bottom:8px;" data-i18n="app_color">App color</label>
@@ -514,7 +510,7 @@
       </div>
     </div>
     <div class="field">
-      <label data-i18n="already_saved_label">Already saved before using this app (MXN)</label>
+      <label id="alreadySavedLabel">Already saved before using this app</label>
       <input type="number" id="startingBalance" inputmode="decimal" placeholder="0">
     </div>
     <div class="field">
@@ -614,6 +610,14 @@ const ICON_CHEVRON_DOWN = '<svg class="icon-svg" viewBox="0 0 24 24" fill="none"
 
 const LANGUAGES = { en:'English', es:'Español', fr:'Français', de:'Deutsch', pt:'Português' };
 
+const CURRENCIES = {
+  MXN:'Mexican Peso', USD:'US Dollar', EUR:'Euro', GBP:'British Pound', CAD:'Canadian Dollar',
+  AUD:'Australian Dollar', COP:'Colombian Peso', ARS:'Argentine Peso', BRL:'Brazilian Real',
+  CLP:'Chilean Peso', PEN:'Peruvian Sol', THB:'Thai Baht', VND:'Vietnamese Dong',
+  IDR:'Indonesian Rupiah', PHP:'Philippine Peso', TRY:'Turkish Lira', INR:'Indian Rupee',
+  JPY:'Japanese Yen', ZAR:'South African Rand'
+};
+
 const I18N = {
 en: {
   tagline: "Foreign income, daily peso spending, tracked automatically",
@@ -624,17 +628,17 @@ en: {
   card_savings_goals: "Savings Goals",
   card_history: "History",
   card_income_settings: "Income Settings",
-  card_monthly_costs: "Monthly Fixed Costs (MXN)",
+  card_monthly_costs: "Monthly Fixed Costs ({cur})",
   card_settings: "Settings",
   loading: "Loading…",
   fetching_rate: "Fetching latest rate…",
-  amount_spent_ph: "Amount spent (MXN)",
+  amount_spent_ph: "Amount spent ({cur})",
   budget_for_day: "Budget for this day",
   add_entry: "Add Entry",
   total_saved_so_far: "Total saved so far",
   total_saved_note: "Available — money added to goals is set aside separately",
   goal_name_ph: "e.g. New laptop",
-  goal_target_ph: "Target amount (MXN)",
+  goal_target_ph: "Target amount ({cur})",
   add_goal: "Add Goal",
   no_goals_yet: "No savings goals yet.",
   card_forecast: "Savings Forecast",
@@ -644,19 +648,20 @@ en: {
   no_entries_yet: "No entries yet — add your first day above.",
   monthly_income_label: "Monthly income ({cur})",
   days_in_period: "Days in period",
-  monthly_income_mxn: "Monthly income (MXN)",
-  total_monthly_costs_mxn: "Total monthly costs (MXN)",
-  left_after_costs_mxn: "Left after costs (MXN)",
-  daily_spending_budget_mxn: "Daily spending budget (MXN)",
+  monthly_income_mxn: "Monthly income ({cur})",
+  total_monthly_costs_mxn: "Total monthly costs ({cur})",
+  left_after_costs_mxn: "Left after costs ({cur})",
+  daily_spending_budget_mxn: "Daily spending budget ({cur})",
   cost_name_ph: "e.g. Rent",
-  cost_amount_ph: "Amount (MXN)",
+  cost_amount_ph: "Amount ({cur})",
   add_cost: "Add Cost",
   no_costs_yet: "No fixed costs added yet.",
   income_currency: "Income currency",
-  cur_eur: "Euro (EUR)", cur_usd: "US Dollar (USD)", cur_cad: "Canadian Dollar (CAD)", cur_mxn: "Mexican Peso (MXN) — no conversion",
+  local_currency_label: "Local currency",
+  local_currency_desc: "The currency you spend day-to-day and track your budget and savings in. Changing this does not convert past entries.",
   app_color: "App color",
   color_green: "Green (default)", color_lilac: "Lilac", color_blue: "Blue", color_pink: "Pink", color_orange: "Orange", color_custom: "Custom color",
-  already_saved_label: "Already saved before using this app (MXN)",
+  already_saved_label: "Already saved before using this app ({cur})",
   rearrange_widgets: "Rearrange widgets",
   rearrange_widgets_desc: "Turn this on to drag widgets into a new order, then off again to lock them in place and stop them moving by accident.",
   autosave_toggle: "Auto-save towards a goal",
@@ -664,7 +669,7 @@ en: {
   select_a_goal: "Select a goal…",
   manual_rate_toggle: "Use a manual exchange rate",
   manual_rate_desc: "Overrides the live rate for entries you log from now on. Entries you already logged keep the rate they were logged with. Turn this off to go back to the live rate.",
-  manual_rate_ph: "1 {cur} = ? MXN",
+  manual_rate_ph: "1 {cur} = ? {local}",
   apply: "Apply",
   view_app_guide: "View app guide",
   language_label: "Language",
@@ -694,7 +699,7 @@ en: {
   ob_tour_history_title: "History", ob_tour_history_desc: "Every day you've logged, with running totals.",
   ob_tour_settings_title: "Settings", ob_tour_settings_desc: "Currency, app color, backups, and this guide if you ever want to see it again.",
   ob_currency_title: "What currency do you get paid in?",
-  ob_currency_desc: "If you earn money in Euros, US Dollars, or Canadian Dollars but spend Mexican Pesos day to day, pick your currency below — we'll convert it to pesos automatically using live exchange rates.<br><br>If you're paid directly in Mexican Pesos, pick <b>Mexican Peso (MXN)</b> — the app skips all conversion and just becomes a simple peso savings tracker.",
+  ob_currency_desc: "Pick the currency you get paid in. We'll automatically convert it into your local spending currency (set anytime in Settings) using live exchange rates.<br><br>If you're already paid directly in your local currency, the app skips conversion entirely and just becomes a simple savings tracker.",
   ob_budget_title: "Set your budget",
   ob_budget_desc: "Tell us your income and how many days it needs to cover — we'll split it into a daily spending budget for you automatically.",
   ob_monthly_income: "Monthly income",
@@ -715,7 +720,7 @@ en: {
   th_cost: "Cost", th_amount: "Amount", th_date: "Date", th_spent: "Spent", th_saved: "Saved", th_total: "Total",
   show_less: "Show less", show_more: "Show {n} more",
   no_conversion_needed: "No conversion needed",
-  budgeting_directly_pesos: "You're budgeting directly in pesos.",
+  budgeting_directly_pesos: "You're budgeting directly in {cur}.",
   manually_set_on: "Manually set on {time} · new entries will use this rate",
   offline_last_saved: "Offline — showing last saved rate from {time}",
   checked_at: "Checked {time}",
@@ -726,8 +731,8 @@ en: {
   unnamed: "(unnamed)",
   will_recalculate: "will recalculate",
   add: "Add",
-  target_amount_mxn: "Target amount (MXN)",
-  add_amount_mxn: "Add amount (MXN)",
+  target_amount_mxn: "Target amount ({cur})",
+  add_amount_mxn: "Add amount ({cur})",
   autosave_this_goal: "Automatically add money towards this goal",
   celeb_perfect: "Perfect day! You spent nothing of today's budget.",
   celeb_incredible: "Incredible! You saved {pct}% of today's budget.",
@@ -743,17 +748,17 @@ es: {
   card_savings_goals: "Metas de Ahorro",
   card_history: "Historial",
   card_income_settings: "Ajustes de Ingresos",
-  card_monthly_costs: "Costos Fijos Mensuales (MXN)",
+  card_monthly_costs: "Costos Fijos Mensuales ({cur})",
   card_settings: "Ajustes",
   loading: "Cargando…",
   fetching_rate: "Obteniendo el tipo de cambio…",
-  amount_spent_ph: "Monto gastado (MXN)",
+  amount_spent_ph: "Monto gastado ({cur})",
   budget_for_day: "Presupuesto para este día",
   add_entry: "Agregar Registro",
   total_saved_so_far: "Total ahorrado hasta ahora",
   total_saved_note: "Disponible — el dinero destinado a metas se aparta por separado",
   goal_name_ph: "ej. Laptop nueva",
-  goal_target_ph: "Monto objetivo (MXN)",
+  goal_target_ph: "Monto objetivo ({cur})",
   add_goal: "Agregar Meta",
   no_goals_yet: "Aún no hay metas de ahorro.",
   card_forecast: "Pronóstico de Ahorro",
@@ -763,19 +768,20 @@ es: {
   no_entries_yet: "Aún no hay registros — agrega tu primer día arriba.",
   monthly_income_label: "Ingreso mensual ({cur})",
   days_in_period: "Días en el periodo",
-  monthly_income_mxn: "Ingreso mensual (MXN)",
-  total_monthly_costs_mxn: "Costos mensuales totales (MXN)",
-  left_after_costs_mxn: "Restante tras costos (MXN)",
-  daily_spending_budget_mxn: "Presupuesto diario (MXN)",
+  monthly_income_mxn: "Ingreso mensual ({cur})",
+  total_monthly_costs_mxn: "Costos mensuales totales ({cur})",
+  left_after_costs_mxn: "Restante tras costos ({cur})",
+  daily_spending_budget_mxn: "Presupuesto diario ({cur})",
   cost_name_ph: "ej. Renta",
-  cost_amount_ph: "Monto (MXN)",
+  cost_amount_ph: "Monto ({cur})",
   add_cost: "Agregar Costo",
   no_costs_yet: "Aún no hay costos fijos.",
   income_currency: "Moneda de ingresos",
-  cur_eur: "Euro (EUR)", cur_usd: "Dólar Estadounidense (USD)", cur_cad: "Dólar Canadiense (CAD)", cur_mxn: "Peso Mexicano (MXN) — sin conversión",
+  local_currency_label: "Moneda local",
+  local_currency_desc: "La moneda en la que gastas día a día y en la que se rastrea tu presupuesto y ahorros. Cambiar esto no convierte los registros anteriores.",
   app_color: "Color de la app",
   color_green: "Verde (predeterminado)", color_lilac: "Lila", color_blue: "Azul", color_pink: "Rosa", color_orange: "Naranja", color_custom: "Color personalizado",
-  already_saved_label: "Ya ahorrado antes de usar esta app (MXN)",
+  already_saved_label: "Ya ahorrado antes de usar esta app ({cur})",
   rearrange_widgets: "Reorganizar widgets",
   rearrange_widgets_desc: "Actívalo para arrastrar los widgets a un nuevo orden, luego desactívalo para bloquearlos y evitar moverlos por accidente.",
   autosave_toggle: "Ahorrar automáticamente hacia una meta",
@@ -783,7 +789,7 @@ es: {
   select_a_goal: "Selecciona una meta…",
   manual_rate_toggle: "Usar un tipo de cambio manual",
   manual_rate_desc: "Reemplaza el tipo de cambio en vivo para los registros que hagas desde ahora. Los registros ya hechos mantienen el tipo con el que se registraron. Desactívalo para volver al tipo en vivo.",
-  manual_rate_ph: "1 {cur} = ? MXN",
+  manual_rate_ph: "1 {cur} = ? {local}",
   apply: "Aplicar",
   view_app_guide: "Ver guía de la app",
   language_label: "Idioma",
@@ -813,7 +819,7 @@ es: {
   ob_tour_history_title: "Historial", ob_tour_history_desc: "Cada día que has registrado, con totales acumulados.",
   ob_tour_settings_title: "Ajustes", ob_tour_settings_desc: "Moneda, color de la app, copias de seguridad, y esta guía si quieres verla de nuevo.",
   ob_currency_title: "¿En qué moneda te pagan?",
-  ob_currency_desc: "Si ganas dinero en Euros, Dólares Estadounidenses o Dólares Canadienses pero gastas Pesos Mexicanos día a día, elige tu moneda abajo — la convertiremos a pesos automáticamente usando el tipo de cambio en vivo.<br><br>Si te pagan directamente en Pesos Mexicanos, elige <b>Peso Mexicano (MXN)</b> — la app se salta toda conversión y se convierte en un simple rastreador de ahorros en pesos.",
+  ob_currency_desc: "Elige la moneda en la que te pagan. La convertiremos automáticamente a tu moneda local de gasto (configurable en cualquier momento en Ajustes) usando el tipo de cambio en vivo.<br><br>Si ya te pagan directamente en tu moneda local, la app se salta toda conversión y se convierte en un simple rastreador de ahorros.",
   ob_budget_title: "Define tu presupuesto",
   ob_budget_desc: "Dinos tu ingreso y cuántos días debe cubrir — lo dividiremos automáticamente en un presupuesto diario de gasto.",
   ob_monthly_income: "Ingreso mensual",
@@ -834,7 +840,7 @@ es: {
   th_cost: "Costo", th_amount: "Monto", th_date: "Fecha", th_spent: "Gastado", th_saved: "Ahorrado", th_total: "Total",
   show_less: "Mostrar menos", show_more: "Mostrar {n} más",
   no_conversion_needed: "No se necesita conversión",
-  budgeting_directly_pesos: "Estás presupuestando directamente en pesos.",
+  budgeting_directly_pesos: "Estás presupuestando directamente en {cur}.",
   manually_set_on: "Establecido manualmente el {time} · los nuevos registros usarán este tipo de cambio",
   offline_last_saved: "Sin conexión — mostrando el último tipo de cambio guardado de {time}",
   checked_at: "Verificado {time}",
@@ -845,8 +851,8 @@ es: {
   unnamed: "(sin nombre)",
   will_recalculate: "se recalculará",
   add: "Agregar",
-  target_amount_mxn: "Monto objetivo (MXN)",
-  add_amount_mxn: "Monto a agregar (MXN)",
+  target_amount_mxn: "Monto objetivo ({cur})",
+  add_amount_mxn: "Monto a agregar ({cur})",
   autosave_this_goal: "Agregar dinero automáticamente a esta meta",
   celeb_perfect: "¡Día perfecto! No gastaste nada de tu presupuesto de hoy.",
   celeb_incredible: "¡Increíble! Ahorraste el {pct}% de tu presupuesto de hoy.",
@@ -862,17 +868,17 @@ fr: {
   card_savings_goals: "Objectifs d'Épargne",
   card_history: "Historique",
   card_income_settings: "Réglages des Revenus",
-  card_monthly_costs: "Charges Fixes Mensuelles (MXN)",
+  card_monthly_costs: "Charges Fixes Mensuelles ({cur})",
   card_settings: "Réglages",
   loading: "Chargement…",
   fetching_rate: "Récupération du taux…",
-  amount_spent_ph: "Montant dépensé (MXN)",
+  amount_spent_ph: "Montant dépensé ({cur})",
   budget_for_day: "Budget pour ce jour",
   add_entry: "Ajouter une Entrée",
   total_saved_so_far: "Total épargné jusqu'à présent",
   total_saved_note: "Disponible — l'argent affecté aux objectifs est mis de côté séparément",
   goal_name_ph: "ex. Nouvel ordinateur",
-  goal_target_ph: "Montant cible (MXN)",
+  goal_target_ph: "Montant cible ({cur})",
   add_goal: "Ajouter un Objectif",
   no_goals_yet: "Aucun objectif d'épargne pour l'instant.",
   card_forecast: "Prévision d'Épargne",
@@ -882,19 +888,20 @@ fr: {
   no_entries_yet: "Aucune entrée pour l'instant — ajoutez votre premier jour ci-dessus.",
   monthly_income_label: "Revenu mensuel ({cur})",
   days_in_period: "Jours dans la période",
-  monthly_income_mxn: "Revenu mensuel (MXN)",
-  total_monthly_costs_mxn: "Charges mensuelles totales (MXN)",
-  left_after_costs_mxn: "Restant après charges (MXN)",
-  daily_spending_budget_mxn: "Budget quotidien (MXN)",
+  monthly_income_mxn: "Revenu mensuel ({cur})",
+  total_monthly_costs_mxn: "Charges mensuelles totales ({cur})",
+  left_after_costs_mxn: "Restant après charges ({cur})",
+  daily_spending_budget_mxn: "Budget quotidien ({cur})",
   cost_name_ph: "ex. Loyer",
-  cost_amount_ph: "Montant (MXN)",
+  cost_amount_ph: "Montant ({cur})",
   add_cost: "Ajouter une Charge",
   no_costs_yet: "Aucune charge fixe pour l'instant.",
   income_currency: "Devise des revenus",
-  cur_eur: "Euro (EUR)", cur_usd: "Dollar Américain (USD)", cur_cad: "Dollar Canadien (CAD)", cur_mxn: "Peso Mexicain (MXN) — sans conversion",
+  local_currency_label: "Devise locale",
+  local_currency_desc: "La devise dans laquelle vous dépensez au quotidien et dans laquelle votre budget et votre épargne sont suivis. Ce changement ne convertit pas les entrées passées.",
   app_color: "Couleur de l'app",
   color_green: "Vert (par défaut)", color_lilac: "Lilas", color_blue: "Bleu", color_pink: "Rose", color_orange: "Orange", color_custom: "Couleur personnalisée",
-  already_saved_label: "Déjà épargné avant d'utiliser cette app (MXN)",
+  already_saved_label: "Déjà épargné avant d'utiliser cette app ({cur})",
   rearrange_widgets: "Réorganiser les widgets",
   rearrange_widgets_desc: "Activez pour glisser les widgets dans un nouvel ordre, puis désactivez pour les verrouiller et éviter tout déplacement accidentel.",
   autosave_toggle: "Épargner automatiquement vers un objectif",
@@ -902,7 +909,7 @@ fr: {
   select_a_goal: "Sélectionnez un objectif…",
   manual_rate_toggle: "Utiliser un taux de change manuel",
   manual_rate_desc: "Remplace le taux en direct pour les entrées enregistrées à partir de maintenant. Les entrées déjà enregistrées conservent leur taux d'origine. Désactivez pour revenir au taux en direct.",
-  manual_rate_ph: "1 {cur} = ? MXN",
+  manual_rate_ph: "1 {cur} = ? {local}",
   apply: "Appliquer",
   view_app_guide: "Voir le guide de l'app",
   language_label: "Langue",
@@ -932,7 +939,7 @@ fr: {
   ob_tour_history_title: "Historique", ob_tour_history_desc: "Chaque jour enregistré, avec les totaux cumulés.",
   ob_tour_settings_title: "Réglages", ob_tour_settings_desc: "Devise, couleur de l'app, sauvegardes, et ce guide si vous voulez le revoir un jour.",
   ob_currency_title: "Dans quelle devise êtes-vous payé ?",
-  ob_currency_desc: "Si vous gagnez de l'argent en Euros, Dollars Américains ou Dollars Canadiens mais dépensez des Pesos Mexicains au quotidien, choisissez votre devise ci-dessous — nous la convertirons automatiquement en pesos avec le taux de change en direct.<br><br>Si vous êtes payé directement en Pesos Mexicains, choisissez <b>Peso Mexicain (MXN)</b> — l'app saute toute conversion et devient un simple suivi d'épargne en pesos.",
+  ob_currency_desc: "Choisissez la devise dans laquelle vous êtes payé. Nous la convertirons automatiquement dans votre devise locale de dépense (modifiable à tout moment dans les Réglages) avec le taux de change en direct.<br><br>Si vous êtes déjà payé directement dans votre devise locale, l'app saute toute conversion et devient un simple suivi d'épargne.",
   ob_budget_title: "Définissez votre budget",
   ob_budget_desc: "Indiquez-nous votre revenu et le nombre de jours qu'il doit couvrir — nous le diviserons automatiquement en budget quotidien.",
   ob_monthly_income: "Revenu mensuel",
@@ -953,7 +960,7 @@ fr: {
   th_cost: "Charge", th_amount: "Montant", th_date: "Date", th_spent: "Dépensé", th_saved: "Épargné", th_total: "Total",
   show_less: "Afficher moins", show_more: "Afficher {n} de plus",
   no_conversion_needed: "Aucune conversion nécessaire",
-  budgeting_directly_pesos: "Vous établissez votre budget directement en pesos.",
+  budgeting_directly_pesos: "Vous établissez votre budget directement en {cur}.",
   manually_set_on: "Défini manuellement le {time} · les nouvelles entrées utiliseront ce taux",
   offline_last_saved: "Hors ligne — affichage du dernier taux enregistré du {time}",
   checked_at: "Vérifié {time}",
@@ -964,8 +971,8 @@ fr: {
   unnamed: "(sans nom)",
   will_recalculate: "sera recalculé",
   add: "Ajouter",
-  target_amount_mxn: "Montant cible (MXN)",
-  add_amount_mxn: "Montant à ajouter (MXN)",
+  target_amount_mxn: "Montant cible ({cur})",
+  add_amount_mxn: "Montant à ajouter ({cur})",
   autosave_this_goal: "Ajouter automatiquement de l'argent à cet objectif",
   celeb_perfect: "Journée parfaite ! Vous n'avez rien dépensé de votre budget aujourd'hui.",
   celeb_incredible: "Incroyable ! Vous avez épargné {pct}% de votre budget aujourd'hui.",
@@ -981,17 +988,17 @@ de: {
   card_savings_goals: "Sparziele",
   card_history: "Verlauf",
   card_income_settings: "Einkommenseinstellungen",
-  card_monthly_costs: "Monatliche Fixkosten (MXN)",
+  card_monthly_costs: "Monatliche Fixkosten ({cur})",
   card_settings: "Einstellungen",
   loading: "Wird geladen…",
   fetching_rate: "Aktueller Kurs wird abgerufen…",
-  amount_spent_ph: "Ausgegebener Betrag (MXN)",
+  amount_spent_ph: "Ausgegebener Betrag ({cur})",
   budget_for_day: "Budget für diesen Tag",
   add_entry: "Eintrag Hinzufügen",
   total_saved_so_far: "Bisher gespart",
   total_saved_note: "Verfügbar — Geld für Ziele wird separat zurückgelegt",
   goal_name_ph: "z.B. Neuer Laptop",
-  goal_target_ph: "Zielbetrag (MXN)",
+  goal_target_ph: "Zielbetrag ({cur})",
   add_goal: "Ziel Hinzufügen",
   no_goals_yet: "Noch keine Sparziele.",
   card_forecast: "Sparprognose",
@@ -1001,19 +1008,20 @@ de: {
   no_entries_yet: "Noch keine Einträge — füge oben deinen ersten Tag hinzu.",
   monthly_income_label: "Monatliches Einkommen ({cur})",
   days_in_period: "Tage im Zeitraum",
-  monthly_income_mxn: "Monatliches Einkommen (MXN)",
-  total_monthly_costs_mxn: "Monatliche Gesamtkosten (MXN)",
-  left_after_costs_mxn: "Verbleibend nach Kosten (MXN)",
-  daily_spending_budget_mxn: "Tägliches Budget (MXN)",
+  monthly_income_mxn: "Monatliches Einkommen ({cur})",
+  total_monthly_costs_mxn: "Monatliche Gesamtkosten ({cur})",
+  left_after_costs_mxn: "Verbleibend nach Kosten ({cur})",
+  daily_spending_budget_mxn: "Tägliches Budget ({cur})",
   cost_name_ph: "z.B. Miete",
-  cost_amount_ph: "Betrag (MXN)",
+  cost_amount_ph: "Betrag ({cur})",
   add_cost: "Kosten Hinzufügen",
   no_costs_yet: "Noch keine Fixkosten hinzugefügt.",
   income_currency: "Einkommenswährung",
-  cur_eur: "Euro (EUR)", cur_usd: "US-Dollar (USD)", cur_cad: "Kanadischer Dollar (CAD)", cur_mxn: "Mexikanischer Peso (MXN) — keine Umrechnung",
+  local_currency_label: "Lokale Währung",
+  local_currency_desc: "Die Währung, in der du täglich ausgibst und in der dein Budget und deine Ersparnisse erfasst werden. Diese Änderung rechnet vergangene Einträge nicht um.",
   app_color: "App-Farbe",
   color_green: "Grün (Standard)", color_lilac: "Lila", color_blue: "Blau", color_pink: "Pink", color_orange: "Orange", color_custom: "Eigene Farbe",
-  already_saved_label: "Bereits gespart vor Nutzung dieser App (MXN)",
+  already_saved_label: "Bereits gespart vor Nutzung dieser App ({cur})",
   rearrange_widgets: "Widgets neu anordnen",
   rearrange_widgets_desc: "Aktiviere dies, um Widgets in eine neue Reihenfolge zu ziehen, dann wieder deaktivieren, um sie zu sperren und versehentliches Verschieben zu verhindern.",
   autosave_toggle: "Automatisch für ein Ziel sparen",
@@ -1021,7 +1029,7 @@ de: {
   select_a_goal: "Ziel auswählen…",
   manual_rate_toggle: "Manuellen Wechselkurs verwenden",
   manual_rate_desc: "Überschreibt den Live-Kurs für ab jetzt erfasste Einträge. Bereits erfasste Einträge behalten den Kurs, mit dem sie erfasst wurden. Deaktiviere dies, um zum Live-Kurs zurückzukehren.",
-  manual_rate_ph: "1 {cur} = ? MXN",
+  manual_rate_ph: "1 {cur} = ? {local}",
   apply: "Anwenden",
   view_app_guide: "App-Anleitung Ansehen",
   language_label: "Sprache",
@@ -1051,7 +1059,7 @@ de: {
   ob_tour_history_title: "Verlauf", ob_tour_history_desc: "Jeder erfasste Tag, mit laufenden Summen.",
   ob_tour_settings_title: "Einstellungen", ob_tour_settings_desc: "Währung, App-Farbe, Sicherungen und diese Anleitung, falls du sie noch einmal sehen möchtest.",
   ob_currency_title: "In welcher Währung wirst du bezahlt?",
-  ob_currency_desc: "Wenn du in Euro, US-Dollar oder Kanadischen Dollar verdienst, aber im Alltag Mexikanische Pesos ausgibst, wähle unten deine Währung — wir rechnen sie automatisch mit aktuellen Wechselkursen in Pesos um.<br><br>Wenn du direkt in Mexikanischen Pesos bezahlt wirst, wähle <b>Mexikanischer Peso (MXN)</b> — die App überspringt jede Umrechnung und wird zu einem einfachen Peso-Spartracker.",
+  ob_currency_desc: "Wähle die Währung, in der du bezahlt wirst. Wir rechnen sie automatisch in deine lokale Ausgabenwährung um (jederzeit in den Einstellungen änderbar) — mit aktuellen Wechselkursen.<br><br>Wenn du bereits direkt in deiner lokalen Währung bezahlt wirst, überspringt die App jede Umrechnung und wird zu einem einfachen Spartracker.",
   ob_budget_title: "Lege dein Budget fest",
   ob_budget_desc: "Nenne uns dein Einkommen und wie viele Tage es abdecken muss — wir teilen es automatisch in ein tägliches Ausgabenbudget auf.",
   ob_monthly_income: "Monatliches Einkommen",
@@ -1072,7 +1080,7 @@ de: {
   th_cost: "Kosten", th_amount: "Betrag", th_date: "Datum", th_spent: "Ausgegeben", th_saved: "Gespart", th_total: "Gesamt",
   show_less: "Weniger anzeigen", show_more: "{n} mehr anzeigen",
   no_conversion_needed: "Keine Umrechnung nötig",
-  budgeting_directly_pesos: "Du budgetierst direkt in Pesos.",
+  budgeting_directly_pesos: "Du budgetierst direkt in {cur}.",
   manually_set_on: "Manuell festgelegt am {time} · neue Einträge verwenden diesen Kurs",
   offline_last_saved: "Offline — zeigt zuletzt gespeicherten Kurs vom {time}",
   checked_at: "Geprüft {time}",
@@ -1083,8 +1091,8 @@ de: {
   unnamed: "(unbenannt)",
   will_recalculate: "wird neu berechnet",
   add: "Hinzufügen",
-  target_amount_mxn: "Zielbetrag (MXN)",
-  add_amount_mxn: "Betrag hinzufügen (MXN)",
+  target_amount_mxn: "Zielbetrag ({cur})",
+  add_amount_mxn: "Betrag hinzufügen ({cur})",
   autosave_this_goal: "Automatisch Geld für dieses Ziel hinzufügen",
   celeb_perfect: "Perfekter Tag! Du hast nichts von deinem heutigen Budget ausgegeben.",
   celeb_incredible: "Unglaublich! Du hast {pct}% deines heutigen Budgets gespart.",
@@ -1100,17 +1108,17 @@ pt: {
   card_savings_goals: "Metas de Economia",
   card_history: "Histórico",
   card_income_settings: "Configurações de Renda",
-  card_monthly_costs: "Custos Fixos Mensais (MXN)",
+  card_monthly_costs: "Custos Fixos Mensais ({cur})",
   card_settings: "Ajustes",
   loading: "Carregando…",
   fetching_rate: "Buscando a taxa mais recente…",
-  amount_spent_ph: "Valor gasto (MXN)",
+  amount_spent_ph: "Valor gasto ({cur})",
   budget_for_day: "Orçamento para este dia",
   add_entry: "Adicionar Registro",
   total_saved_so_far: "Total economizado até agora",
   total_saved_note: "Disponível — dinheiro adicionado a metas é reservado separadamente",
   goal_name_ph: "ex. Novo laptop",
-  goal_target_ph: "Valor alvo (MXN)",
+  goal_target_ph: "Valor alvo ({cur})",
   add_goal: "Adicionar Meta",
   no_goals_yet: "Ainda não há metas de economia.",
   card_forecast: "Previsão de Economia",
@@ -1120,19 +1128,20 @@ pt: {
   no_entries_yet: "Ainda não há registros — adicione seu primeiro dia acima.",
   monthly_income_label: "Renda mensal ({cur})",
   days_in_period: "Dias no período",
-  monthly_income_mxn: "Renda mensal (MXN)",
-  total_monthly_costs_mxn: "Custos mensais totais (MXN)",
-  left_after_costs_mxn: "Restante após custos (MXN)",
-  daily_spending_budget_mxn: "Orçamento diário (MXN)",
+  monthly_income_mxn: "Renda mensal ({cur})",
+  total_monthly_costs_mxn: "Custos mensais totais ({cur})",
+  left_after_costs_mxn: "Restante após custos ({cur})",
+  daily_spending_budget_mxn: "Orçamento diário ({cur})",
   cost_name_ph: "ex. Aluguel",
-  cost_amount_ph: "Valor (MXN)",
+  cost_amount_ph: "Valor ({cur})",
   add_cost: "Adicionar Custo",
   no_costs_yet: "Ainda não há custos fixos adicionados.",
   income_currency: "Moeda da renda",
-  cur_eur: "Euro (EUR)", cur_usd: "Dólar Americano (USD)", cur_cad: "Dólar Canadense (CAD)", cur_mxn: "Peso Mexicano (MXN) — sem conversão",
+  local_currency_label: "Moeda local",
+  local_currency_desc: "A moeda em que você gasta no dia a dia e na qual seu orçamento e economias são rastreados. Alterar isso não converte registros anteriores.",
   app_color: "Cor do app",
   color_green: "Verde (padrão)", color_lilac: "Lilás", color_blue: "Azul", color_pink: "Rosa", color_orange: "Laranja", color_custom: "Cor personalizada",
-  already_saved_label: "Já economizado antes de usar este app (MXN)",
+  already_saved_label: "Já economizado antes de usar este app ({cur})",
   rearrange_widgets: "Reorganizar widgets",
   rearrange_widgets_desc: "Ative para arrastar os widgets para uma nova ordem, depois desative para travá-los e evitar que se movam por acidente.",
   autosave_toggle: "Economizar automaticamente para uma meta",
@@ -1140,7 +1149,7 @@ pt: {
   select_a_goal: "Selecione uma meta…",
   manual_rate_toggle: "Usar uma taxa de câmbio manual",
   manual_rate_desc: "Substitui a taxa ao vivo para registros feitos a partir de agora. Registros já feitos mantêm a taxa com que foram registrados. Desative para voltar à taxa ao vivo.",
-  manual_rate_ph: "1 {cur} = ? MXN",
+  manual_rate_ph: "1 {cur} = ? {local}",
   apply: "Aplicar",
   view_app_guide: "Ver guia do app",
   language_label: "Idioma",
@@ -1170,7 +1179,7 @@ pt: {
   ob_tour_history_title: "Histórico", ob_tour_history_desc: "Cada dia que você registrou, com totais acumulados.",
   ob_tour_settings_title: "Ajustes", ob_tour_settings_desc: "Moeda, cor do app, backups, e este guia caso queira vê-lo novamente.",
   ob_currency_title: "Em qual moeda você recebe?",
-  ob_currency_desc: "Se você ganha em Euros, Dólares Americanos ou Dólares Canadenses mas gasta Pesos Mexicanos no dia a dia, escolha sua moeda abaixo — vamos converter para pesos automaticamente usando taxas de câmbio ao vivo.<br><br>Se você recebe diretamente em Pesos Mexicanos, escolha <b>Peso Mexicano (MXN)</b> — o app pula toda conversão e vira um simples rastreador de economia em pesos.",
+  ob_currency_desc: "Escolha a moeda em que você recebe. Vamos convertê-la automaticamente para sua moeda local de gastos (configurável a qualquer momento nos Ajustes) usando taxas de câmbio ao vivo.<br><br>Se você já recebe diretamente na sua moeda local, o app pula toda conversão e vira um simples rastreador de economia.",
   ob_budget_title: "Defina seu orçamento",
   ob_budget_desc: "Diga-nos sua renda e quantos dias ela precisa cobrir — vamos dividir automaticamente em um orçamento diário de gastos.",
   ob_monthly_income: "Renda mensal",
@@ -1191,7 +1200,7 @@ pt: {
   th_cost: "Custo", th_amount: "Valor", th_date: "Data", th_spent: "Gasto", th_saved: "Economizado", th_total: "Total",
   show_less: "Mostrar menos", show_more: "Mostrar mais {n}",
   no_conversion_needed: "Nenhuma conversão necessária",
-  budgeting_directly_pesos: "Você está orçando diretamente em pesos.",
+  budgeting_directly_pesos: "Você está orçando diretamente em {cur}.",
   manually_set_on: "Definido manualmente em {time} · novos registros usarão esta taxa",
   offline_last_saved: "Offline — mostrando última taxa salva de {time}",
   checked_at: "Verificado {time}",
@@ -1202,8 +1211,8 @@ pt: {
   unnamed: "(sem nome)",
   will_recalculate: "será recalculado",
   add: "Adicionar",
-  target_amount_mxn: "Valor alvo (MXN)",
-  add_amount_mxn: "Valor a adicionar (MXN)",
+  target_amount_mxn: "Valor alvo ({cur})",
+  add_amount_mxn: "Valor a adicionar ({cur})",
   autosave_this_goal: "Adicionar dinheiro automaticamente a esta meta",
   celeb_perfect: "Dia perfeito! Você não gastou nada do seu orçamento hoje.",
   celeb_incredible: "Incrível! Você economizou {pct}% do seu orçamento hoje.",
@@ -1223,6 +1232,14 @@ function t(key, vars){
 function populateLanguageSelects(){
   const optionsHtml = Object.keys(LANGUAGES).map(code=>`<option value="${code}">${LANGUAGES[code]}</option>`).join('');
   ['onboardingLanguage','languageSelect'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.innerHTML = optionsHtml;
+  });
+}
+
+function populateCurrencySelects(){
+  const optionsHtml = Object.keys(CURRENCIES).map(code=>`<option value="${code}">${CURRENCIES[code]} (${code})</option>`).join('');
+  ['onboardingCurrency','incomeCurrency','localCurrencySelect'].forEach(id=>{
     const el = document.getElementById(id);
     if(el) el.innerHTML = optionsHtml;
   });
@@ -1267,11 +1284,12 @@ function normalize(parsed){
   if(!parsed.accentColor) parsed.accentColor = '#34d399';
   if(!parsed.firstUseDate) parsed.firstUseDate = localDateStr(new Date());
   if(!parsed.language) parsed.language = 'en';
+  if(!parsed.localCurrency) parsed.localCurrency = 'MXN';
   return parsed;
 }
 
 function defaultState(){
-  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:{}, spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR', dragModeEnabled:false, autoSaveEnabled:false, autoSaveGoalId:'', manualRateOverride:false, accentColor:'#34d399', firstUseDate:localDateStr(new Date()), language:'en' };
+  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:{}, spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR', dragModeEnabled:false, autoSaveEnabled:false, autoSaveGoalId:'', manualRateOverride:false, accentColor:'#34d399', firstUseDate:localDateStr(new Date()), language:'en', localCurrency:'MXN' };
 }
 
 function load(){
@@ -1304,8 +1322,9 @@ function applyAccentColor(color){
 }
 
 function fmtMXN(n){
-  if(state.privacyMode) return 'MXN •••••';
-  return 'MXN ' + Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2});
+  const cur = state.localCurrency || 'MXN';
+  if(state.privacyMode) return cur + ' •••••';
+  return cur + ' ' + Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2});
 }
 
 function escapeAttr(s){
@@ -1318,9 +1337,10 @@ let editingEntryId = null;
 
 async function fetchRate(){
   const currency = state.incomeCurrency || 'EUR';
-  if(currency === 'MXN'){
+  const localCur = state.localCurrency || 'MXN';
+  if(currency === localCur){
     state.liveRate = 1;
-    state.liveRateCurrency = 'MXN';
+    state.liveRateCurrency = localCur;
     state.rateTime = new Date().toISOString();
     state.nextRateUpdate = null;
     save();
@@ -1337,7 +1357,7 @@ async function fetchRate(){
     const res = await fetch('https://open.er-api.com/v6/latest/' + currency, {cache:'no-store'});
     if(!res.ok) throw new Error('bad response');
     const data = await res.json();
-    const rate = data.rates && data.rates.MXN;
+    const rate = data.rates && data.rates[localCur];
     if(!rate) throw new Error('no rate in response');
     if(state.manualRateOverride) return;
     state.liveRate = rate;
@@ -1349,10 +1369,10 @@ async function fetchRate(){
     return;
   }catch(e){}
   try{
-    const res2 = await fetch('https://api.frankfurter.app/latest?from=' + currency + '&to=MXN', {cache:'no-store'});
+    const res2 = await fetch('https://api.frankfurter.app/latest?from=' + currency + '&to=' + localCur, {cache:'no-store'});
     if(!res2.ok) throw new Error('bad response');
     const data2 = await res2.json();
-    const rate2 = data2.rates && data2.rates.MXN;
+    const rate2 = data2.rates && data2.rates[localCur];
     if(!rate2) throw new Error('no rate in response');
     if(state.manualRateOverride) return;
     state.liveRate = rate2;
@@ -1369,11 +1389,12 @@ async function fetchRate(){
 function renderRate(failed){
   const rateValueEl = document.getElementById('rateValue');
   const rateMetaEl = document.getElementById('rateMeta');
-  if((state.incomeCurrency || 'EUR') === 'MXN'){
+  const localCur = state.localCurrency || 'MXN';
+  if((state.incomeCurrency || 'EUR') === localCur){
     rateValueEl.textContent = t('no_conversion_needed');
-    rateMetaEl.textContent = t('budgeting_directly_pesos');
+    rateMetaEl.textContent = t('budgeting_directly_pesos', {cur: localCur});
   } else if(state.liveRate){
-    rateValueEl.textContent = '1 ' + (state.liveRateCurrency || state.incomeCurrency || 'EUR') + ' = ' + Number(state.liveRate).toFixed(3) + ' MXN';
+    rateValueEl.textContent = '1 ' + (state.liveRateCurrency || state.incomeCurrency || 'EUR') + ' = ' + Number(state.liveRate).toFixed(3) + ' ' + localCur;
     const rt = state.rateTime ? new Date(state.rateTime) : null;
     const timeStr = rt ? rt.toLocaleString() : '';
     if(state.manualRateOverride){
@@ -1457,10 +1478,21 @@ function toggleGoalAutoSave(id, checked){
 }
 
 function renderSettings(){
+  const localCur = state.localCurrency || 'MXN';
   document.getElementById('income').value = state.income ?? '';
   document.getElementById('days').value = state.days ?? '';
+  document.getElementById('localCurrencySelect').value = localCur;
   document.getElementById('incomeCurrency').value = state.incomeCurrency || 'EUR';
   document.getElementById('incomeRowLabel').textContent = t('monthly_income_label', {cur: state.incomeCurrency || 'EUR'});
+  document.getElementById('entrySpent').placeholder = t('amount_spent_ph', {cur: localCur});
+  document.getElementById('goalTarget').placeholder = t('goal_target_ph', {cur: localCur});
+  document.getElementById('costAmount').placeholder = t('cost_amount_ph', {cur: localCur});
+  document.getElementById('monthlyCostsTitle').textContent = t('card_monthly_costs', {cur: localCur});
+  document.getElementById('alreadySavedLabel').textContent = t('already_saved_label', {cur: localCur});
+  document.getElementById('incomeMxnLabel').textContent = t('monthly_income_mxn', {cur: localCur});
+  document.getElementById('totalCostsLabel').textContent = t('total_monthly_costs_mxn', {cur: localCur});
+  document.getElementById('moneyLeftLabel').textContent = t('left_after_costs_mxn', {cur: localCur});
+  document.getElementById('dailyMxnLabel').textContent = t('daily_spending_budget_mxn', {cur: localCur});
   document.getElementById('dragModeToggle').checked = !!state.dragModeEnabled;
   if(state.autoSaveGoalId && !state.goals.some(g=>g.id===state.autoSaveGoalId)){
     state.autoSaveGoalId = '';
@@ -1476,11 +1508,11 @@ function renderSettings(){
   document.querySelectorAll('.color-swatch').forEach(sw=>{
     sw.classList.toggle('active', sw.dataset.color.toLowerCase() === (state.accentColor||'').toLowerCase());
   });
-  const isMXN = (state.incomeCurrency || 'EUR') === 'MXN';
-  document.getElementById('manualRateField').style.display = isMXN ? 'none' : 'block';
+  const noConversionNeeded = (state.incomeCurrency || 'EUR') === localCur;
+  document.getElementById('manualRateField').style.display = noConversionNeeded ? 'none' : 'block';
   document.getElementById('manualRateToggle').checked = !!state.manualRateOverride;
   document.getElementById('manualRateFields').style.display = state.manualRateOverride ? 'flex' : 'none';
-  document.getElementById('manualRateValue').placeholder = t('manual_rate_ph', {cur: state.incomeCurrency || 'EUR'});
+  document.getElementById('manualRateValue').placeholder = t('manual_rate_ph', {cur: state.incomeCurrency || 'EUR', local: localCur});
   const incomeMXN = monthlyIncomeMXN();
   document.getElementById('incomeMXN').textContent = incomeMXN!=null ? fmtMXN(incomeMXN) : '—';
   document.getElementById('totalCostsStat').textContent = fmtMXN(totalMonthlyCosts());
@@ -1578,7 +1610,7 @@ function renderGoals(){
           </span>
         </div>
         <div class="field" style="margin-bottom:0;">
-          <label>${t('target_amount_mxn')}</label>
+          <label>${t('target_amount_mxn', {cur: state.localCurrency || 'MXN'})}</label>
           <input type="number" class="inline-edit-input" id="editGoalTarget-${g.id}" value="${target}">
         </div>
       </div>`;
@@ -1597,7 +1629,7 @@ function renderGoals(){
           <span>${pct.toFixed(0)}%</span>
         </div>
         <div class="goal-add-row">
-          <input type="number" inputmode="decimal" placeholder="${t('add_amount_mxn')}" id="goalAdd-${g.id}">
+          <input type="number" inputmode="decimal" placeholder="${t('add_amount_mxn', {cur: state.localCurrency || 'MXN'})}" id="goalAdd-${g.id}">
           <button class="btn-small" onclick="addToGoal('${g.id}')">${t('add')}</button>
         </div>
         <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; margin-top:10px; margin-bottom:0;">
@@ -1884,6 +1916,14 @@ document.getElementById('days').addEventListener('input', e=>{
 });
 document.getElementById('incomeCurrency').addEventListener('change', e=>{
   state.incomeCurrency = e.target.value;
+  state.liveRate = null;
+  state.manualRateOverride = false;
+  save();
+  renderSettings();
+  fetchRate();
+});
+document.getElementById('localCurrencySelect').addEventListener('change', e=>{
+  state.localCurrency = e.target.value;
   state.liveRate = null;
   state.manualRateOverride = false;
   save();
@@ -2255,6 +2295,7 @@ document.querySelectorAll('.tab-bar-btn').forEach(btn=>{
 });
 
 populateLanguageSelects();
+populateCurrencySelects();
 applyTranslations();
 applyWidgetOrder();
 initDragReorder();
