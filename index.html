@@ -1322,7 +1322,10 @@ function applyAccentColor(color){
 }
 
 function fmtMXN(n){
-  const cur = state.localCurrency || 'MXN';
+  return fmtCur(n, state.localCurrency || 'MXN');
+}
+
+function fmtCur(n, cur){
   if(state.privacyMode) return cur + ' •••••';
   return cur + ' ' + Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2});
 }
@@ -1792,10 +1795,11 @@ function renderHistory(){
       </tr>`);
     } else {
       const cls = e.saved>=0 ? 'saved-pos' : 'saved-neg';
+      const entryCur = e.currency || 'MXN';
       allRows.push(`<tr>
         <td>${e.date}</td>
-        <td>${fmtMXN(e.spent)}</td>
-        <td class="${cls}">${fmtMXN(e.saved)}</td>
+        <td>${fmtCur(e.spent, entryCur)}</td>
+        <td class="${cls}">${fmtCur(e.saved, entryCur)}</td>
         <td>${fmtMXN(running)}</td>
         <td class="actions-cell">
           <button class="del-btn" onclick="startEntryEdit('${e.id}')">${ICON_PENCIL}</button>
@@ -2152,7 +2156,7 @@ document.getElementById('addBtn').addEventListener('click', ()=>{
   const saved = budgetMXN - spent;
   state.entries.push({
     id: Date.now().toString(36)+Math.random().toString(36).slice(2,6),
-    date, rate: state.liveRate, budget: budgetMXN, spent, saved
+    date, rate: state.liveRate, budget: budgetMXN, spent, saved, currency: state.localCurrency || 'MXN'
   });
   save();
   autoAllocateSavings();
