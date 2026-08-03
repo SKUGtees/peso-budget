@@ -412,6 +412,12 @@
     </div>
   </div>
 
+  <div class="card" data-widget-id="forecast">
+    <h2 data-i18n="card_forecast">Savings Forecast</h2>
+    <div class="entry-preview" style="display:block; margin-bottom:10px;" data-i18n="forecast_desc">Based on your average daily savings so far — recalculates every time you log a new day.</div>
+    <div id="forecastWrap"></div>
+  </div>
+
 </div>
 </div>
 
@@ -631,6 +637,10 @@ en: {
   goal_target_ph: "Target amount (MXN)",
   add_goal: "Add Goal",
   no_goals_yet: "No savings goals yet.",
+  card_forecast: "Savings Forecast",
+  forecast_desc: "Based on your average daily savings so far — recalculates every time you log a new day.",
+  forecast_empty: "Log a few days of spending to see your savings forecast.",
+  forecast_week: "Next week", forecast_month: "Next month", forecast_year: "Next year",
   no_entries_yet: "No entries yet — add your first day above.",
   monthly_income_label: "Monthly income ({cur})",
   days_in_period: "Days in period",
@@ -746,6 +756,10 @@ es: {
   goal_target_ph: "Monto objetivo (MXN)",
   add_goal: "Agregar Meta",
   no_goals_yet: "Aún no hay metas de ahorro.",
+  card_forecast: "Pronóstico de Ahorro",
+  forecast_desc: "Basado en tu ahorro diario promedio hasta ahora — se recalcula cada vez que registras un nuevo día.",
+  forecast_empty: "Registra algunos días de gastos para ver tu pronóstico de ahorro.",
+  forecast_week: "Próxima semana", forecast_month: "Próximo mes", forecast_year: "Próximo año",
   no_entries_yet: "Aún no hay registros — agrega tu primer día arriba.",
   monthly_income_label: "Ingreso mensual ({cur})",
   days_in_period: "Días en el periodo",
@@ -861,6 +875,10 @@ fr: {
   goal_target_ph: "Montant cible (MXN)",
   add_goal: "Ajouter un Objectif",
   no_goals_yet: "Aucun objectif d'épargne pour l'instant.",
+  card_forecast: "Prévision d'Épargne",
+  forecast_desc: "Basé sur votre épargne quotidienne moyenne jusqu'à présent — recalculé à chaque nouveau jour enregistré.",
+  forecast_empty: "Enregistrez quelques jours de dépenses pour voir votre prévision d'épargne.",
+  forecast_week: "Semaine prochaine", forecast_month: "Mois prochain", forecast_year: "Année prochaine",
   no_entries_yet: "Aucune entrée pour l'instant — ajoutez votre premier jour ci-dessus.",
   monthly_income_label: "Revenu mensuel ({cur})",
   days_in_period: "Jours dans la période",
@@ -976,6 +994,10 @@ de: {
   goal_target_ph: "Zielbetrag (MXN)",
   add_goal: "Ziel Hinzufügen",
   no_goals_yet: "Noch keine Sparziele.",
+  card_forecast: "Sparprognose",
+  forecast_desc: "Basierend auf deinem durchschnittlichen täglichen Sparbetrag bisher — wird bei jedem neu erfassten Tag neu berechnet.",
+  forecast_empty: "Erfasse ein paar Tage an Ausgaben, um deine Sparprognose zu sehen.",
+  forecast_week: "Nächste Woche", forecast_month: "Nächster Monat", forecast_year: "Nächstes Jahr",
   no_entries_yet: "Noch keine Einträge — füge oben deinen ersten Tag hinzu.",
   monthly_income_label: "Monatliches Einkommen ({cur})",
   days_in_period: "Tage im Zeitraum",
@@ -1091,6 +1113,10 @@ pt: {
   goal_target_ph: "Valor alvo (MXN)",
   add_goal: "Adicionar Meta",
   no_goals_yet: "Ainda não há metas de economia.",
+  card_forecast: "Previsão de Economia",
+  forecast_desc: "Baseado na sua economia diária média até agora — recalculado a cada novo dia registrado.",
+  forecast_empty: "Registre alguns dias de gastos para ver sua previsão de economia.",
+  forecast_week: "Próxima semana", forecast_month: "Próximo mês", forecast_year: "Próximo ano",
   no_entries_yet: "Ainda não há registros — adicione seu primeiro dia acima.",
   monthly_income_label: "Renda mensal ({cur})",
   days_in_period: "Dias no período",
@@ -1790,6 +1816,37 @@ function renderPrivacyToggle(){
   btn.title = state.privacyMode ? t('show_amounts') : t('hide_amounts');
 }
 
+function renderForecast(){
+  const wrap = document.getElementById('forecastWrap');
+  const entries = state.entries;
+  if(entries.length===0){
+    wrap.innerHTML = `<div class="empty">${t('forecast_empty')}</div>`;
+    return;
+  }
+  const totalSaved = entries.reduce((sum,e)=> sum + (Number(e.saved)||0), 0);
+  const avgDaily = totalSaved / entries.length;
+  const projections = [
+    { label: t('forecast_week'), days: 7 },
+    { label: t('forecast_month'), days: 30 },
+    { label: t('forecast_year'), days: 365 }
+  ].map(p=> ({ ...p, amount: avgDaily * p.days }));
+  const maxAbs = Math.max(...projections.map(p=>Math.abs(p.amount)), 1);
+  let html = '';
+  projections.forEach(p=>{
+    const pct = Math.min(100, (Math.abs(p.amount)/maxAbs)*100);
+    const negative = p.amount < 0;
+    html += `
+      <div style="margin-bottom:14px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:6px;">
+          <span style="color:var(--muted);">${p.label}</span>
+          <span style="font-weight:700; color:${negative ? 'var(--danger)' : 'var(--accent)'};">${fmtMXN(p.amount)}</span>
+        </div>
+        <div class="goal-bar-track"><div class="goal-bar-fill" style="width:${pct}%; background:${negative ? 'var(--danger)' : 'var(--accent)'};"></div></div>
+      </div>`;
+  });
+  wrap.innerHTML = html;
+}
+
 function renderAll(){
   renderCosts();
   renderSettings();
@@ -1798,6 +1855,7 @@ function renderAll(){
   renderGoals();
   renderPrivacyToggle();
   renderStreak();
+  renderForecast();
 }
 
 function deleteEntry(id){
