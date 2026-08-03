@@ -243,77 +243,88 @@
       <span class="onboarding-dot" data-dot="1"></span>
       <span class="onboarding-dot" data-dot="2"></span>
       <span class="onboarding-dot" data-dot="3"></span>
+      <span class="onboarding-dot" data-dot="4"></span>
     </div>
 
     <div class="onboarding-step" data-step="1">
-      <div class="onboarding-emoji"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg></div>
-      <h2>Welcome to Saving Pesos</h2>
-      <p class="onboarding-intro">Here's a quick look at where everything lives. You can always come back to this guide from Settings.</p>
-      <div class="tour-list">
-        <div class="tour-item">
-          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"></path><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"></path></svg>
-          <div><b>Home</b><span>Log what you spend today, check the exchange rate, and see your weekly streak.</span></div>
-        </div>
-        <div class="tour-item">
-          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
-          <div><b>Budget</b><span>Set your monthly income and any fixed costs (rent, subscriptions) that come out first.</span></div>
-        </div>
-        <div class="tour-item">
-          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"></circle></svg>
-          <div><b>Goals</b><span>Set money aside for things you're saving toward, separate from your everyday savings.</span></div>
-        </div>
-        <div class="tour-item">
-          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 16 14"></polyline></svg>
-          <div><b>History</b><span>Every day you've logged, with running totals.</span></div>
-        </div>
-        <div class="tour-item">
-          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-          <div><b>Settings</b><span>Currency, app color, backups, and this guide if you ever want to see it again.</span></div>
-        </div>
+      <div class="onboarding-emoji">🌐</div>
+      <h2 data-i18n="ob_choose_language">Choose your language</h2>
+      <p class="onboarding-intro" data-i18n="ob_choose_language_desc">You can change this later anytime in Settings.</p>
+      <div class="field">
+        <select id="onboardingLanguage"></select>
       </div>
-      <button class="btn-primary" id="onboardingNext1" type="button">Next</button>
-      <div class="settings-toggle" id="onboardingSkipBtn1" style="padding-top:14px; padding-bottom:0;">Skip for now</div>
+      <button class="btn-primary" id="onboardingNext0" type="button" data-i18n="ob_next">Next</button>
     </div>
 
     <div class="onboarding-step" data-step="2">
-      <h2>What currency do you get paid in?</h2>
-      <p class="onboarding-intro">
+      <div class="onboarding-emoji"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg></div>
+      <h2 data-i18n="ob_welcome_title">Welcome to Saving Pesos</h2>
+      <p class="onboarding-intro" data-i18n="ob_welcome_intro">Here's a quick look at where everything lives. You can always come back to this guide from Settings.</p>
+      <div class="tour-list">
+        <div class="tour-item">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"></path><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"></path></svg>
+          <div><b data-i18n="ob_tour_home_title">Home</b><span data-i18n="ob_tour_home_desc">Log what you spend today, check the exchange rate, and see your weekly streak.</span></div>
+        </div>
+        <div class="tour-item">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
+          <div><b data-i18n="ob_tour_budget_title">Budget</b><span data-i18n="ob_tour_budget_desc">Set your monthly income and any fixed costs (rent, subscriptions) that come out first.</span></div>
+        </div>
+        <div class="tour-item">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"></circle></svg>
+          <div><b data-i18n="ob_tour_goals_title">Goals</b><span data-i18n="ob_tour_goals_desc">Set money aside for things you're saving toward, separate from your everyday savings.</span></div>
+        </div>
+        <div class="tour-item">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 16 14"></polyline></svg>
+          <div><b data-i18n="ob_tour_history_title">History</b><span data-i18n="ob_tour_history_desc">Every day you've logged, with running totals.</span></div>
+        </div>
+        <div class="tour-item">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <div><b data-i18n="ob_tour_settings_title">Settings</b><span data-i18n="ob_tour_settings_desc">Currency, app color, backups, and this guide if you ever want to see it again.</span></div>
+        </div>
+      </div>
+      <button class="btn-primary" id="onboardingNext1" type="button" data-i18n="ob_next">Next</button>
+      <div class="settings-toggle" id="onboardingSkipBtn1" style="padding-top:14px; padding-bottom:0;" data-i18n="ob_skip">Skip for now</div>
+    </div>
+
+    <div class="onboarding-step" data-step="3">
+      <h2 data-i18n="ob_currency_title">What currency do you get paid in?</h2>
+      <p class="onboarding-intro" data-i18n-html="ob_currency_desc">
         If you earn money in Euros, US Dollars, or Canadian Dollars but spend Mexican Pesos day to day, pick your currency below —
         we'll convert it to pesos automatically using live exchange rates.<br><br>
         If you're paid directly in Mexican Pesos, pick <b>Mexican Peso (MXN)</b> — the app skips all conversion and just becomes a simple peso savings tracker.
       </p>
       <div class="field">
-        <label>What currency do you get paid in?</label>
+        <label data-i18n="ob_currency_title">What currency do you get paid in?</label>
         <select id="onboardingCurrency">
-          <option value="EUR">Euro (EUR)</option>
-          <option value="USD">US Dollar (USD)</option>
-          <option value="CAD">Canadian Dollar (CAD)</option>
-          <option value="MXN">Mexican Peso (MXN) — no conversion</option>
+          <option value="EUR" data-i18n="cur_eur">Euro (EUR)</option>
+          <option value="USD" data-i18n="cur_usd">US Dollar (USD)</option>
+          <option value="CAD" data-i18n="cur_cad">Canadian Dollar (CAD)</option>
+          <option value="MXN" data-i18n="cur_mxn">Mexican Peso (MXN) — no conversion</option>
         </select>
       </div>
       <div class="onboarding-nav">
-        <button class="btn-secondary" id="onboardingBack2" type="button">Back</button>
-        <button class="btn-primary" id="onboardingNext2" type="button">Next</button>
+        <button class="btn-secondary" id="onboardingBack2" type="button" data-i18n="ob_back">Back</button>
+        <button class="btn-primary" id="onboardingNext2" type="button" data-i18n="ob_next">Next</button>
       </div>
-      <div class="settings-toggle" id="onboardingSkipBtn2" style="padding-top:14px; padding-bottom:0;">Skip for now</div>
+      <div class="settings-toggle" id="onboardingSkipBtn2" style="padding-top:14px; padding-bottom:0;" data-i18n="ob_skip">Skip for now</div>
     </div>
 
-    <div class="onboarding-step" data-step="3">
-      <h2>Set your budget</h2>
-      <p class="onboarding-intro">Tell us your income and how many days it needs to cover — we'll split it into a daily spending budget for you automatically.</p>
+    <div class="onboarding-step" data-step="4">
+      <h2 data-i18n="ob_budget_title">Set your budget</h2>
+      <p class="onboarding-intro" data-i18n="ob_budget_desc">Tell us your income and how many days it needs to cover — we'll split it into a daily spending budget for you automatically.</p>
       <div class="field">
-        <label>Monthly income</label>
+        <label data-i18n="ob_monthly_income">Monthly income</label>
         <input type="number" id="onboardingIncome" inputmode="decimal">
       </div>
       <div class="field">
-        <label>Days in period</label>
+        <label data-i18n="days_in_period">Days in period</label>
         <input type="number" id="onboardingDays" inputmode="numeric">
       </div>
       <div class="onboarding-nav">
-        <button class="btn-secondary" id="onboardingBack3" type="button">Back</button>
-        <button class="btn-primary" id="onboardingStartBtn" type="button">Get Started</button>
+        <button class="btn-secondary" id="onboardingBack3" type="button" data-i18n="ob_back">Back</button>
+        <button class="btn-primary" id="onboardingStartBtn" type="button" data-i18n="ob_get_started">Get Started</button>
       </div>
-      <div class="settings-toggle" id="onboardingSkipBtn3" style="padding-top:14px; padding-bottom:0;">Skip for now</div>
+      <div class="settings-toggle" id="onboardingSkipBtn3" style="padding-top:14px; padding-bottom:0;" data-i18n="ob_skip">Skip for now</div>
     </div>
 
   </div>
@@ -323,9 +334,9 @@
   <div class="onboarding-card" style="text-align:left;">
     <h2 id="goalDeleteTitle" style="margin:0 0 10px; font-size:1.15rem;">Delete goal?</h2>
     <p id="goalDeleteMsg" style="color:var(--muted); font-size:0.9rem; line-height:1.55; margin:0 0 20px;"></p>
-    <button class="btn-primary" id="goalDeleteReturnBtn" style="margin-top:0;">Return money to Total Saved</button>
-    <button class="btn-secondary" id="goalDeleteSpentBtn" style="margin-top:10px;">It was already spent, don't return it</button>
-    <button id="goalDeleteCancelBtn" style="margin-top:10px; width:100%; background:transparent; border:none; color:var(--muted); font-size:0.9rem; padding:10px; cursor:pointer;">Cancel</button>
+    <button class="btn-primary" id="goalDeleteReturnBtn" style="margin-top:0;" data-i18n="goal_delete_return">Return money to Total Saved</button>
+    <button class="btn-secondary" id="goalDeleteSpentBtn" style="margin-top:10px;" data-i18n="goal_delete_spent">It was already spent, don't return it</button>
+    <button id="goalDeleteCancelBtn" style="margin-top:10px; width:100%; background:transparent; border:none; color:var(--muted); font-size:0.9rem; padding:10px; cursor:pointer;" data-i18n="cancel">Cancel</button>
   </div>
 </div>
 
@@ -334,7 +345,7 @@
 <div id="scrollArea">
 <header>
   <h1>Saving <span>Pesos</span></h1>
-  <p>Foreign income, daily peso spending, tracked automatically</p>
+  <p data-i18n="tagline">Foreign income, daily peso spending, tracked automatically</p>
 </header>
 
 <div class="wrap">
@@ -344,41 +355,41 @@
 
   <div class="card" data-widget-id="rate">
     <span class="drag-handle" title="Drag to reorder">⠿</span>
-    <h2>Live Exchange Rate</h2>
+    <h2 data-i18n="card_rate">Live Exchange Rate</h2>
     <div class="rate-row">
       <div>
-        <div class="rate-value" id="rateValue">Loading…</div>
-        <div class="rate-meta" id="rateMeta">Fetching latest rate…</div>
+        <div class="rate-value" id="rateValue" data-i18n="loading">Loading…</div>
+        <div class="rate-meta" id="rateMeta" data-i18n="fetching_rate">Fetching latest rate…</div>
       </div>
     </div>
   </div>
 
   <div class="card" data-widget-id="logSpending">
     <span class="drag-handle" title="Drag to reorder">⠿</span>
-    <h2>Log Today's Spending</h2>
+    <h2 data-i18n="card_log_spending">Log Today's Spending</h2>
     <div class="entry-form">
       <input type="date" id="entryDate">
-      <input type="number" id="entrySpent" inputmode="decimal" placeholder="Amount spent (MXN)">
+      <input type="number" id="entrySpent" inputmode="decimal" data-i18n-ph="amount_spent_ph" placeholder="Amount spent (MXN)">
     </div>
     <div class="entry-preview">
-      <span>Budget for this day</span>
+      <span data-i18n="budget_for_day">Budget for this day</span>
       <b id="previewBudget">—</b>
     </div>
-    <button class="btn-primary" id="addBtn">Add Entry</button>
+    <button class="btn-primary" id="addBtn" data-i18n="add_entry">Add Entry</button>
   </div>
 
   <div class="card" data-widget-id="streak">
     <span class="drag-handle" title="Drag to reorder">⠿</span>
-    <h2>This Week</h2>
+    <h2 data-i18n="card_this_week">This Week</h2>
     <div class="streak-wrap" id="streakWrap"></div>
   </div>
 
   <div class="card" data-widget-id="totalSaved">
     <span class="drag-handle" title="Drag to reorder">⠿</span>
     <div class="total-banner">
-      <div class="label">Total saved so far</div>
+      <div class="label" data-i18n="total_saved_so_far">Total saved so far</div>
       <div class="amount" id="totalSaved">$0</div>
-      <div class="label" style="margin-top:4px;">Available — money added to goals is set aside separately</div>
+      <div class="label" style="margin-top:4px;" data-i18n="total_saved_note">Available — money added to goals is set aside separately</div>
     </div>
   </div>
 
@@ -390,14 +401,14 @@
 
   <div class="card" data-widget-id="goals">
     <span class="drag-handle" title="Drag to reorder">⠿</span>
-    <h2>Savings Goals</h2>
+    <h2 data-i18n="card_savings_goals">Savings Goals</h2>
     <div class="entry-form">
-      <input type="text" id="goalName" placeholder="e.g. New laptop">
-      <input type="number" id="goalTarget" inputmode="decimal" placeholder="Target amount (MXN)">
+      <input type="text" id="goalName" data-i18n-ph="goal_name_ph" placeholder="e.g. New laptop">
+      <input type="number" id="goalTarget" inputmode="decimal" data-i18n-ph="goal_target_ph" placeholder="Target amount (MXN)">
     </div>
-    <button class="btn-primary" id="addGoalBtn">Add Goal</button>
+    <button class="btn-primary" id="addGoalBtn" data-i18n="add_goal">Add Goal</button>
     <div id="goalsWrap" style="margin-top:12px;">
-      <div class="empty">No savings goals yet.</div>
+      <div class="empty" data-i18n="no_goals_yet">No savings goals yet.</div>
     </div>
   </div>
 
@@ -409,9 +420,9 @@
 
   <div class="card" data-widget-id="history">
     <span class="drag-handle" title="Drag to reorder">⠿</span>
-    <h2>History</h2>
+    <h2 data-i18n="card_history">History</h2>
     <div id="historyWrap">
-      <div class="empty">No entries yet — add your first day above.</div>
+      <div class="empty" data-i18n="no_entries_yet">No entries yet — add your first day above.</div>
     </div>
   </div>
 
@@ -423,30 +434,30 @@
 
   <div class="card" data-widget-id="incomeSettings">
     <span class="drag-handle" title="Drag to reorder">⠿</span>
-    <h2>Income Settings</h2>
+    <h2 data-i18n="card_income_settings">Income Settings</h2>
     <div class="row">
-      <label>Monthly income (<span id="incomeCurrencyLabel">EUR</span>)</label>
+      <label id="incomeRowLabel">Monthly income (<span id="incomeCurrencyLabel">EUR</span>)</label>
       <input type="number" id="income" inputmode="decimal" placeholder="1500">
     </div>
     <div class="row">
-      <label>Days in period</label>
+      <label data-i18n="days_in_period">Days in period</label>
       <input type="number" id="days" inputmode="numeric" placeholder="30">
     </div>
     <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:12px;">
       <div class="stat">
-        <span class="label">Monthly income (MXN)</span>
+        <span class="label" data-i18n="monthly_income_mxn">Monthly income (MXN)</span>
         <span class="value" id="incomeMXN">—</span>
       </div>
       <div class="stat">
-        <span class="label">Total monthly costs (MXN)</span>
+        <span class="label" data-i18n="total_monthly_costs_mxn">Total monthly costs (MXN)</span>
         <span class="value" id="totalCostsStat">—</span>
       </div>
       <div class="stat">
-        <span class="label">Left after costs (MXN)</span>
+        <span class="label" data-i18n="left_after_costs_mxn">Left after costs (MXN)</span>
         <span class="value" id="moneyLeft">—</span>
       </div>
       <div class="stat">
-        <span class="label">Daily spending budget (MXN)</span>
+        <span class="label" data-i18n="daily_spending_budget_mxn">Daily spending budget (MXN)</span>
         <span class="value big" id="dailyMXN">—</span>
       </div>
     </div>
@@ -454,14 +465,14 @@
 
   <div class="card" data-widget-id="monthlyCosts">
     <span class="drag-handle" title="Drag to reorder">⠿</span>
-    <h2>Monthly Fixed Costs (MXN)</h2>
+    <h2 data-i18n="card_monthly_costs">Monthly Fixed Costs (MXN)</h2>
     <div class="entry-form">
-      <input type="text" id="costName" placeholder="e.g. Rent">
-      <input type="number" id="costAmount" inputmode="decimal" placeholder="Amount (MXN)">
+      <input type="text" id="costName" data-i18n-ph="cost_name_ph" placeholder="e.g. Rent">
+      <input type="number" id="costAmount" inputmode="decimal" data-i18n-ph="cost_amount_ph" placeholder="Amount (MXN)">
     </div>
-    <button class="btn-primary" id="addCostBtn">Add Cost</button>
+    <button class="btn-primary" id="addCostBtn" data-i18n="add_cost">Add Cost</button>
     <div id="costsWrap" style="margin-top:12px;">
-      <div class="empty">No fixed costs added yet.</div>
+      <div class="empty" data-i18n="no_costs_yet">No fixed costs added yet.</div>
     </div>
   </div>
 
@@ -471,96 +482,100 @@
 <div class="tab-panel" data-tab="settings" style="display:none;">
 
   <div class="card" id="settingsCard">
-    <h2>Settings</h2>
+    <h2 data-i18n="card_settings">Settings</h2>
     <div class="field">
-      <label>Income currency</label>
+      <label data-i18n="language_label">Language</label>
+      <select id="languageSelect"></select>
+    </div>
+    <div class="field">
+      <label data-i18n="income_currency">Income currency</label>
       <select id="incomeCurrency">
-        <option value="EUR">Euro (EUR)</option>
-        <option value="USD">US Dollar (USD)</option>
-        <option value="CAD">Canadian Dollar (CAD)</option>
-        <option value="MXN">Mexican Peso (MXN) — no conversion</option>
+        <option value="EUR" data-i18n="cur_eur">Euro (EUR)</option>
+        <option value="USD" data-i18n="cur_usd">US Dollar (USD)</option>
+        <option value="CAD" data-i18n="cur_cad">Canadian Dollar (CAD)</option>
+        <option value="MXN" data-i18n="cur_mxn">Mexican Peso (MXN) — no conversion</option>
       </select>
     </div>
     <div class="field">
-      <label style="display:block; margin-bottom:8px;">App color</label>
+      <label style="display:block; margin-bottom:8px;" data-i18n="app_color">App color</label>
       <div class="color-swatch-row" id="colorSwatches">
-        <button type="button" class="color-swatch" data-color="#34d399" style="background:#34d399;" title="Green (default)"></button>
-        <button type="button" class="color-swatch" data-color="#c084fc" style="background:#c084fc;" title="Lilac"></button>
-        <button type="button" class="color-swatch" data-color="#60a5fa" style="background:#60a5fa;" title="Blue"></button>
-        <button type="button" class="color-swatch" data-color="#f472b6" style="background:#f472b6;" title="Pink"></button>
-        <button type="button" class="color-swatch" data-color="#fb923c" style="background:#fb923c;" title="Orange"></button>
-        <input type="color" id="customAccentColor" class="custom-color-input" value="#34d399" title="Custom color">
+        <button type="button" class="color-swatch" data-color="#34d399" style="background:#34d399;" data-i18n-title="color_green" title="Green (default)"></button>
+        <button type="button" class="color-swatch" data-color="#c084fc" style="background:#c084fc;" data-i18n-title="color_lilac" title="Lilac"></button>
+        <button type="button" class="color-swatch" data-color="#60a5fa" style="background:#60a5fa;" data-i18n-title="color_blue" title="Blue"></button>
+        <button type="button" class="color-swatch" data-color="#f472b6" style="background:#f472b6;" data-i18n-title="color_pink" title="Pink"></button>
+        <button type="button" class="color-swatch" data-color="#fb923c" style="background:#fb923c;" data-i18n-title="color_orange" title="Orange"></button>
+        <input type="color" id="customAccentColor" class="custom-color-input" value="#34d399" data-i18n-title="color_custom" title="Custom color">
       </div>
     </div>
     <div class="field">
-      <label>Already saved before using this app (MXN)</label>
+      <label data-i18n="already_saved_label">Already saved before using this app (MXN)</label>
       <input type="number" id="startingBalance" inputmode="decimal" placeholder="0">
     </div>
     <div class="field">
       <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; margin-bottom:0;">
-        <span>Rearrange widgets</span>
+        <span data-i18n="rearrange_widgets">Rearrange widgets</span>
         <input type="checkbox" id="dragModeToggle" style="width:18px; height:18px; accent-color:var(--accent); cursor:pointer;">
       </label>
-      <div class="entry-preview" style="display:block; margin-top:6px;">
+      <div class="entry-preview" style="display:block; margin-top:6px;" data-i18n="rearrange_widgets_desc">
         Turn this on to drag widgets into a new order, then off again to lock them in place and stop them moving by accident.
       </div>
     </div>
     <div class="field">
       <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; margin-bottom:0;">
-        <span>Auto-save towards a goal</span>
+        <span data-i18n="autosave_toggle">Auto-save towards a goal</span>
         <input type="checkbox" id="autoSaveToggle" style="width:18px; height:18px; accent-color:var(--accent); cursor:pointer;">
       </label>
-      <div class="entry-preview" style="display:block; margin-top:6px; margin-bottom:8px;">
+      <div class="entry-preview" style="display:block; margin-top:6px; margin-bottom:8px;" data-i18n="autosave_toggle_desc">
         Automatically move newly saved money into the goal below, up to its target. You'll get a message once it's fully funded.
       </div>
       <select id="autoSaveGoalSelect">
-        <option value="">Select a goal…</option>
+        <option value="" data-i18n="select_a_goal">Select a goal…</option>
       </select>
     </div>
     <div class="field" id="manualRateField">
       <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; margin-bottom:0;">
-        <span>Use a manual exchange rate</span>
+        <span data-i18n="manual_rate_toggle">Use a manual exchange rate</span>
         <input type="checkbox" id="manualRateToggle" style="width:18px; height:18px; accent-color:var(--accent); cursor:pointer;">
       </label>
-      <div class="entry-preview" style="display:block; margin-top:6px; margin-bottom:8px;">
+      <div class="entry-preview" style="display:block; margin-top:6px; margin-bottom:8px;" data-i18n="manual_rate_desc">
         Overrides the live rate for entries you log from now on. Entries you already logged keep the rate they were logged with. Turn this off to go back to the live rate.
       </div>
       <div class="goal-add-row" id="manualRateFields" style="display:none;">
         <input type="number" id="manualRateValue" inputmode="decimal" placeholder="1 EUR = ? MXN" step="0.001">
-        <button class="btn-small" id="applyManualRateBtn">Apply</button>
+        <button class="btn-small" id="applyManualRateBtn" data-i18n="apply">Apply</button>
       </div>
     </div>
     <div class="field">
-      <button class="btn-primary" id="showOnboardingBtn" style="background:var(--card2); color:var(--accent); border:1px solid var(--border);">View app guide</button>
+      <button class="btn-primary" id="showOnboardingBtn" style="background:var(--card2); color:var(--accent); border:1px solid var(--border);" data-i18n="view_app_guide">View app guide</button>
     </div>
     <div class="field" id="testerFeedbackField" style="display:none;">
-      <label>Send feedback to the developer</label>
-      <div class="entry-preview" style="display:block; margin-bottom:8px;">
+      <label data-i18n="send_feedback_label">Send feedback to the developer</label>
+      <div class="entry-preview" style="display:block; margin-bottom:8px;" data-i18n="send_feedback_desc">
         Thanks for testing! Found a bug, have an idea, or just want to say something? Drop a note below.
       </div>
-      <textarea id="testerFeedbackText" rows="4" placeholder="Your feedback…" style="width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--border); background:var(--input-bg); color:var(--text); font-family:inherit; font-size:0.95rem; resize:vertical;"></textarea>
-      <button class="btn-primary" id="testerFeedbackSubmitBtn" style="margin-top:10px;">Send feedback</button>
-      <div class="entry-preview" id="testerFeedbackMsg" style="display:none; margin-top:8px; color:var(--accent);">Thank you! Your feedback has been sent. 🙏</div>
+      <textarea id="testerFeedbackText" rows="4" data-i18n-ph="feedback_ph" placeholder="Your feedback…" style="width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--border); background:var(--input-bg); color:var(--text); font-family:inherit; font-size:0.95rem; resize:vertical;"></textarea>
+      <button class="btn-primary" id="testerFeedbackSubmitBtn" style="margin-top:10px;" data-i18n="send_feedback_btn">Send feedback</button>
+      <div class="entry-preview" id="testerFeedbackMsg" style="display:none; margin-top:8px; color:var(--accent);" data-i18n="feedback_thanks">Thank you! Your feedback has been sent. 🙏</div>
     </div>
     <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:14px;">
-      <label style="display:block; font-size:0.82rem; color:var(--muted); margin-bottom:10px;">Backup &amp; Restore</label>
-      <button class="btn-primary" id="exportBtn" style="margin-top:0;">Export backup file</button>
+      <label style="display:block; font-size:0.82rem; color:var(--muted); margin-bottom:10px;" data-i18n="backup_restore">Backup &amp; Restore</label>
+      <button class="btn-primary" id="exportBtn" style="margin-top:0;" data-i18n="export_backup">Export backup file</button>
       <input type="file" id="importFile" accept="application/json" style="display:none;">
-      <button class="btn-primary" id="importBtn" style="background:var(--card2); color:var(--accent); border:1px solid var(--border); margin-top:10px;">Restore from backup file</button>
-      <div class="entry-preview" style="display:block; line-height:1.6; margin-top:10px; margin-bottom:0;">
+      <button class="btn-primary" id="importBtn" style="background:var(--card2); color:var(--accent); border:1px solid var(--border); margin-top:10px;" data-i18n="restore_backup">Restore from backup file</button>
+      <div class="entry-preview" style="display:block; line-height:1.6; margin-top:10px; margin-bottom:0;" data-i18n="backup_desc">
         Your data lives only on this device's browser storage. Updates to the app never touch it, but clearing browser data, switching phones, or reinstalling will. Export a backup file now and then to be safe — Restore reads one back in.
       </div>
     </div>
     <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:14px;">
-      <label style="display:block; font-size:0.82rem; color:var(--muted); margin-bottom:10px;">Danger Zone</label>
-      <button class="btn-primary" id="resetDataBtn" style="background:var(--danger); color:#3a0d0d;">Reset all data</button>
-      <div class="entry-preview" style="display:block; line-height:1.6; margin-top:10px; margin-bottom:0;">
+      <label style="display:block; font-size:0.82rem; color:var(--muted); margin-bottom:10px;" data-i18n="danger_zone">Danger Zone</label>
+      <button class="btn-primary" id="resetDataBtn" style="background:var(--danger); color:#3a0d0d;" data-i18n="reset_all_data">Reset all data</button>
+      <div class="entry-preview" style="display:block; line-height:1.6; margin-top:10px; margin-bottom:0;" data-i18n="reset_desc">
         Permanently erases every entry, goal, cost, and setting on this device and starts over from scratch. This cannot be undone — export a backup first if you want to keep a copy.
       </div>
     </div>
   </div>
 
-  <div class="footer-note">
+  <div class="footer-note" data-i18n="footer_note">
     Exchange rates refresh once every 24 hours (source: exchangerate-api.com), not continuously — that's normal, not a bug. Each entry stores the rate at the moment you log it, so past days never change when the rate updates. All data is saved on this device only.
   </div>
 </div>
@@ -568,11 +583,11 @@
 </div>
 
 <nav class="tab-bar" id="tabBar">
-  <button class="tab-bar-btn active" data-tab="home"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"></path><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"></path></svg><span>Home</span></button>
-  <button class="tab-bar-btn" data-tab="budget"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg><span>Budget</span></button>
-  <button class="tab-bar-btn" data-tab="goals"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"></circle></svg><span>Goals</span></button>
-  <button class="tab-bar-btn" data-tab="history"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 16 14"></polyline></svg><span>History</span></button>
-  <button class="tab-bar-btn" data-tab="settings"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg><span>Settings</span></button>
+  <button class="tab-bar-btn active" data-tab="home"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"></path><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"></path></svg><span data-i18n="tab_home">Home</span></button>
+  <button class="tab-bar-btn" data-tab="budget"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg><span data-i18n="tab_budget">Budget</span></button>
+  <button class="tab-bar-btn" data-tab="goals"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"></circle></svg><span data-i18n="tab_goals">Goals</span></button>
+  <button class="tab-bar-btn" data-tab="history"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 16 14"></polyline></svg><span data-i18n="tab_history">History</span></button>
+  <button class="tab-bar-btn" data-tab="settings"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg><span data-i18n="tab_settings">Settings</span></button>
 </nav>
 
 <script src="sortable.min.js"></script>
@@ -590,6 +605,621 @@ const ICON_X = '<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="cu
 const ICON_PENCIL = '<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>';
 const ICON_CHEVRON_UP = '<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>';
 const ICON_CHEVRON_DOWN = '<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+
+const LANGUAGES = { en:'English', es:'Español', fr:'Français', de:'Deutsch', pt:'Português' };
+
+const I18N = {
+en: {
+  tagline: "Foreign income, daily peso spending, tracked automatically",
+  tab_home: "Home", tab_budget: "Budget", tab_goals: "Goals", tab_history: "History", tab_settings: "Settings",
+  card_rate: "Live Exchange Rate",
+  card_log_spending: "Log Today's Spending",
+  card_this_week: "This Week",
+  card_savings_goals: "Savings Goals",
+  card_history: "History",
+  card_income_settings: "Income Settings",
+  card_monthly_costs: "Monthly Fixed Costs (MXN)",
+  card_settings: "Settings",
+  loading: "Loading…",
+  fetching_rate: "Fetching latest rate…",
+  amount_spent_ph: "Amount spent (MXN)",
+  budget_for_day: "Budget for this day",
+  add_entry: "Add Entry",
+  total_saved_so_far: "Total saved so far",
+  total_saved_note: "Available — money added to goals is set aside separately",
+  goal_name_ph: "e.g. New laptop",
+  goal_target_ph: "Target amount (MXN)",
+  add_goal: "Add Goal",
+  no_goals_yet: "No savings goals yet.",
+  no_entries_yet: "No entries yet — add your first day above.",
+  monthly_income_label: "Monthly income ({cur})",
+  days_in_period: "Days in period",
+  monthly_income_mxn: "Monthly income (MXN)",
+  total_monthly_costs_mxn: "Total monthly costs (MXN)",
+  left_after_costs_mxn: "Left after costs (MXN)",
+  daily_spending_budget_mxn: "Daily spending budget (MXN)",
+  cost_name_ph: "e.g. Rent",
+  cost_amount_ph: "Amount (MXN)",
+  add_cost: "Add Cost",
+  no_costs_yet: "No fixed costs added yet.",
+  income_currency: "Income currency",
+  cur_eur: "Euro (EUR)", cur_usd: "US Dollar (USD)", cur_cad: "Canadian Dollar (CAD)", cur_mxn: "Mexican Peso (MXN) — no conversion",
+  app_color: "App color",
+  color_green: "Green (default)", color_lilac: "Lilac", color_blue: "Blue", color_pink: "Pink", color_orange: "Orange", color_custom: "Custom color",
+  already_saved_label: "Already saved before using this app (MXN)",
+  rearrange_widgets: "Rearrange widgets",
+  rearrange_widgets_desc: "Turn this on to drag widgets into a new order, then off again to lock them in place and stop them moving by accident.",
+  autosave_toggle: "Auto-save towards a goal",
+  autosave_toggle_desc: "Automatically move newly saved money into the goal below, up to its target. You'll get a message once it's fully funded.",
+  select_a_goal: "Select a goal…",
+  manual_rate_toggle: "Use a manual exchange rate",
+  manual_rate_desc: "Overrides the live rate for entries you log from now on. Entries you already logged keep the rate they were logged with. Turn this off to go back to the live rate.",
+  manual_rate_ph: "1 {cur} = ? MXN",
+  apply: "Apply",
+  view_app_guide: "View app guide",
+  language_label: "Language",
+  send_feedback_label: "Send feedback to the developer",
+  send_feedback_desc: "Thanks for testing! Found a bug, have an idea, or just want to say something? Drop a note below.",
+  feedback_ph: "Your feedback…",
+  send_feedback_btn: "Send feedback",
+  sending: "Sending…",
+  feedback_thanks: "Thank you! Your feedback has been sent. 🙏",
+  backup_restore: "Backup & Restore",
+  export_backup: "Export backup file",
+  restore_backup: "Restore from backup file",
+  backup_desc: "Your data lives only on this device's browser storage. Updates to the app never touch it, but clearing browser data, switching phones, or reinstalling will. Export a backup file now and then to be safe — Restore reads one back in.",
+  danger_zone: "Danger Zone",
+  reset_all_data: "Reset all data",
+  reset_desc: "Permanently erases every entry, goal, cost, and setting on this device and starts over from scratch. This cannot be undone — export a backup first if you want to keep a copy.",
+  footer_note: "Exchange rates refresh once every 24 hours (source: exchangerate-api.com), not continuously — that's normal, not a bug. Each entry stores the rate at the moment you log it, so past days never change when the rate updates. All data is saved on this device only.",
+  hide_amounts: "Hide amounts", show_amounts: "Show amounts",
+  ob_choose_language: "Choose your language",
+  ob_choose_language_desc: "You can change this later anytime in Settings.",
+  ob_next: "Next", ob_back: "Back", ob_skip: "Skip for now", ob_get_started: "Get Started",
+  ob_welcome_title: "Welcome to Saving Pesos",
+  ob_welcome_intro: "Here's a quick look at where everything lives. You can always come back to this guide from Settings.",
+  ob_tour_home_title: "Home", ob_tour_home_desc: "Log what you spend today, check the exchange rate, and see your weekly streak.",
+  ob_tour_budget_title: "Budget", ob_tour_budget_desc: "Set your monthly income and any fixed costs (rent, subscriptions) that come out first.",
+  ob_tour_goals_title: "Goals", ob_tour_goals_desc: "Set money aside for things you're saving toward, separate from your everyday savings.",
+  ob_tour_history_title: "History", ob_tour_history_desc: "Every day you've logged, with running totals.",
+  ob_tour_settings_title: "Settings", ob_tour_settings_desc: "Currency, app color, backups, and this guide if you ever want to see it again.",
+  ob_currency_title: "What currency do you get paid in?",
+  ob_currency_desc: "If you earn money in Euros, US Dollars, or Canadian Dollars but spend Mexican Pesos day to day, pick your currency below — we'll convert it to pesos automatically using live exchange rates.<br><br>If you're paid directly in Mexican Pesos, pick <b>Mexican Peso (MXN)</b> — the app skips all conversion and just becomes a simple peso savings tracker.",
+  ob_budget_title: "Set your budget",
+  ob_budget_desc: "Tell us your income and how many days it needs to cover — we'll split it into a daily spending budget for you automatically.",
+  ob_monthly_income: "Monthly income",
+  goal_delete_title: "Delete \"{name}\"?",
+  goal_delete_msg: "This goal has {amount} saved toward it. What should happen to that money?",
+  goal_delete_return: "Return money to Total Saved",
+  goal_delete_spent: "It was already spent, don't return it",
+  cancel: "Cancel",
+  goal_reached_alert: "Goal reached! \"{name}\" is fully funded.",
+  only_have_available: "You only have {amount} available in Total Saved.",
+  confirm_delete_entry: "Delete this entry? This cannot be undone.",
+  confirm_delete_cost: "Delete this fixed cost? This cannot be undone.",
+  confirm_restore_backup: "This will replace all current data on this device with the backup file. Continue?",
+  confirm_reset_all: "Are you sure? This will permanently erase every entry, goal, cost, and setting on this device. This cannot be undone.",
+  invalid_backup_json: "That file is not a valid backup (invalid JSON).",
+  invalid_backup_shape: "That file doesn't look like a Saving Pesos backup.",
+  invalid_rate: "Enter a valid rate greater than 0.",
+  th_cost: "Cost", th_amount: "Amount", th_date: "Date", th_spent: "Spent", th_saved: "Saved", th_total: "Total",
+  show_less: "Show less", show_more: "Show {n} more",
+  no_conversion_needed: "No conversion needed",
+  budgeting_directly_pesos: "You're budgeting directly in pesos.",
+  manually_set_on: "Manually set on {time} · new entries will use this rate",
+  offline_last_saved: "Offline — showing last saved rate from {time}",
+  checked_at: "Checked {time}",
+  next_rate_update: " · next rate update ~{time}",
+  no_rate_available: "No rate available",
+  check_connection: "Check your connection and tap Refresh",
+  rate_unavailable: "rate unavailable",
+  unnamed: "(unnamed)",
+  will_recalculate: "will recalculate",
+  add: "Add",
+  target_amount_mxn: "Target amount (MXN)",
+  add_amount_mxn: "Add amount (MXN)",
+  autosave_this_goal: "Automatically add money towards this goal",
+  celeb_perfect: "Perfect day! You spent nothing of today's budget.",
+  celeb_incredible: "Incredible! You saved {pct}% of today's budget.",
+  celeb_great: "Great job! You saved {pct}% today.",
+  celeb_nice: "Nice save! {pct}% left unspent today."
+},
+es: {
+  tagline: "Ingresos extranjeros, gasto diario en pesos, todo automático",
+  tab_home: "Inicio", tab_budget: "Presupuesto", tab_goals: "Metas", tab_history: "Historial", tab_settings: "Ajustes",
+  card_rate: "Tipo de Cambio en Vivo",
+  card_log_spending: "Registrar Gasto de Hoy",
+  card_this_week: "Esta Semana",
+  card_savings_goals: "Metas de Ahorro",
+  card_history: "Historial",
+  card_income_settings: "Ajustes de Ingresos",
+  card_monthly_costs: "Costos Fijos Mensuales (MXN)",
+  card_settings: "Ajustes",
+  loading: "Cargando…",
+  fetching_rate: "Obteniendo el tipo de cambio…",
+  amount_spent_ph: "Monto gastado (MXN)",
+  budget_for_day: "Presupuesto para este día",
+  add_entry: "Agregar Registro",
+  total_saved_so_far: "Total ahorrado hasta ahora",
+  total_saved_note: "Disponible — el dinero destinado a metas se aparta por separado",
+  goal_name_ph: "ej. Laptop nueva",
+  goal_target_ph: "Monto objetivo (MXN)",
+  add_goal: "Agregar Meta",
+  no_goals_yet: "Aún no hay metas de ahorro.",
+  no_entries_yet: "Aún no hay registros — agrega tu primer día arriba.",
+  monthly_income_label: "Ingreso mensual ({cur})",
+  days_in_period: "Días en el periodo",
+  monthly_income_mxn: "Ingreso mensual (MXN)",
+  total_monthly_costs_mxn: "Costos mensuales totales (MXN)",
+  left_after_costs_mxn: "Restante tras costos (MXN)",
+  daily_spending_budget_mxn: "Presupuesto diario (MXN)",
+  cost_name_ph: "ej. Renta",
+  cost_amount_ph: "Monto (MXN)",
+  add_cost: "Agregar Costo",
+  no_costs_yet: "Aún no hay costos fijos.",
+  income_currency: "Moneda de ingresos",
+  cur_eur: "Euro (EUR)", cur_usd: "Dólar Estadounidense (USD)", cur_cad: "Dólar Canadiense (CAD)", cur_mxn: "Peso Mexicano (MXN) — sin conversión",
+  app_color: "Color de la app",
+  color_green: "Verde (predeterminado)", color_lilac: "Lila", color_blue: "Azul", color_pink: "Rosa", color_orange: "Naranja", color_custom: "Color personalizado",
+  already_saved_label: "Ya ahorrado antes de usar esta app (MXN)",
+  rearrange_widgets: "Reorganizar widgets",
+  rearrange_widgets_desc: "Actívalo para arrastrar los widgets a un nuevo orden, luego desactívalo para bloquearlos y evitar moverlos por accidente.",
+  autosave_toggle: "Ahorrar automáticamente hacia una meta",
+  autosave_toggle_desc: "Mueve automáticamente el dinero recién ahorrado hacia la meta de abajo, hasta alcanzar su objetivo. Recibirás un aviso cuando esté completa.",
+  select_a_goal: "Selecciona una meta…",
+  manual_rate_toggle: "Usar un tipo de cambio manual",
+  manual_rate_desc: "Reemplaza el tipo de cambio en vivo para los registros que hagas desde ahora. Los registros ya hechos mantienen el tipo con el que se registraron. Desactívalo para volver al tipo en vivo.",
+  manual_rate_ph: "1 {cur} = ? MXN",
+  apply: "Aplicar",
+  view_app_guide: "Ver guía de la app",
+  language_label: "Idioma",
+  send_feedback_label: "Enviar comentarios al desarrollador",
+  send_feedback_desc: "¡Gracias por probar la app! ¿Encontraste un error, tienes una idea o quieres decir algo? Escribe aquí abajo.",
+  feedback_ph: "Tu comentario…",
+  send_feedback_btn: "Enviar comentario",
+  sending: "Enviando…",
+  feedback_thanks: "¡Gracias! Tu comentario ha sido enviado. 🙏",
+  backup_restore: "Copia de Seguridad y Restauración",
+  export_backup: "Exportar copia de seguridad",
+  restore_backup: "Restaurar desde copia de seguridad",
+  backup_desc: "Tus datos viven solo en el almacenamiento del navegador de este dispositivo. Las actualizaciones de la app nunca los tocan, pero borrar los datos del navegador, cambiar de teléfono o reinstalar sí lo hará. Exporta una copia de seguridad de vez en cuando — Restaurar la vuelve a cargar.",
+  danger_zone: "Zona de Peligro",
+  reset_all_data: "Restablecer todos los datos",
+  reset_desc: "Borra permanentemente cada registro, meta, costo y ajuste en este dispositivo y empieza de cero. Esto no se puede deshacer — exporta una copia de seguridad primero si quieres conservar una copia.",
+  footer_note: "El tipo de cambio se actualiza cada 24 horas (fuente: exchangerate-api.com), no continuamente — eso es normal, no un error. Cada registro guarda el tipo de cambio del momento en que lo agregaste, así que los días pasados nunca cambian cuando se actualiza el tipo. Todos los datos se guardan solo en este dispositivo.",
+  hide_amounts: "Ocultar montos", show_amounts: "Mostrar montos",
+  ob_choose_language: "Elige tu idioma",
+  ob_choose_language_desc: "Puedes cambiarlo después en cualquier momento desde Ajustes.",
+  ob_next: "Siguiente", ob_back: "Atrás", ob_skip: "Omitir por ahora", ob_get_started: "Comenzar",
+  ob_welcome_title: "Bienvenido a Saving Pesos",
+  ob_welcome_intro: "Aquí tienes un vistazo rápido de dónde está todo. Siempre puedes volver a esta guía desde Ajustes.",
+  ob_tour_home_title: "Inicio", ob_tour_home_desc: "Registra lo que gastas hoy, revisa el tipo de cambio y mira tu racha semanal.",
+  ob_tour_budget_title: "Presupuesto", ob_tour_budget_desc: "Define tu ingreso mensual y los costos fijos (renta, suscripciones) que se descuentan primero.",
+  ob_tour_goals_title: "Metas", ob_tour_goals_desc: "Aparta dinero para las cosas que estás ahorrando, separado de tus ahorros del día a día.",
+  ob_tour_history_title: "Historial", ob_tour_history_desc: "Cada día que has registrado, con totales acumulados.",
+  ob_tour_settings_title: "Ajustes", ob_tour_settings_desc: "Moneda, color de la app, copias de seguridad, y esta guía si quieres verla de nuevo.",
+  ob_currency_title: "¿En qué moneda te pagan?",
+  ob_currency_desc: "Si ganas dinero en Euros, Dólares Estadounidenses o Dólares Canadienses pero gastas Pesos Mexicanos día a día, elige tu moneda abajo — la convertiremos a pesos automáticamente usando el tipo de cambio en vivo.<br><br>Si te pagan directamente en Pesos Mexicanos, elige <b>Peso Mexicano (MXN)</b> — la app se salta toda conversión y se convierte en un simple rastreador de ahorros en pesos.",
+  ob_budget_title: "Define tu presupuesto",
+  ob_budget_desc: "Dinos tu ingreso y cuántos días debe cubrir — lo dividiremos automáticamente en un presupuesto diario de gasto.",
+  ob_monthly_income: "Ingreso mensual",
+  goal_delete_title: "¿Eliminar \"{name}\"?",
+  goal_delete_msg: "Esta meta tiene {amount} ahorrados. ¿Qué debe pasar con ese dinero?",
+  goal_delete_return: "Devolver dinero al Total Ahorrado",
+  goal_delete_spent: "Ya se gastó, no lo devuelvas",
+  cancel: "Cancelar",
+  goal_reached_alert: "¡Meta alcanzada! \"{name}\" está completamente financiada.",
+  only_have_available: "Solo tienes {amount} disponible en Total Ahorrado.",
+  confirm_delete_entry: "¿Eliminar este registro? Esto no se puede deshacer.",
+  confirm_delete_cost: "¿Eliminar este costo fijo? Esto no se puede deshacer.",
+  confirm_restore_backup: "Esto reemplazará todos los datos actuales en este dispositivo con el archivo de copia de seguridad. ¿Continuar?",
+  confirm_reset_all: "¿Estás seguro? Esto borrará permanentemente cada registro, meta, costo y ajuste en este dispositivo. Esto no se puede deshacer.",
+  invalid_backup_json: "Ese archivo no es una copia de seguridad válida (JSON inválido).",
+  invalid_backup_shape: "Ese archivo no parece ser una copia de seguridad de Saving Pesos.",
+  invalid_rate: "Ingresa un tipo de cambio válido mayor a 0.",
+  th_cost: "Costo", th_amount: "Monto", th_date: "Fecha", th_spent: "Gastado", th_saved: "Ahorrado", th_total: "Total",
+  show_less: "Mostrar menos", show_more: "Mostrar {n} más",
+  no_conversion_needed: "No se necesita conversión",
+  budgeting_directly_pesos: "Estás presupuestando directamente en pesos.",
+  manually_set_on: "Establecido manualmente el {time} · los nuevos registros usarán este tipo de cambio",
+  offline_last_saved: "Sin conexión — mostrando el último tipo de cambio guardado de {time}",
+  checked_at: "Verificado {time}",
+  next_rate_update: " · próxima actualización ~{time}",
+  no_rate_available: "Tipo de cambio no disponible",
+  check_connection: "Revisa tu conexión y toca Actualizar",
+  rate_unavailable: "tipo de cambio no disponible",
+  unnamed: "(sin nombre)",
+  will_recalculate: "se recalculará",
+  add: "Agregar",
+  target_amount_mxn: "Monto objetivo (MXN)",
+  add_amount_mxn: "Monto a agregar (MXN)",
+  autosave_this_goal: "Agregar dinero automáticamente a esta meta",
+  celeb_perfect: "¡Día perfecto! No gastaste nada de tu presupuesto de hoy.",
+  celeb_incredible: "¡Increíble! Ahorraste el {pct}% de tu presupuesto de hoy.",
+  celeb_great: "¡Buen trabajo! Ahorraste el {pct}% hoy.",
+  celeb_nice: "¡Buen ahorro! Te quedó sin gastar el {pct}% de hoy."
+},
+fr: {
+  tagline: "Revenus étrangers, dépenses quotidiennes en pesos, suivi automatique",
+  tab_home: "Accueil", tab_budget: "Budget", tab_goals: "Objectifs", tab_history: "Historique", tab_settings: "Réglages",
+  card_rate: "Taux de Change en Direct",
+  card_log_spending: "Enregistrer la Dépense du Jour",
+  card_this_week: "Cette Semaine",
+  card_savings_goals: "Objectifs d'Épargne",
+  card_history: "Historique",
+  card_income_settings: "Réglages des Revenus",
+  card_monthly_costs: "Charges Fixes Mensuelles (MXN)",
+  card_settings: "Réglages",
+  loading: "Chargement…",
+  fetching_rate: "Récupération du taux…",
+  amount_spent_ph: "Montant dépensé (MXN)",
+  budget_for_day: "Budget pour ce jour",
+  add_entry: "Ajouter une Entrée",
+  total_saved_so_far: "Total épargné jusqu'à présent",
+  total_saved_note: "Disponible — l'argent affecté aux objectifs est mis de côté séparément",
+  goal_name_ph: "ex. Nouvel ordinateur",
+  goal_target_ph: "Montant cible (MXN)",
+  add_goal: "Ajouter un Objectif",
+  no_goals_yet: "Aucun objectif d'épargne pour l'instant.",
+  no_entries_yet: "Aucune entrée pour l'instant — ajoutez votre premier jour ci-dessus.",
+  monthly_income_label: "Revenu mensuel ({cur})",
+  days_in_period: "Jours dans la période",
+  monthly_income_mxn: "Revenu mensuel (MXN)",
+  total_monthly_costs_mxn: "Charges mensuelles totales (MXN)",
+  left_after_costs_mxn: "Restant après charges (MXN)",
+  daily_spending_budget_mxn: "Budget quotidien (MXN)",
+  cost_name_ph: "ex. Loyer",
+  cost_amount_ph: "Montant (MXN)",
+  add_cost: "Ajouter une Charge",
+  no_costs_yet: "Aucune charge fixe pour l'instant.",
+  income_currency: "Devise des revenus",
+  cur_eur: "Euro (EUR)", cur_usd: "Dollar Américain (USD)", cur_cad: "Dollar Canadien (CAD)", cur_mxn: "Peso Mexicain (MXN) — sans conversion",
+  app_color: "Couleur de l'app",
+  color_green: "Vert (par défaut)", color_lilac: "Lilas", color_blue: "Bleu", color_pink: "Rose", color_orange: "Orange", color_custom: "Couleur personnalisée",
+  already_saved_label: "Déjà épargné avant d'utiliser cette app (MXN)",
+  rearrange_widgets: "Réorganiser les widgets",
+  rearrange_widgets_desc: "Activez pour glisser les widgets dans un nouvel ordre, puis désactivez pour les verrouiller et éviter tout déplacement accidentel.",
+  autosave_toggle: "Épargner automatiquement vers un objectif",
+  autosave_toggle_desc: "Déplace automatiquement l'argent nouvellement épargné vers l'objectif ci-dessous, jusqu'à sa cible. Vous recevrez un message une fois qu'il sera atteint.",
+  select_a_goal: "Sélectionnez un objectif…",
+  manual_rate_toggle: "Utiliser un taux de change manuel",
+  manual_rate_desc: "Remplace le taux en direct pour les entrées enregistrées à partir de maintenant. Les entrées déjà enregistrées conservent leur taux d'origine. Désactivez pour revenir au taux en direct.",
+  manual_rate_ph: "1 {cur} = ? MXN",
+  apply: "Appliquer",
+  view_app_guide: "Voir le guide de l'app",
+  language_label: "Langue",
+  send_feedback_label: "Envoyer un commentaire au développeur",
+  send_feedback_desc: "Merci de tester l'app ! Un bug, une idée, ou juste envie de dire quelque chose ? Écrivez ci-dessous.",
+  feedback_ph: "Votre commentaire…",
+  send_feedback_btn: "Envoyer le commentaire",
+  sending: "Envoi…",
+  feedback_thanks: "Merci ! Votre commentaire a été envoyé. 🙏",
+  backup_restore: "Sauvegarde et Restauration",
+  export_backup: "Exporter une sauvegarde",
+  restore_backup: "Restaurer depuis une sauvegarde",
+  backup_desc: "Vos données ne vivent que dans le stockage du navigateur de cet appareil. Les mises à jour de l'app n'y touchent jamais, mais effacer les données du navigateur, changer de téléphone ou réinstaller le fera. Exportez une sauvegarde de temps en temps par sécurité — Restaurer la recharge.",
+  danger_zone: "Zone de Danger",
+  reset_all_data: "Réinitialiser toutes les données",
+  reset_desc: "Efface définitivement chaque entrée, objectif, charge et réglage sur cet appareil et repart de zéro. Ceci est irréversible — exportez d'abord une sauvegarde si vous voulez garder une copie.",
+  footer_note: "Les taux de change se rafraîchissent une fois toutes les 24 heures (source : exchangerate-api.com), pas en continu — c'est normal, pas un bug. Chaque entrée enregistre le taux au moment où vous la créez, donc les jours passés ne changent jamais quand le taux est mis à jour. Toutes les données sont enregistrées uniquement sur cet appareil.",
+  hide_amounts: "Masquer les montants", show_amounts: "Afficher les montants",
+  ob_choose_language: "Choisissez votre langue",
+  ob_choose_language_desc: "Vous pourrez le changer plus tard à tout moment dans les Réglages.",
+  ob_next: "Suivant", ob_back: "Retour", ob_skip: "Passer pour l'instant", ob_get_started: "Commencer",
+  ob_welcome_title: "Bienvenue sur Saving Pesos",
+  ob_welcome_intro: "Voici un aperçu rapide de tout ce que vous pouvez trouver. Vous pouvez toujours revenir à ce guide depuis les Réglages.",
+  ob_tour_home_title: "Accueil", ob_tour_home_desc: "Enregistrez vos dépenses du jour, consultez le taux de change et suivez votre série hebdomadaire.",
+  ob_tour_budget_title: "Budget", ob_tour_budget_desc: "Définissez votre revenu mensuel et les charges fixes (loyer, abonnements) prélevées en premier.",
+  ob_tour_goals_title: "Objectifs", ob_tour_goals_desc: "Mettez de l'argent de côté pour ce que vous économisez, séparément de votre épargne quotidienne.",
+  ob_tour_history_title: "Historique", ob_tour_history_desc: "Chaque jour enregistré, avec les totaux cumulés.",
+  ob_tour_settings_title: "Réglages", ob_tour_settings_desc: "Devise, couleur de l'app, sauvegardes, et ce guide si vous voulez le revoir un jour.",
+  ob_currency_title: "Dans quelle devise êtes-vous payé ?",
+  ob_currency_desc: "Si vous gagnez de l'argent en Euros, Dollars Américains ou Dollars Canadiens mais dépensez des Pesos Mexicains au quotidien, choisissez votre devise ci-dessous — nous la convertirons automatiquement en pesos avec le taux de change en direct.<br><br>Si vous êtes payé directement en Pesos Mexicains, choisissez <b>Peso Mexicain (MXN)</b> — l'app saute toute conversion et devient un simple suivi d'épargne en pesos.",
+  ob_budget_title: "Définissez votre budget",
+  ob_budget_desc: "Indiquez-nous votre revenu et le nombre de jours qu'il doit couvrir — nous le diviserons automatiquement en budget quotidien.",
+  ob_monthly_income: "Revenu mensuel",
+  goal_delete_title: "Supprimer « {name} » ?",
+  goal_delete_msg: "Cet objectif a {amount} épargnés. Que faire de cet argent ?",
+  goal_delete_return: "Remettre l'argent dans le Total Épargné",
+  goal_delete_spent: "Déjà dépensé, ne pas le remettre",
+  cancel: "Annuler",
+  goal_reached_alert: "Objectif atteint ! « {name} » est entièrement financé.",
+  only_have_available: "Vous n'avez que {amount} disponible dans le Total Épargné.",
+  confirm_delete_entry: "Supprimer cette entrée ? Ceci est irréversible.",
+  confirm_delete_cost: "Supprimer cette charge fixe ? Ceci est irréversible.",
+  confirm_restore_backup: "Cela remplacera toutes les données actuelles sur cet appareil par le fichier de sauvegarde. Continuer ?",
+  confirm_reset_all: "Êtes-vous sûr ? Cela effacera définitivement chaque entrée, objectif, charge et réglage sur cet appareil. Ceci est irréversible.",
+  invalid_backup_json: "Ce fichier n'est pas une sauvegarde valide (JSON invalide).",
+  invalid_backup_shape: "Ce fichier ne ressemble pas à une sauvegarde Saving Pesos.",
+  invalid_rate: "Entrez un taux valide supérieur à 0.",
+  th_cost: "Charge", th_amount: "Montant", th_date: "Date", th_spent: "Dépensé", th_saved: "Épargné", th_total: "Total",
+  show_less: "Afficher moins", show_more: "Afficher {n} de plus",
+  no_conversion_needed: "Aucune conversion nécessaire",
+  budgeting_directly_pesos: "Vous établissez votre budget directement en pesos.",
+  manually_set_on: "Défini manuellement le {time} · les nouvelles entrées utiliseront ce taux",
+  offline_last_saved: "Hors ligne — affichage du dernier taux enregistré du {time}",
+  checked_at: "Vérifié {time}",
+  next_rate_update: " · prochaine mise à jour ~{time}",
+  no_rate_available: "Aucun taux disponible",
+  check_connection: "Vérifiez votre connexion et appuyez sur Actualiser",
+  rate_unavailable: "taux indisponible",
+  unnamed: "(sans nom)",
+  will_recalculate: "sera recalculé",
+  add: "Ajouter",
+  target_amount_mxn: "Montant cible (MXN)",
+  add_amount_mxn: "Montant à ajouter (MXN)",
+  autosave_this_goal: "Ajouter automatiquement de l'argent à cet objectif",
+  celeb_perfect: "Journée parfaite ! Vous n'avez rien dépensé de votre budget aujourd'hui.",
+  celeb_incredible: "Incroyable ! Vous avez épargné {pct}% de votre budget aujourd'hui.",
+  celeb_great: "Bravo ! Vous avez épargné {pct}% aujourd'hui.",
+  celeb_nice: "Belle épargne ! {pct}% non dépensé aujourd'hui."
+},
+de: {
+  tagline: "Ausländisches Einkommen, tägliche Peso-Ausgaben, automatisch erfasst",
+  tab_home: "Start", tab_budget: "Budget", tab_goals: "Ziele", tab_history: "Verlauf", tab_settings: "Einstellungen",
+  card_rate: "Aktueller Wechselkurs",
+  card_log_spending: "Heutige Ausgaben Erfassen",
+  card_this_week: "Diese Woche",
+  card_savings_goals: "Sparziele",
+  card_history: "Verlauf",
+  card_income_settings: "Einkommenseinstellungen",
+  card_monthly_costs: "Monatliche Fixkosten (MXN)",
+  card_settings: "Einstellungen",
+  loading: "Wird geladen…",
+  fetching_rate: "Aktueller Kurs wird abgerufen…",
+  amount_spent_ph: "Ausgegebener Betrag (MXN)",
+  budget_for_day: "Budget für diesen Tag",
+  add_entry: "Eintrag Hinzufügen",
+  total_saved_so_far: "Bisher gespart",
+  total_saved_note: "Verfügbar — Geld für Ziele wird separat zurückgelegt",
+  goal_name_ph: "z.B. Neuer Laptop",
+  goal_target_ph: "Zielbetrag (MXN)",
+  add_goal: "Ziel Hinzufügen",
+  no_goals_yet: "Noch keine Sparziele.",
+  no_entries_yet: "Noch keine Einträge — füge oben deinen ersten Tag hinzu.",
+  monthly_income_label: "Monatliches Einkommen ({cur})",
+  days_in_period: "Tage im Zeitraum",
+  monthly_income_mxn: "Monatliches Einkommen (MXN)",
+  total_monthly_costs_mxn: "Monatliche Gesamtkosten (MXN)",
+  left_after_costs_mxn: "Verbleibend nach Kosten (MXN)",
+  daily_spending_budget_mxn: "Tägliches Budget (MXN)",
+  cost_name_ph: "z.B. Miete",
+  cost_amount_ph: "Betrag (MXN)",
+  add_cost: "Kosten Hinzufügen",
+  no_costs_yet: "Noch keine Fixkosten hinzugefügt.",
+  income_currency: "Einkommenswährung",
+  cur_eur: "Euro (EUR)", cur_usd: "US-Dollar (USD)", cur_cad: "Kanadischer Dollar (CAD)", cur_mxn: "Mexikanischer Peso (MXN) — keine Umrechnung",
+  app_color: "App-Farbe",
+  color_green: "Grün (Standard)", color_lilac: "Lila", color_blue: "Blau", color_pink: "Pink", color_orange: "Orange", color_custom: "Eigene Farbe",
+  already_saved_label: "Bereits gespart vor Nutzung dieser App (MXN)",
+  rearrange_widgets: "Widgets neu anordnen",
+  rearrange_widgets_desc: "Aktiviere dies, um Widgets in eine neue Reihenfolge zu ziehen, dann wieder deaktivieren, um sie zu sperren und versehentliches Verschieben zu verhindern.",
+  autosave_toggle: "Automatisch für ein Ziel sparen",
+  autosave_toggle_desc: "Verschiebt neu gespartes Geld automatisch auf das untenstehende Ziel, bis das Ziel erreicht ist. Du erhältst eine Nachricht, sobald es vollständig finanziert ist.",
+  select_a_goal: "Ziel auswählen…",
+  manual_rate_toggle: "Manuellen Wechselkurs verwenden",
+  manual_rate_desc: "Überschreibt den Live-Kurs für ab jetzt erfasste Einträge. Bereits erfasste Einträge behalten den Kurs, mit dem sie erfasst wurden. Deaktiviere dies, um zum Live-Kurs zurückzukehren.",
+  manual_rate_ph: "1 {cur} = ? MXN",
+  apply: "Anwenden",
+  view_app_guide: "App-Anleitung Ansehen",
+  language_label: "Sprache",
+  send_feedback_label: "Feedback an den Entwickler senden",
+  send_feedback_desc: "Danke fürs Testen! Einen Fehler gefunden, eine Idee, oder möchtest einfach etwas sagen? Schreib es unten.",
+  feedback_ph: "Dein Feedback…",
+  send_feedback_btn: "Feedback Senden",
+  sending: "Wird gesendet…",
+  feedback_thanks: "Danke! Dein Feedback wurde gesendet. 🙏",
+  backup_restore: "Sicherung & Wiederherstellung",
+  export_backup: "Sicherungsdatei Exportieren",
+  restore_backup: "Aus Sicherungsdatei Wiederherstellen",
+  backup_desc: "Deine Daten leben nur im Browser-Speicher dieses Geräts. App-Updates berühren sie nie, aber das Löschen von Browserdaten, ein Telefonwechsel oder eine Neuinstallation schon. Exportiere ab und zu eine Sicherungsdatei zur Sicherheit — Wiederherstellen liest sie wieder ein.",
+  danger_zone: "Gefahrenzone",
+  reset_all_data: "Alle Daten Zurücksetzen",
+  reset_desc: "Löscht dauerhaft jeden Eintrag, jedes Ziel, jede Kostenposition und Einstellung auf diesem Gerät und beginnt von vorne. Dies kann nicht rückgängig gemacht werden — exportiere zuerst eine Sicherung, wenn du eine Kopie behalten möchtest.",
+  footer_note: "Wechselkurse werden alle 24 Stunden aktualisiert (Quelle: exchangerate-api.com), nicht fortlaufend — das ist normal, kein Fehler. Jeder Eintrag speichert den Kurs zum Zeitpunkt der Erfassung, sodass sich vergangene Tage nie ändern, wenn der Kurs aktualisiert wird. Alle Daten werden nur auf diesem Gerät gespeichert.",
+  hide_amounts: "Beträge ausblenden", show_amounts: "Beträge anzeigen",
+  ob_choose_language: "Wähle deine Sprache",
+  ob_choose_language_desc: "Du kannst dies später jederzeit in den Einstellungen ändern.",
+  ob_next: "Weiter", ob_back: "Zurück", ob_skip: "Vorerst überspringen", ob_get_started: "Loslegen",
+  ob_welcome_title: "Willkommen bei Saving Pesos",
+  ob_welcome_intro: "Hier ist ein kurzer Überblick, wo alles zu finden ist. Du kannst jederzeit über die Einstellungen zu dieser Anleitung zurückkehren.",
+  ob_tour_home_title: "Start", ob_tour_home_desc: "Erfasse deine heutigen Ausgaben, prüfe den Wechselkurs und sieh deine wöchentliche Serie.",
+  ob_tour_budget_title: "Budget", ob_tour_budget_desc: "Lege dein monatliches Einkommen und Fixkosten (Miete, Abos) fest, die zuerst abgezogen werden.",
+  ob_tour_goals_title: "Ziele", ob_tour_goals_desc: "Lege Geld für Dinge zurück, auf die du sparst, getrennt von deinen alltäglichen Ersparnissen.",
+  ob_tour_history_title: "Verlauf", ob_tour_history_desc: "Jeder erfasste Tag, mit laufenden Summen.",
+  ob_tour_settings_title: "Einstellungen", ob_tour_settings_desc: "Währung, App-Farbe, Sicherungen und diese Anleitung, falls du sie noch einmal sehen möchtest.",
+  ob_currency_title: "In welcher Währung wirst du bezahlt?",
+  ob_currency_desc: "Wenn du in Euro, US-Dollar oder Kanadischen Dollar verdienst, aber im Alltag Mexikanische Pesos ausgibst, wähle unten deine Währung — wir rechnen sie automatisch mit aktuellen Wechselkursen in Pesos um.<br><br>Wenn du direkt in Mexikanischen Pesos bezahlt wirst, wähle <b>Mexikanischer Peso (MXN)</b> — die App überspringt jede Umrechnung und wird zu einem einfachen Peso-Spartracker.",
+  ob_budget_title: "Lege dein Budget fest",
+  ob_budget_desc: "Nenne uns dein Einkommen und wie viele Tage es abdecken muss — wir teilen es automatisch in ein tägliches Ausgabenbudget auf.",
+  ob_monthly_income: "Monatliches Einkommen",
+  goal_delete_title: "„{name}“ löschen?",
+  goal_delete_msg: "Für dieses Ziel wurden {amount} gespart. Was soll mit diesem Geld passieren?",
+  goal_delete_return: "Geld zurück in Gesamt Gespart legen",
+  goal_delete_spent: "Wurde bereits ausgegeben, nicht zurücklegen",
+  cancel: "Abbrechen",
+  goal_reached_alert: "Ziel erreicht! „{name}“ ist vollständig finanziert.",
+  only_have_available: "Du hast nur {amount} in Gesamt Gespart verfügbar.",
+  confirm_delete_entry: "Diesen Eintrag löschen? Dies kann nicht rückgängig gemacht werden.",
+  confirm_delete_cost: "Diese Fixkosten löschen? Dies kann nicht rückgängig gemacht werden.",
+  confirm_restore_backup: "Dies ersetzt alle aktuellen Daten auf diesem Gerät durch die Sicherungsdatei. Fortfahren?",
+  confirm_reset_all: "Bist du sicher? Dies löscht dauerhaft jeden Eintrag, jedes Ziel, jede Kostenposition und Einstellung auf diesem Gerät. Dies kann nicht rückgängig gemacht werden.",
+  invalid_backup_json: "Diese Datei ist keine gültige Sicherung (ungültiges JSON).",
+  invalid_backup_shape: "Diese Datei scheint keine Saving-Pesos-Sicherung zu sein.",
+  invalid_rate: "Gib einen gültigen Kurs größer als 0 ein.",
+  th_cost: "Kosten", th_amount: "Betrag", th_date: "Datum", th_spent: "Ausgegeben", th_saved: "Gespart", th_total: "Gesamt",
+  show_less: "Weniger anzeigen", show_more: "{n} mehr anzeigen",
+  no_conversion_needed: "Keine Umrechnung nötig",
+  budgeting_directly_pesos: "Du budgetierst direkt in Pesos.",
+  manually_set_on: "Manuell festgelegt am {time} · neue Einträge verwenden diesen Kurs",
+  offline_last_saved: "Offline — zeigt zuletzt gespeicherten Kurs vom {time}",
+  checked_at: "Geprüft {time}",
+  next_rate_update: " · nächste Aktualisierung ~{time}",
+  no_rate_available: "Kein Kurs verfügbar",
+  check_connection: "Prüfe deine Verbindung und tippe auf Aktualisieren",
+  rate_unavailable: "Kurs nicht verfügbar",
+  unnamed: "(unbenannt)",
+  will_recalculate: "wird neu berechnet",
+  add: "Hinzufügen",
+  target_amount_mxn: "Zielbetrag (MXN)",
+  add_amount_mxn: "Betrag hinzufügen (MXN)",
+  autosave_this_goal: "Automatisch Geld für dieses Ziel hinzufügen",
+  celeb_perfect: "Perfekter Tag! Du hast nichts von deinem heutigen Budget ausgegeben.",
+  celeb_incredible: "Unglaublich! Du hast {pct}% deines heutigen Budgets gespart.",
+  celeb_great: "Gut gemacht! Du hast heute {pct}% gespart.",
+  celeb_nice: "Gut gespart! {pct}% heute nicht ausgegeben."
+},
+pt: {
+  tagline: "Renda estrangeira, gastos diários em pesos, rastreados automaticamente",
+  tab_home: "Início", tab_budget: "Orçamento", tab_goals: "Metas", tab_history: "Histórico", tab_settings: "Ajustes",
+  card_rate: "Câmbio ao Vivo",
+  card_log_spending: "Registrar Gasto de Hoje",
+  card_this_week: "Esta Semana",
+  card_savings_goals: "Metas de Economia",
+  card_history: "Histórico",
+  card_income_settings: "Configurações de Renda",
+  card_monthly_costs: "Custos Fixos Mensais (MXN)",
+  card_settings: "Ajustes",
+  loading: "Carregando…",
+  fetching_rate: "Buscando a taxa mais recente…",
+  amount_spent_ph: "Valor gasto (MXN)",
+  budget_for_day: "Orçamento para este dia",
+  add_entry: "Adicionar Registro",
+  total_saved_so_far: "Total economizado até agora",
+  total_saved_note: "Disponível — dinheiro adicionado a metas é reservado separadamente",
+  goal_name_ph: "ex. Novo laptop",
+  goal_target_ph: "Valor alvo (MXN)",
+  add_goal: "Adicionar Meta",
+  no_goals_yet: "Ainda não há metas de economia.",
+  no_entries_yet: "Ainda não há registros — adicione seu primeiro dia acima.",
+  monthly_income_label: "Renda mensal ({cur})",
+  days_in_period: "Dias no período",
+  monthly_income_mxn: "Renda mensal (MXN)",
+  total_monthly_costs_mxn: "Custos mensais totais (MXN)",
+  left_after_costs_mxn: "Restante após custos (MXN)",
+  daily_spending_budget_mxn: "Orçamento diário (MXN)",
+  cost_name_ph: "ex. Aluguel",
+  cost_amount_ph: "Valor (MXN)",
+  add_cost: "Adicionar Custo",
+  no_costs_yet: "Ainda não há custos fixos adicionados.",
+  income_currency: "Moeda da renda",
+  cur_eur: "Euro (EUR)", cur_usd: "Dólar Americano (USD)", cur_cad: "Dólar Canadense (CAD)", cur_mxn: "Peso Mexicano (MXN) — sem conversão",
+  app_color: "Cor do app",
+  color_green: "Verde (padrão)", color_lilac: "Lilás", color_blue: "Azul", color_pink: "Rosa", color_orange: "Laranja", color_custom: "Cor personalizada",
+  already_saved_label: "Já economizado antes de usar este app (MXN)",
+  rearrange_widgets: "Reorganizar widgets",
+  rearrange_widgets_desc: "Ative para arrastar os widgets para uma nova ordem, depois desative para travá-los e evitar que se movam por acidente.",
+  autosave_toggle: "Economizar automaticamente para uma meta",
+  autosave_toggle_desc: "Move automaticamente o dinheiro recém-economizado para a meta abaixo, até atingir seu objetivo. Você receberá um aviso quando estiver totalmente financiada.",
+  select_a_goal: "Selecione uma meta…",
+  manual_rate_toggle: "Usar uma taxa de câmbio manual",
+  manual_rate_desc: "Substitui a taxa ao vivo para registros feitos a partir de agora. Registros já feitos mantêm a taxa com que foram registrados. Desative para voltar à taxa ao vivo.",
+  manual_rate_ph: "1 {cur} = ? MXN",
+  apply: "Aplicar",
+  view_app_guide: "Ver guia do app",
+  language_label: "Idioma",
+  send_feedback_label: "Enviar feedback ao desenvolvedor",
+  send_feedback_desc: "Obrigado por testar! Encontrou um bug, tem uma ideia, ou só quer dizer algo? Escreva abaixo.",
+  feedback_ph: "Seu feedback…",
+  send_feedback_btn: "Enviar Feedback",
+  sending: "Enviando…",
+  feedback_thanks: "Obrigado! Seu feedback foi enviado. 🙏",
+  backup_restore: "Backup e Restauração",
+  export_backup: "Exportar arquivo de backup",
+  restore_backup: "Restaurar de arquivo de backup",
+  backup_desc: "Seus dados vivem apenas no armazenamento do navegador deste dispositivo. Atualizações do app nunca os tocam, mas limpar dados do navegador, trocar de telefone ou reinstalar sim. Exporte um backup de vez em quando por segurança — Restaurar o carrega de volta.",
+  danger_zone: "Zona de Perigo",
+  reset_all_data: "Redefinir todos os dados",
+  reset_desc: "Apaga permanentemente cada registro, meta, custo e configuração neste dispositivo e recomeça do zero. Isso não pode ser desfeito — exporte um backup primeiro se quiser manter uma cópia.",
+  footer_note: "As taxas de câmbio são atualizadas a cada 24 horas (fonte: exchangerate-api.com), não continuamente — isso é normal, não um bug. Cada registro guarda a taxa no momento em que foi feito, então dias passados nunca mudam quando a taxa é atualizada. Todos os dados são salvos apenas neste dispositivo.",
+  hide_amounts: "Ocultar valores", show_amounts: "Mostrar valores",
+  ob_choose_language: "Escolha seu idioma",
+  ob_choose_language_desc: "Você pode mudar isso depois a qualquer momento nos Ajustes.",
+  ob_next: "Próximo", ob_back: "Voltar", ob_skip: "Pular por agora", ob_get_started: "Começar",
+  ob_welcome_title: "Bem-vindo ao Saving Pesos",
+  ob_welcome_intro: "Aqui está uma visão rápida de onde tudo está. Você sempre pode voltar a este guia pelos Ajustes.",
+  ob_tour_home_title: "Início", ob_tour_home_desc: "Registre o que você gasta hoje, confira a taxa de câmbio e veja sua sequência semanal.",
+  ob_tour_budget_title: "Orçamento", ob_tour_budget_desc: "Defina sua renda mensal e quaisquer custos fixos (aluguel, assinaturas) que saem primeiro.",
+  ob_tour_goals_title: "Metas", ob_tour_goals_desc: "Reserve dinheiro para coisas que você está economizando, separado da sua economia do dia a dia.",
+  ob_tour_history_title: "Histórico", ob_tour_history_desc: "Cada dia que você registrou, com totais acumulados.",
+  ob_tour_settings_title: "Ajustes", ob_tour_settings_desc: "Moeda, cor do app, backups, e este guia caso queira vê-lo novamente.",
+  ob_currency_title: "Em qual moeda você recebe?",
+  ob_currency_desc: "Se você ganha em Euros, Dólares Americanos ou Dólares Canadenses mas gasta Pesos Mexicanos no dia a dia, escolha sua moeda abaixo — vamos converter para pesos automaticamente usando taxas de câmbio ao vivo.<br><br>Se você recebe diretamente em Pesos Mexicanos, escolha <b>Peso Mexicano (MXN)</b> — o app pula toda conversão e vira um simples rastreador de economia em pesos.",
+  ob_budget_title: "Defina seu orçamento",
+  ob_budget_desc: "Diga-nos sua renda e quantos dias ela precisa cobrir — vamos dividir automaticamente em um orçamento diário de gastos.",
+  ob_monthly_income: "Renda mensal",
+  goal_delete_title: "Excluir \"{name}\"?",
+  goal_delete_msg: "Esta meta tem {amount} economizados. O que deve acontecer com esse dinheiro?",
+  goal_delete_return: "Devolver dinheiro ao Total Economizado",
+  goal_delete_spent: "Já foi gasto, não devolver",
+  cancel: "Cancelar",
+  goal_reached_alert: "Meta alcançada! \"{name}\" está totalmente financiada.",
+  only_have_available: "Você só tem {amount} disponível no Total Economizado.",
+  confirm_delete_entry: "Excluir este registro? Isso não pode ser desfeito.",
+  confirm_delete_cost: "Excluir este custo fixo? Isso não pode ser desfeito.",
+  confirm_restore_backup: "Isso substituirá todos os dados atuais neste dispositivo pelo arquivo de backup. Continuar?",
+  confirm_reset_all: "Tem certeza? Isso apagará permanentemente cada registro, meta, custo e configuração neste dispositivo. Isso não pode ser desfeito.",
+  invalid_backup_json: "Esse arquivo não é um backup válido (JSON inválido).",
+  invalid_backup_shape: "Esse arquivo não parece ser um backup do Saving Pesos.",
+  invalid_rate: "Insira uma taxa válida maior que 0.",
+  th_cost: "Custo", th_amount: "Valor", th_date: "Data", th_spent: "Gasto", th_saved: "Economizado", th_total: "Total",
+  show_less: "Mostrar menos", show_more: "Mostrar mais {n}",
+  no_conversion_needed: "Nenhuma conversão necessária",
+  budgeting_directly_pesos: "Você está orçando diretamente em pesos.",
+  manually_set_on: "Definido manualmente em {time} · novos registros usarão esta taxa",
+  offline_last_saved: "Offline — mostrando última taxa salva de {time}",
+  checked_at: "Verificado {time}",
+  next_rate_update: " · próxima atualização ~{time}",
+  no_rate_available: "Nenhuma taxa disponível",
+  check_connection: "Verifique sua conexão e toque em Atualizar",
+  rate_unavailable: "taxa indisponível",
+  unnamed: "(sem nome)",
+  will_recalculate: "será recalculado",
+  add: "Adicionar",
+  target_amount_mxn: "Valor alvo (MXN)",
+  add_amount_mxn: "Valor a adicionar (MXN)",
+  autosave_this_goal: "Adicionar dinheiro automaticamente a esta meta",
+  celeb_perfect: "Dia perfeito! Você não gastou nada do seu orçamento hoje.",
+  celeb_incredible: "Incrível! Você economizou {pct}% do seu orçamento hoje.",
+  celeb_great: "Bom trabalho! Você economizou {pct}% hoje.",
+  celeb_nice: "Boa economia! {pct}% não gasto hoje."
+}
+};
+
+function t(key, vars){
+  let str = (I18N[state.language] && I18N[state.language][key]) || I18N.en[key] || key;
+  if(vars){
+    Object.keys(vars).forEach(k=>{ str = str.split('{'+k+'}').join(vars[k]); });
+  }
+  return str;
+}
+
+function populateLanguageSelects(){
+  const optionsHtml = Object.keys(LANGUAGES).map(code=>`<option value="${code}">${LANGUAGES[code]}</option>`).join('');
+  ['onboardingLanguage','languageSelect'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.innerHTML = optionsHtml;
+  });
+}
+
+function applyTranslations(){
+  document.documentElement.lang = state.language;
+  document.getElementById('onboardingLanguage').value = state.language;
+  document.getElementById('languageSelect').value = state.language;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    el.textContent = t(el.getAttribute('data-i18n'));
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(el=>{
+    el.innerHTML = t(el.getAttribute('data-i18n-html'));
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{
+    el.placeholder = t(el.getAttribute('data-i18n-ph'));
+  });
+  document.querySelectorAll('[data-i18n-title]').forEach(el=>{
+    el.title = t(el.getAttribute('data-i18n-title'));
+  });
+  renderRate();
+}
 
 let state = load();
 applyAccentColor(state.accentColor);
@@ -610,11 +1240,12 @@ function normalize(parsed){
   if(parsed.manualRateOverride==null) parsed.manualRateOverride = false;
   if(!parsed.accentColor) parsed.accentColor = '#34d399';
   if(!parsed.firstUseDate) parsed.firstUseDate = localDateStr(new Date());
+  if(!parsed.language) parsed.language = 'en';
   return parsed;
 }
 
 function defaultState(){
-  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:{}, spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR', dragModeEnabled:false, autoSaveEnabled:false, autoSaveGoalId:'', manualRateOverride:false, accentColor:'#34d399', firstUseDate:localDateStr(new Date()) };
+  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:{}, spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR', dragModeEnabled:false, autoSaveEnabled:false, autoSaveGoalId:'', manualRateOverride:false, accentColor:'#34d399', firstUseDate:localDateStr(new Date()), language:'en' };
 }
 
 function load(){
@@ -713,24 +1344,24 @@ function renderRate(failed){
   const rateValueEl = document.getElementById('rateValue');
   const rateMetaEl = document.getElementById('rateMeta');
   if((state.incomeCurrency || 'EUR') === 'MXN'){
-    rateValueEl.textContent = 'No conversion needed';
-    rateMetaEl.textContent = "You're budgeting directly in pesos.";
+    rateValueEl.textContent = t('no_conversion_needed');
+    rateMetaEl.textContent = t('budgeting_directly_pesos');
   } else if(state.liveRate){
     rateValueEl.textContent = '1 ' + (state.liveRateCurrency || state.incomeCurrency || 'EUR') + ' = ' + Number(state.liveRate).toFixed(3) + ' MXN';
-    const t = state.rateTime ? new Date(state.rateTime) : null;
-    const timeStr = t ? t.toLocaleString() : '';
+    const rt = state.rateTime ? new Date(state.rateTime) : null;
+    const timeStr = rt ? rt.toLocaleString() : '';
     if(state.manualRateOverride){
-      rateMetaEl.textContent = 'Manually set on ' + timeStr + ' · new entries will use this rate';
+      rateMetaEl.textContent = t('manually_set_on', {time: timeStr});
     } else if(failed){
-      rateMetaEl.textContent = 'Offline — showing last saved rate from ' + timeStr;
+      rateMetaEl.textContent = t('offline_last_saved', {time: timeStr});
     } else {
       const next = state.nextRateUpdate ? new Date(state.nextRateUpdate) : null;
-      rateMetaEl.textContent = 'Checked ' + timeStr
-        + (next ? ' · next rate update ~' + next.toLocaleString() : '');
+      rateMetaEl.textContent = t('checked_at', {time: timeStr})
+        + (next ? t('next_rate_update', {time: next.toLocaleString()}) : '');
     }
   } else {
-    rateValueEl.textContent = 'No rate available';
-    rateMetaEl.textContent = 'Check your connection and tap Refresh';
+    rateValueEl.textContent = t('no_rate_available');
+    rateMetaEl.textContent = t('check_connection');
   }
   renderAll();
 }
@@ -781,7 +1412,7 @@ function autoAllocateSavings(){
   goal.saved = currentSaved + amountToMove;
   save();
   if(target>0 && goal.saved>=target){
-    alert(`Goal reached! "${goal.name}" is fully funded.`);
+    alert(t('goal_reached_alert', {name: goal.name}));
   }
 }
 
@@ -803,7 +1434,7 @@ function renderSettings(){
   document.getElementById('income').value = state.income ?? '';
   document.getElementById('days').value = state.days ?? '';
   document.getElementById('incomeCurrency').value = state.incomeCurrency || 'EUR';
-  document.getElementById('incomeCurrencyLabel').textContent = state.incomeCurrency || 'EUR';
+  document.getElementById('incomeRowLabel').textContent = t('monthly_income_label', {cur: state.incomeCurrency || 'EUR'});
   document.getElementById('dragModeToggle').checked = !!state.dragModeEnabled;
   if(state.autoSaveGoalId && !state.goals.some(g=>g.id===state.autoSaveGoalId)){
     state.autoSaveGoalId = '';
@@ -811,7 +1442,7 @@ function renderSettings(){
   }
   document.getElementById('autoSaveToggle').checked = !!state.autoSaveEnabled;
   const goalSelect = document.getElementById('autoSaveGoalSelect');
-  goalSelect.innerHTML = '<option value="">Select a goal…</option>' +
+  goalSelect.innerHTML = `<option value="">${t('select_a_goal')}</option>` +
     state.goals.map(g=>`<option value="${g.id}">${escapeAttr(g.name)}</option>`).join('');
   goalSelect.value = state.autoSaveGoalId || '';
   goalSelect.disabled = !state.autoSaveEnabled;
@@ -823,7 +1454,7 @@ function renderSettings(){
   document.getElementById('manualRateField').style.display = isMXN ? 'none' : 'block';
   document.getElementById('manualRateToggle').checked = !!state.manualRateOverride;
   document.getElementById('manualRateFields').style.display = state.manualRateOverride ? 'flex' : 'none';
-  document.getElementById('manualRateValue').placeholder = `1 ${state.incomeCurrency || 'EUR'} = ? MXN`;
+  document.getElementById('manualRateValue').placeholder = t('manual_rate_ph', {cur: state.incomeCurrency || 'EUR'});
   const incomeMXN = monthlyIncomeMXN();
   document.getElementById('incomeMXN').textContent = incomeMXN!=null ? fmtMXN(incomeMXN) : '—';
   document.getElementById('totalCostsStat').textContent = fmtMXN(totalMonthlyCosts());
@@ -839,7 +1470,7 @@ let costsExpanded = false;
 function renderCosts(){
   const wrap = document.getElementById('costsWrap');
   if(state.costs.length===0){
-    wrap.innerHTML = '<div class="empty">No fixed costs added yet.</div>';
+    wrap.innerHTML = `<div class="empty">${t('no_costs_yet')}</div>`;
     return;
   }
   const showAll = costsExpanded || editingCostId!=null || state.costs.length<=COSTS_COLLAPSED_LIMIT;
@@ -857,7 +1488,7 @@ function renderCosts(){
       </tr>`;
     } else {
       rows += `<tr>
-        <td>${c.name || '(unnamed)'}</td>
+        <td>${c.name || t('unnamed')}</td>
         <td>${fmtMXN(c.amount)}</td>
         <td class="actions-cell">
           <button class="del-btn" onclick="startCostEdit('${c.id}')">${ICON_PENCIL}</button>
@@ -869,10 +1500,10 @@ function renderCosts(){
   const hiddenCount = state.costs.length - COSTS_COLLAPSED_LIMIT;
   let toggleHtml = '';
   if(state.costs.length > COSTS_COLLAPSED_LIMIT && editingCostId==null){
-    toggleHtml = `<div class="list-more-toggle" onclick="toggleCostsExpanded()">${costsExpanded ? (ICON_CHEVRON_UP + ' Show less') : (ICON_CHEVRON_DOWN + ` Show ${hiddenCount} more`)}</div>`;
+    toggleHtml = `<div class="list-more-toggle" onclick="toggleCostsExpanded()">${costsExpanded ? (ICON_CHEVRON_UP + ' ' + t('show_less')) : (ICON_CHEVRON_DOWN + ' ' + t('show_more', {n: hiddenCount}))}</div>`;
   }
   wrap.innerHTML = `<table>
-    <tr><th>Cost</th><th>Amount</th><th></th></tr>
+    <tr><th>${t('th_cost')}</th><th>${t('th_amount')}</th><th></th></tr>
     ${rows}
   </table>${toggleHtml}`;
 }
@@ -903,7 +1534,7 @@ window.saveCostEdit = saveCostEdit;
 function renderGoals(){
   const wrap = document.getElementById('goalsWrap');
   if(state.goals.length===0){
-    wrap.innerHTML = '<div class="empty">No savings goals yet.</div>';
+    wrap.innerHTML = `<div class="empty">${t('no_goals_yet')}</div>`;
     return;
   }
   let html = '';
@@ -921,7 +1552,7 @@ function renderGoals(){
           </span>
         </div>
         <div class="field" style="margin-bottom:0;">
-          <label>Target amount (MXN)</label>
+          <label>${t('target_amount_mxn')}</label>
           <input type="number" class="inline-edit-input" id="editGoalTarget-${g.id}" value="${target}">
         </div>
       </div>`;
@@ -940,11 +1571,11 @@ function renderGoals(){
           <span>${pct.toFixed(0)}%</span>
         </div>
         <div class="goal-add-row">
-          <input type="number" inputmode="decimal" placeholder="Add amount (MXN)" id="goalAdd-${g.id}">
-          <button class="btn-small" onclick="addToGoal('${g.id}')">Add</button>
+          <input type="number" inputmode="decimal" placeholder="${t('add_amount_mxn')}" id="goalAdd-${g.id}">
+          <button class="btn-small" onclick="addToGoal('${g.id}')">${t('add')}</button>
         </div>
         <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; margin-top:10px; margin-bottom:0;">
-          <span style="font-size:0.85rem; color:var(--muted);">Automatically add money towards this goal</span>
+          <span style="font-size:0.85rem; color:var(--muted);">${t('autosave_this_goal')}</span>
           <input type="checkbox" onchange="toggleGoalAutoSave('${g.id}', this.checked)" style="width:18px; height:18px; accent-color:var(--accent); cursor:pointer; flex-shrink:0;" ${(state.autoSaveEnabled && state.autoSaveGoalId===g.id) ? 'checked' : ''}>
         </label>
       </div>`;
@@ -979,7 +1610,7 @@ function addToGoal(id){
   if(amount>0){
     const available = totalSavedAvailable();
     if(amount > available){
-      alert(`You only have ${fmtMXN(available)} available in Total Saved.`);
+      alert(t('only_have_available', {amount: fmtMXN(available)}));
       return;
     }
   }
@@ -998,8 +1629,8 @@ function deleteGoal(id){
   const saved = Number(goal.saved)||0;
   if(saved > 0){
     pendingDeleteGoalId = id;
-    document.getElementById('goalDeleteTitle').textContent = `Delete "${goal.name}"?`;
-    document.getElementById('goalDeleteMsg').textContent = `This goal has ${fmtMXN(saved)} saved toward it. What should happen to that money?`;
+    document.getElementById('goalDeleteTitle').textContent = t('goal_delete_title', {name: goal.name});
+    document.getElementById('goalDeleteMsg').textContent = t('goal_delete_msg', {amount: fmtMXN(saved)});
     document.getElementById('goalDeleteOverlay').style.display = 'flex';
     return;
   }
@@ -1070,7 +1701,7 @@ function renderStreak(){
 
 function renderPreview(){
   const mxnToday = dailyBudgetMXNToday();
-  document.getElementById('previewBudget').textContent = mxnToday!=null ? fmtMXN(mxnToday) : 'rate unavailable';
+  document.getElementById('previewBudget').textContent = mxnToday!=null ? fmtMXN(mxnToday) : t('rate_unavailable');
   document.getElementById('addBtn').disabled = mxnToday==null;
 }
 
@@ -1083,7 +1714,7 @@ function renderHistory(){
   const entries = [...state.entries].sort((a,b)=> a.date.localeCompare(b.date));
   let running = Number(state.startingBalance)||0;
   if(entries.length===0){
-    wrap.innerHTML = '<div class="empty">No entries yet — add your first day above.</div>';
+    wrap.innerHTML = `<div class="empty">${t('no_entries_yet')}</div>`;
     document.getElementById('totalSaved').textContent = fmtMXN(totalSavedAvailable());
     return;
   }
@@ -1095,7 +1726,7 @@ function renderHistory(){
       allRows.push(`<tr>
         <td><input type="date" class="inline-edit-input" id="editEntryDate-${e.id}" value="${e.date}"></td>
         <td><input type="number" class="inline-edit-input" id="editEntrySpent-${e.id}" value="${e.spent}"></td>
-        <td colspan="2" style="text-align:center; color:var(--muted); font-size:0.78rem;">will recalculate</td>
+        <td colspan="2" style="text-align:center; color:var(--muted); font-size:0.78rem;">${t('will_recalculate')}</td>
         <td class="actions-cell">
           <button class="save-btn" onclick="saveEntryEdit('${e.id}')">${ICON_CHECK}</button>
           <button class="del-btn" onclick="cancelEntryEdit()">${ICON_X}</button>
@@ -1119,10 +1750,10 @@ function renderHistory(){
   const hiddenCount = entries.length - HISTORY_COLLAPSED_LIMIT;
   let toggleHtml = '';
   if(entries.length > HISTORY_COLLAPSED_LIMIT && editingEntryId==null){
-    toggleHtml = `<div class="list-more-toggle" onclick="toggleHistoryExpanded()">${historyExpanded ? (ICON_CHEVRON_UP + ' Show less') : (ICON_CHEVRON_DOWN + ` Show ${hiddenCount} more`)}</div>`;
+    toggleHtml = `<div class="list-more-toggle" onclick="toggleHistoryExpanded()">${historyExpanded ? (ICON_CHEVRON_UP + ' ' + t('show_less')) : (ICON_CHEVRON_DOWN + ' ' + t('show_more', {n: hiddenCount}))}</div>`;
   }
   wrap.innerHTML = `<table>
-    <tr><th>Date</th><th>Spent</th><th>Saved</th><th>Total</th><th></th></tr>
+    <tr><th>${t('th_date')}</th><th>${t('th_spent')}</th><th>${t('th_saved')}</th><th>${t('th_total')}</th><th></th></tr>
     ${visibleRows.join('')}
   </table>${toggleHtml}`;
   document.getElementById('totalSaved').textContent = fmtMXN(totalSavedAvailable());
@@ -1156,7 +1787,7 @@ window.saveEntryEdit = saveEntryEdit;
 function renderPrivacyToggle(){
   const btn = document.getElementById('privacyToggle');
   btn.classList.toggle('active', !!state.privacyMode);
-  btn.title = state.privacyMode ? 'Show amounts' : 'Hide amounts';
+  btn.title = state.privacyMode ? t('show_amounts') : t('hide_amounts');
 }
 
 function renderAll(){
@@ -1170,7 +1801,7 @@ function renderAll(){
 }
 
 function deleteEntry(id){
-  if(!confirm('Delete this entry? This cannot be undone.')) return;
+  if(!confirm(t('confirm_delete_entry'))) return;
   state.entries = state.entries.filter(e=>e.id!==id);
   save();
   renderAll();
@@ -1178,7 +1809,7 @@ function deleteEntry(id){
 window.deleteEntry = deleteEntry;
 
 function deleteCost(id){
-  if(!confirm('Delete this fixed cost? This cannot be undone.')) return;
+  if(!confirm(t('confirm_delete_cost'))) return;
   state.costs = state.costs.filter(c=>c.id!==id);
   save();
   renderAll();
@@ -1242,14 +1873,14 @@ document.getElementById('importFile').addEventListener('change', e=>{
   reader.onload = ()=>{
     let parsed;
     try{ parsed = JSON.parse(reader.result); }catch(err){
-      alert('That file is not a valid backup (invalid JSON).');
+      alert(t('invalid_backup_json'));
       return;
     }
     if(!Array.isArray(parsed.entries)){
-      alert('That file doesn\'t look like a Saving Pesos backup.');
+      alert(t('invalid_backup_shape'));
       return;
     }
-    if(!confirm('This will replace all current data on this device with the backup file. Continue?')) return;
+    if(!confirm(t('confirm_restore_backup'))) return;
     state = normalize(parsed);
     save();
     renderAll();
@@ -1258,7 +1889,7 @@ document.getElementById('importFile').addEventListener('change', e=>{
   e.target.value = '';
 });
 document.getElementById('resetDataBtn').addEventListener('click', ()=>{
-  if(!confirm('Are you sure? This will permanently erase every entry, goal, cost, and setting on this device. This cannot be undone.')) return;
+  if(!confirm(t('confirm_reset_all'))) return;
   localStorage.removeItem(STORE_KEY);
   localStorage.removeItem(BACKUP_KEY);
   state = defaultState();
@@ -1276,7 +1907,7 @@ if(IS_TESTING_BUILD){
     if(!text) return;
     const btn = document.getElementById('testerFeedbackSubmitBtn');
     btn.disabled = true;
-    btn.textContent = 'Sending…';
+    btn.textContent = t('sending');
     try{
       await fetch(TESTER_FEEDBACK_FORM_URL, {
         method: 'POST',
@@ -1287,7 +1918,7 @@ if(IS_TESTING_BUILD){
     }catch(e){}
     textEl.value = '';
     btn.disabled = false;
-    btn.textContent = 'Send feedback';
+    btn.textContent = t('send_feedback_btn');
     const msg = document.getElementById('testerFeedbackMsg');
     msg.style.display = 'block';
     setTimeout(()=>{ msg.style.display = 'none'; }, 5000);
@@ -1324,7 +1955,7 @@ document.getElementById('applyManualRateBtn').addEventListener('click', ()=>{
   const input = document.getElementById('manualRateValue');
   const rate = Number(input.value);
   if(!rate || rate<=0){
-    alert('Enter a valid rate greater than 0.');
+    alert(t('invalid_rate'));
     return;
   }
   state.liveRate = rate;
@@ -1369,10 +2000,10 @@ document.getElementById('addGoalBtn').addEventListener('click', ()=>{
 });
 
 const SAVINGS_CELEBRATION_TIERS = [
-  { min: 1.0, emoji: '💯', message: 'Perfect day! You spent nothing of today\'s budget.', confetti: 50 },
-  { min: 0.9, emoji: '🔥', message: 'Incredible! You saved {pct}% of today\'s budget.', confetti: 36 },
-  { min: 0.8, emoji: '🎉', message: 'Great job! You saved {pct}% today.', confetti: 22 },
-  { min: 0.6, emoji: '✨', message: 'Nice save! {pct}% left unspent today.', confetti: 10 }
+  { min: 1.0, emoji: '💯', key: 'celeb_perfect', confetti: 50 },
+  { min: 0.9, emoji: '🔥', key: 'celeb_incredible', confetti: 36 },
+  { min: 0.8, emoji: '🎉', key: 'celeb_great', confetti: 22 },
+  { min: 0.6, emoji: '✨', key: 'celeb_nice', confetti: 10 }
 ];
 const CONFETTI_COLORS = ['#34d399','#fbbf24','#60a5fa','#f472b6','#c084fc','#fb923c'];
 
@@ -1409,7 +2040,7 @@ function celebrateSavings(saved, budget){
   const tier = SAVINGS_CELEBRATION_TIERS.find(t=>pct>=t.min);
   if(!tier) return;
   const pctRounded = Math.round(Math.min(pct,1)*100);
-  showCelebrationToast(tier.emoji, tier.message.replace('{pct}', pctRounded));
+  showCelebrationToast(tier.emoji, t(tier.key, {pct: pctRounded}));
   spawnConfetti(tier.confetti);
 }
 
@@ -1497,10 +2128,13 @@ function showOnboardingStep(step){
 }
 
 function openOnboarding(){
+  document.getElementById('onboardingLanguage').value = state.language || 'en';
   document.getElementById('onboardingCurrency').value = state.incomeCurrency || 'EUR';
   document.getElementById('onboardingIncome').value = state.income ?? 1500;
   document.getElementById('onboardingDays').value = state.days ?? 30;
-  showOnboardingStep(1);
+  // New installs start at the language picker; reopening the guide later (language
+  // already chosen) jumps straight to the tour so it doesn't feel repetitive.
+  showOnboardingStep(state.onboardingComplete ? 2 : 1);
   document.getElementById('onboardingOverlay').style.display = 'flex';
 }
 
@@ -1515,10 +2149,16 @@ function closeOnboarding(){
   document.getElementById('onboardingOverlay').style.display = 'none';
 }
 
-document.getElementById('onboardingNext1').addEventListener('click', ()=> showOnboardingStep(2));
-document.getElementById('onboardingBack2').addEventListener('click', ()=> showOnboardingStep(1));
-document.getElementById('onboardingNext2').addEventListener('click', ()=> showOnboardingStep(3));
-document.getElementById('onboardingBack3').addEventListener('click', ()=> showOnboardingStep(2));
+document.getElementById('onboardingLanguage').addEventListener('change', e=>{
+  state.language = e.target.value;
+  save();
+  applyTranslations();
+});
+document.getElementById('onboardingNext0').addEventListener('click', ()=> showOnboardingStep(2));
+document.getElementById('onboardingNext1').addEventListener('click', ()=> showOnboardingStep(3));
+document.getElementById('onboardingBack2').addEventListener('click', ()=> showOnboardingStep(2));
+document.getElementById('onboardingNext2').addEventListener('click', ()=> showOnboardingStep(4));
+document.getElementById('onboardingBack3').addEventListener('click', ()=> showOnboardingStep(3));
 
 document.getElementById('onboardingStartBtn').addEventListener('click', ()=>{
   const income = Number(document.getElementById('onboardingIncome').value)||0;
@@ -1537,6 +2177,11 @@ document.getElementById('onboardingStartBtn').addEventListener('click', ()=>{
   document.getElementById(id).addEventListener('click', closeOnboarding);
 });
 document.getElementById('showOnboardingBtn').addEventListener('click', openOnboarding);
+document.getElementById('languageSelect').addEventListener('change', e=>{
+  state.language = e.target.value;
+  save();
+  applyTranslations();
+});
 
 function switchTab(tab){
   document.querySelectorAll('.tab-panel').forEach(p=>{
@@ -1551,6 +2196,8 @@ document.querySelectorAll('.tab-bar-btn').forEach(btn=>{
   btn.addEventListener('click', ()=> switchTab(btn.dataset.tab));
 });
 
+populateLanguageSelects();
+applyTranslations();
 applyWidgetOrder();
 initDragReorder();
 initOnboarding();
