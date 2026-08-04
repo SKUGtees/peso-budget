@@ -1995,7 +1995,7 @@ function renderForecast(){
     const anchor = i===coords.length-1 ? 'end' : 'middle';
     const xPos = i===coords.length-1 ? c.x - 2 : c.x;
     const text = Math.round(points[i].amount).toLocaleString('en-US');
-    return `<text x="${xPos.toFixed(1)}" y="${(c.y-8).toFixed(1)}" font-size="9" font-weight="700" fill="${colorVar}" text-anchor="${anchor}">${escapeAttr(text)}</text>`;
+    return `<text x="${xPos.toFixed(1)}" y="${(c.y-8).toFixed(1)}" font-size="9" font-weight="700" fill="var(--text)" text-anchor="${anchor}">${escapeAttr(text)}</text>`;
   }).join('');
 
   wrap.innerHTML = `
