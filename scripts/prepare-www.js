@@ -12,4 +12,19 @@ fs.mkdirSync(wwwDir, { recursive: true });
 for (const file of files) {
   fs.copyFileSync(path.join(root, file), path.join(wwwDir, file));
 }
-console.log('Copied', files.length, 'files into www/');
+
+function copyDirRecursive(src, dest) {
+  fs.mkdirSync(dest, { recursive: true });
+  for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
+    const srcPath = path.join(src, entry.name);
+    const destPath = path.join(dest, entry.name);
+    if (entry.isDirectory()) {
+      copyDirRecursive(srcPath, destPath);
+    } else {
+      fs.copyFileSync(srcPath, destPath);
+    }
+  }
+}
+copyDirRecursive(path.join(root, 'assets'), path.join(wwwDir, 'assets'));
+
+console.log('Copied', files.length, 'files and assets/ into www/');
