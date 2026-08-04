@@ -1,6 +1,6 @@
 {
   "appId": "com.skugtees.pesobudget",
-  "appName": "Saving Pesos",
+  "appName": "Budget Abroad",
   "webDir": "www",
   "plugins": {
     "SplashScreen": {
