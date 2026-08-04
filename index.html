@@ -172,6 +172,9 @@
   .goal-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
   .goal-name{ font-weight:600; }
   .goal-bar-track{ background:var(--input-bg); border-radius:8px; height:10px; overflow:hidden; margin-bottom:6px; }
+  .mascot-wrap{ text-align:center; }
+  .mascot-wrap img{ max-width:180px; width:100%; display:block; margin:0 auto; }
+  .mascot-wrap .mascot-caption{ margin-top:8px; font-size:0.85rem; color:var(--muted); font-weight:600; }
   .goal-bar-fill{ background:var(--accent); height:100%; border-radius:8px; }
   .goal-stats{ display:flex; justify-content:space-between; font-size:0.82rem; color:var(--muted); margin-bottom:10px; }
   .goal-add-row{ display:flex; gap:8px; }
@@ -392,6 +395,12 @@
       <div class="amount" id="totalSaved">$0</div>
       <div class="label" style="margin-top:4px;" data-i18n="total_saved_note">Available — money added to goals is set aside separately</div>
     </div>
+  </div>
+
+  <div class="card" data-widget-id="mascot">
+    <span class="drag-handle" title="Drag to reorder">⠿</span>
+    <h2 data-i18n="card_mascot">Your Savings Buddy</h2>
+    <div class="mascot-wrap" id="mascotWrap"></div>
   </div>
 
 </div>
@@ -653,6 +662,12 @@ en: {
   forecast_empty: "Log a few days of spending to see your savings forecast.",
   forecast_week: "Next week", forecast_month: "Next month", forecast_year: "Next year",
   forecast_axis_today: "Today", forecast_axis_week: "1wk", forecast_axis_month: "1mo", forecast_axis_year: "1yr",
+  card_mascot: "Your Savings Buddy",
+  mascot_tier_1: "Every bit counts — keep going!",
+  mascot_tier_2: "You're building a stash!",
+  mascot_tier_3: "Nice nest egg forming!",
+  mascot_tier_4: "Living large!",
+  mascot_tier_5: "Certified money mogul!",
   no_entries_yet: "No entries yet — add your first day above.",
   monthly_income_label: "Monthly income ({cur})",
   days_in_period: "Days in period",
@@ -774,6 +789,12 @@ es: {
   forecast_empty: "Registra algunos días de gastos para ver tu pronóstico de ahorro.",
   forecast_week: "Próxima semana", forecast_month: "Próximo mes", forecast_year: "Próximo año",
   forecast_axis_today: "Hoy", forecast_axis_week: "1sem", forecast_axis_month: "1mes", forecast_axis_year: "1año",
+  card_mascot: "Tu Compañero de Ahorro",
+  mascot_tier_1: "Cada poco cuenta — ¡sigue así!",
+  mascot_tier_2: "¡Estás formando una reserva!",
+  mascot_tier_3: "¡Se está formando un buen colchón!",
+  mascot_tier_4: "¡Viviendo a lo grande!",
+  mascot_tier_5: "¡Magnate del dinero certificado!",
   no_entries_yet: "Aún no hay registros — agrega tu primer día arriba.",
   monthly_income_label: "Ingreso mensual ({cur})",
   days_in_period: "Días en el periodo",
@@ -895,6 +916,12 @@ fr: {
   forecast_empty: "Enregistrez quelques jours de dépenses pour voir votre prévision d'épargne.",
   forecast_week: "Semaine prochaine", forecast_month: "Mois prochain", forecast_year: "Année prochaine",
   forecast_axis_today: "Aujourd'hui", forecast_axis_week: "1sem", forecast_axis_month: "1mois", forecast_axis_year: "1an",
+  card_mascot: "Ton Copain d'Épargne",
+  mascot_tier_1: "Chaque petit geste compte — continue !",
+  mascot_tier_2: "Tu te constitues une réserve !",
+  mascot_tier_3: "Un joli pécule se forme !",
+  mascot_tier_4: "La grande vie !",
+  mascot_tier_5: "Magnat de l'argent certifié !",
   no_entries_yet: "Aucune entrée pour l'instant — ajoutez votre premier jour ci-dessus.",
   monthly_income_label: "Revenu mensuel ({cur})",
   days_in_period: "Jours dans la période",
@@ -1016,6 +1043,12 @@ de: {
   forecast_empty: "Erfasse ein paar Tage an Ausgaben, um deine Sparprognose zu sehen.",
   forecast_week: "Nächste Woche", forecast_month: "Nächster Monat", forecast_year: "Nächstes Jahr",
   forecast_axis_today: "Heute", forecast_axis_week: "1Wo", forecast_axis_month: "1Mo", forecast_axis_year: "1J",
+  card_mascot: "Dein Spar-Kumpel",
+  mascot_tier_1: "Jeder Betrag zählt — weiter so!",
+  mascot_tier_2: "Du baust dir einen Vorrat auf!",
+  mascot_tier_3: "Ein schönes Polster entsteht!",
+  mascot_tier_4: "Lebst groß auf!",
+  mascot_tier_5: "Zertifizierter Geld-Mogul!",
   no_entries_yet: "Noch keine Einträge — füge oben deinen ersten Tag hinzu.",
   monthly_income_label: "Monatliches Einkommen ({cur})",
   days_in_period: "Tage im Zeitraum",
@@ -1137,6 +1170,12 @@ pt: {
   forecast_empty: "Registre alguns dias de gastos para ver sua previsão de economia.",
   forecast_week: "Próxima semana", forecast_month: "Próximo mês", forecast_year: "Próximo ano",
   forecast_axis_today: "Hoje", forecast_axis_week: "1sem", forecast_axis_month: "1mês", forecast_axis_year: "1ano",
+  card_mascot: "Seu Amigo da Economia",
+  mascot_tier_1: "Cada pouquinho conta — continue!",
+  mascot_tier_2: "Você está formando uma reserva!",
+  mascot_tier_3: "Um belo pé de meia se formando!",
+  mascot_tier_4: "Vivendo em grande estilo!",
+  mascot_tier_5: "Magnata do dinheiro certificado!",
   no_entries_yet: "Ainda não há registros — adicione seu primeiro dia acima.",
   monthly_income_label: "Renda mensal ({cur})",
   days_in_period: "Dias no período",
@@ -1858,6 +1897,26 @@ function saveEntryEdit(id){
 }
 window.saveEntryEdit = saveEntryEdit;
 
+const MASCOT_TIERS = [
+  { maxDays: 3, img: 'assets/mascot/tier-1.png', key: 'mascot_tier_1' },
+  { maxDays: 7, img: 'assets/mascot/tier-2.png', key: 'mascot_tier_2' },
+  { maxDays: 14, img: 'assets/mascot/tier-3.png', key: 'mascot_tier_3' },
+  { maxDays: 30, img: 'assets/mascot/tier-4.png', key: 'mascot_tier_4' },
+  { maxDays: Infinity, img: 'assets/mascot/tier-5.png', key: 'mascot_tier_5' }
+];
+
+function renderMascot(){
+  const wrap = document.getElementById('mascotWrap');
+  const available = totalSavedAvailable();
+  const dailyBudget = dailyBudgetMXNToday();
+  const daysBanked = (dailyBudget && dailyBudget > 0) ? available / dailyBudget : 0;
+  const tier = MASCOT_TIERS.find(t2 => daysBanked < t2.maxDays) || MASCOT_TIERS[MASCOT_TIERS.length-1];
+  wrap.innerHTML = `
+    <img src="${tier.img}" alt="Savings mascot">
+    <div class="mascot-caption">${t(tier.key)}</div>
+  `;
+}
+
 function renderPrivacyToggle(){
   const btn = document.getElementById('privacyToggle');
   btn.classList.toggle('active', !!state.privacyMode);
@@ -1933,6 +1992,7 @@ function renderAll(){
   renderPrivacyToggle();
   renderStreak();
   renderForecast();
+  renderMascot();
 }
 
 function deleteEntry(id){
