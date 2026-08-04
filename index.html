@@ -1969,7 +1969,7 @@ function renderForecast(){
   const negative = finalAmount < 0;
   const colorVar = negative ? 'var(--danger)' : 'var(--accent)';
 
-  const W = 300, H = 130, padL = 8, padR = 8, padT = 12, padB = 22;
+  const W = 300, H = 130, padL = 8, padR = 8, padT = 22, padB = 22;
   const plotW = W - padL - padR, plotH = H - padT - padB;
   const amounts = points.map(p=>p.amount);
   const minY = Math.min(0, ...amounts);
@@ -1990,6 +1990,13 @@ function renderForecast(){
 
   const dots = coords.map(c=> `<circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="3" fill="${colorVar}"/>`).join('');
   const axisLabels = coords.map(c=> `<text x="${c.x.toFixed(1)}" y="${H-6}" font-size="9" fill="var(--muted)" text-anchor="middle">${escapeAttr(c.label)}</text>`).join('');
+  const valueLabels = coords.map((c,i)=>{
+    if(i===0) return '';
+    const anchor = i===coords.length-1 ? 'end' : 'middle';
+    const xPos = i===coords.length-1 ? c.x - 2 : c.x;
+    const text = Math.round(points[i].amount).toLocaleString('en-US');
+    return `<text x="${xPos.toFixed(1)}" y="${(c.y-8).toFixed(1)}" font-size="9" font-weight="700" fill="${colorVar}" text-anchor="${anchor}">${escapeAttr(text)}</text>`;
+  }).join('');
 
   wrap.innerHTML = `
     <div style="font-size:0.8rem; color:var(--muted); margin-bottom:2px;">${t('forecast_year')}</div>
@@ -2006,6 +2013,7 @@ function renderForecast(){
       <path d="${linePath}" fill="none" stroke="${colorVar}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
       <line x1="${lastC.x.toFixed(1)}" y1="${padT}" x2="${lastC.x.toFixed(1)}" y2="${(H-padB).toFixed(1)}" stroke="${colorVar}" stroke-width="1" stroke-dasharray="2,3" opacity="0.5"/>
       ${dots}
+      ${valueLabels}
       ${axisLabels}
     </svg>`;
 }
