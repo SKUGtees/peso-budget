@@ -585,19 +585,25 @@
       <div class="entry-preview" id="testerFeedbackMsg" style="display:none; margin-top:8px; color:var(--accent);" data-i18n="feedback_thanks">Thank you! Your feedback has been sent. 🙏</div>
     </div>
     <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:14px;">
-      <label style="display:block; font-size:0.82rem; color:var(--muted); margin-bottom:10px;" data-i18n="backup_restore">Backup &amp; Restore</label>
-      <button class="btn-primary" id="exportBtn" style="margin-top:0;" data-i18n="export_backup">Export backup file</button>
-      <input type="file" id="importFile" accept="application/json" style="display:none;">
-      <button class="btn-primary" id="importBtn" style="background:var(--card2); color:var(--accent); border:1px solid var(--border); margin-top:10px;" data-i18n="restore_backup">Restore from backup file</button>
-      <div class="entry-preview" style="display:block; line-height:1.6; margin-top:10px; margin-bottom:0;" data-i18n="backup_desc">
-        Your data lives only on this device's browser storage. Updates to the app never touch it, but clearing browser data, switching phones, or reinstalling will. Export a backup file now and then to be safe - Restore reads one back in.
+      <div id="dataMgmtToggle" style="display:flex; align-items:center; justify-content:space-between; cursor:pointer;">
+        <label style="font-size:0.82rem; color:var(--muted); margin-bottom:0; cursor:pointer;" data-i18n="data_management">Data Management</label>
+        <span id="dataMgmtChevron" style="color:var(--muted); display:flex;"></span>
       </div>
-    </div>
-    <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:14px;">
-      <label style="display:block; font-size:0.82rem; color:var(--muted); margin-bottom:10px;" data-i18n="danger_zone">Danger Zone</label>
-      <button class="btn-primary" id="resetDataBtn" style="background:var(--danger); color:#3a0d0d;" data-i18n="reset_all_data">Reset all data</button>
-      <div class="entry-preview" style="display:block; line-height:1.6; margin-top:10px; margin-bottom:0;" data-i18n="reset_desc">
-        Permanently erases every entry, goal, cost, and setting on this device and starts over from scratch. This cannot be undone - export a backup first if you want to keep a copy.
+      <div id="dataMgmtBody" style="display:none; margin-top:14px;">
+        <label style="display:block; font-size:0.82rem; color:var(--muted); margin-bottom:10px;" data-i18n="backup_restore">Backup &amp; Restore</label>
+        <button class="btn-primary" id="exportBtn" style="margin-top:0;" data-i18n="export_backup">Export backup file</button>
+        <input type="file" id="importFile" accept="application/json" style="display:none;">
+        <button class="btn-primary" id="importBtn" style="background:var(--card2); color:var(--accent); border:1px solid var(--border); margin-top:10px;" data-i18n="restore_backup">Restore from backup file</button>
+        <div class="entry-preview" style="display:block; line-height:1.6; margin-top:10px; margin-bottom:0;" data-i18n="backup_desc">
+          Your data lives only on this device's browser storage. Updates to the app never touch it, but clearing browser data, switching phones, or reinstalling will. Export a backup file now and then to be safe - Restore reads one back in.
+        </div>
+        <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:14px;">
+          <label style="display:block; font-size:0.82rem; color:var(--muted); margin-bottom:10px;" data-i18n="danger_zone">Danger Zone</label>
+          <button class="btn-primary" id="resetDataBtn" style="background:var(--danger); color:#3a0d0d;" data-i18n="reset_all_data">Reset all data</button>
+          <div class="entry-preview" style="display:block; line-height:1.6; margin-top:10px; margin-bottom:0;" data-i18n="reset_desc">
+            Permanently erases every entry, goal, cost, and setting on this device and starts over from scratch. This cannot be undone - export a backup first if you want to keep a copy.
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -714,6 +720,7 @@ en: {
   sending: "Sending…",
   feedback_thanks: "Thank you! Your feedback has been sent. 🙏",
   backup_restore: "Backup & Restore",
+  data_management: "Data Management",
   export_backup: "Export backup file",
   restore_backup: "Restore from backup file",
   backup_desc: "Your data lives only on this device's browser storage. Updates to the app never touch it, but clearing browser data, switching phones, or reinstalling will. Export a backup file now and then to be safe - Restore reads one back in.",
@@ -843,6 +850,7 @@ es: {
   sending: "Enviando…",
   feedback_thanks: "¡Gracias! Tu comentario ha sido enviado. 🙏",
   backup_restore: "Copia de Seguridad y Restauración",
+  data_management: "Gestión de Datos",
   export_backup: "Exportar copia de seguridad",
   restore_backup: "Restaurar desde copia de seguridad",
   backup_desc: "Tus datos viven solo en el almacenamiento del navegador de este dispositivo. Las actualizaciones de la app nunca los tocan, pero borrar los datos del navegador, cambiar de teléfono o reinstalar sí lo hará. Exporta una copia de seguridad de vez en cuando - Restaurar la vuelve a cargar.",
@@ -972,6 +980,7 @@ fr: {
   sending: "Envoi…",
   feedback_thanks: "Merci ! Votre commentaire a été envoyé. 🙏",
   backup_restore: "Sauvegarde et Restauration",
+  data_management: "Gestion des Données",
   export_backup: "Exporter une sauvegarde",
   restore_backup: "Restaurer depuis une sauvegarde",
   backup_desc: "Vos données ne vivent que dans le stockage du navigateur de cet appareil. Les mises à jour de l'app n'y touchent jamais, mais effacer les données du navigateur, changer de téléphone ou réinstaller le fera. Exportez une sauvegarde de temps en temps par sécurité - Restaurer la recharge.",
@@ -1101,6 +1110,7 @@ de: {
   sending: "Wird gesendet…",
   feedback_thanks: "Danke! Dein Feedback wurde gesendet. 🙏",
   backup_restore: "Sicherung & Wiederherstellung",
+  data_management: "Datenverwaltung",
   export_backup: "Sicherungsdatei Exportieren",
   restore_backup: "Aus Sicherungsdatei Wiederherstellen",
   backup_desc: "Deine Daten leben nur im Browser-Speicher dieses Geräts. App-Updates berühren sie nie, aber das Löschen von Browserdaten, ein Telefonwechsel oder eine Neuinstallation schon. Exportiere ab und zu eine Sicherungsdatei zur Sicherheit - Wiederherstellen liest sie wieder ein.",
@@ -1230,6 +1240,7 @@ pt: {
   sending: "Enviando…",
   feedback_thanks: "Obrigado! Seu feedback foi enviado. 🙏",
   backup_restore: "Backup e Restauração",
+  data_management: "Gerenciamento de Dados",
   export_backup: "Exportar arquivo de backup",
   restore_backup: "Restaurar de arquivo de backup",
   backup_desc: "Seus dados vivem apenas no armazenamento do navegador deste dispositivo. Atualizações do app nunca os tocam, mas limpar dados do navegador, trocar de telefone ou reinstalar sim. Exporte um backup de vez em quando por segurança - Restaurar o carrega de volta.",
@@ -2356,6 +2367,13 @@ document.getElementById('mascotToggle').addEventListener('change', e=>{
   state.mascotEnabled = e.target.checked;
   save();
   renderMascot();
+});
+document.getElementById('dataMgmtChevron').innerHTML = ICON_CHEVRON_DOWN;
+document.getElementById('dataMgmtToggle').addEventListener('click', ()=>{
+  const body = document.getElementById('dataMgmtBody');
+  const expanded = body.style.display !== 'none';
+  body.style.display = expanded ? 'none' : 'block';
+  document.getElementById('dataMgmtChevron').innerHTML = expanded ? ICON_CHEVRON_DOWN : ICON_CHEVRON_UP;
 });
 
 let onboardingStep = 1;
