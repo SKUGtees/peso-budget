@@ -540,6 +540,15 @@
     </div>
     <div class="field">
       <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; margin-bottom:0;">
+        <span data-i18n="mascot_toggle">Show savings mascot</span>
+        <input type="checkbox" id="mascotToggle" style="width:18px; height:18px; accent-color:var(--accent); cursor:pointer;">
+      </label>
+      <div class="entry-preview" style="display:block; margin-top:6px;" data-i18n="mascot_toggle_desc">
+        Shows a character on the Home tab that changes as your savings grow. Turn off to hide it.
+      </div>
+    </div>
+    <div class="field">
+      <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; margin-bottom:0;">
         <span data-i18n="autosave_toggle">Auto-save towards a goal</span>
         <input type="checkbox" id="autoSaveToggle" style="width:18px; height:18px; accent-color:var(--accent); cursor:pointer;">
       </label>
@@ -668,6 +677,8 @@ en: {
   mascot_tier_3: "Nice nest egg forming!",
   mascot_tier_4: "Living large!",
   mascot_tier_5: "Certified money mogul!",
+  mascot_toggle: "Show savings mascot",
+  mascot_toggle_desc: "Shows a character on the Home tab that changes as your savings grow. Turn off to hide it.",
   no_entries_yet: "No entries yet — add your first day above.",
   monthly_income_label: "Monthly income ({cur})",
   days_in_period: "Days in period",
@@ -795,6 +806,8 @@ es: {
   mascot_tier_3: "¡Se está formando un buen colchón!",
   mascot_tier_4: "¡Viviendo a lo grande!",
   mascot_tier_5: "¡Magnate del dinero certificado!",
+  mascot_toggle: "Mostrar compañero de ahorro",
+  mascot_toggle_desc: "Muestra un personaje en la pestaña de Inicio que cambia a medida que crecen tus ahorros. Desactívalo para ocultarlo.",
   no_entries_yet: "Aún no hay registros — agrega tu primer día arriba.",
   monthly_income_label: "Ingreso mensual ({cur})",
   days_in_period: "Días en el periodo",
@@ -922,6 +935,8 @@ fr: {
   mascot_tier_3: "Un joli pécule se forme !",
   mascot_tier_4: "La grande vie !",
   mascot_tier_5: "Magnat de l'argent certifié !",
+  mascot_toggle: "Afficher le copain d'épargne",
+  mascot_toggle_desc: "Affiche un personnage dans l'onglet Accueil qui évolue avec tes économies. Désactive pour le masquer.",
   no_entries_yet: "Aucune entrée pour l'instant — ajoutez votre premier jour ci-dessus.",
   monthly_income_label: "Revenu mensuel ({cur})",
   days_in_period: "Jours dans la période",
@@ -1049,6 +1064,8 @@ de: {
   mascot_tier_3: "Ein schönes Polster entsteht!",
   mascot_tier_4: "Lebst groß auf!",
   mascot_tier_5: "Zertifizierter Geld-Mogul!",
+  mascot_toggle: "Spar-Kumpel anzeigen",
+  mascot_toggle_desc: "Zeigt einen Charakter im Home-Tab, der sich mit deinen Ersparnissen verändert. Schalte ihn aus, um ihn auszublenden.",
   no_entries_yet: "Noch keine Einträge — füge oben deinen ersten Tag hinzu.",
   monthly_income_label: "Monatliches Einkommen ({cur})",
   days_in_period: "Tage im Zeitraum",
@@ -1176,6 +1193,8 @@ pt: {
   mascot_tier_3: "Um belo pé de meia se formando!",
   mascot_tier_4: "Vivendo em grande estilo!",
   mascot_tier_5: "Magnata do dinheiro certificado!",
+  mascot_toggle: "Mostrar amigo da economia",
+  mascot_toggle_desc: "Mostra um personagem na aba Início que muda conforme suas economias crescem. Desative para ocultá-lo.",
   no_entries_yet: "Ainda não há registros — adicione seu primeiro dia acima.",
   monthly_income_label: "Renda mensal ({cur})",
   days_in_period: "Dias no período",
@@ -1336,11 +1355,12 @@ function normalize(parsed){
   if(!parsed.firstUseDate) parsed.firstUseDate = localDateStr(new Date());
   if(!parsed.language) parsed.language = 'en';
   if(!parsed.localCurrency) parsed.localCurrency = 'MXN';
+  if(parsed.mascotEnabled==null) parsed.mascotEnabled = true;
   return parsed;
 }
 
 function defaultState(){
-  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:{}, spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR', dragModeEnabled:false, autoSaveEnabled:false, autoSaveGoalId:'', manualRateOverride:false, accentColor:'#34d399', firstUseDate:localDateStr(new Date()), language:'en', localCurrency:'MXN' };
+  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:{}, spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR', dragModeEnabled:false, autoSaveEnabled:false, autoSaveGoalId:'', manualRateOverride:false, accentColor:'#34d399', firstUseDate:localDateStr(new Date()), language:'en', localCurrency:'MXN', mascotEnabled:true };
 }
 
 function load(){
@@ -1548,6 +1568,7 @@ function renderSettings(){
   document.getElementById('moneyLeftLabel').textContent = t('left_after_costs_mxn', {cur: localCur});
   document.getElementById('dailyMxnLabel').textContent = t('daily_spending_budget_mxn', {cur: localCur});
   document.getElementById('dragModeToggle').checked = !!state.dragModeEnabled;
+  document.getElementById('mascotToggle').checked = state.mascotEnabled !== false;
   if(state.autoSaveGoalId && !state.goals.some(g=>g.id===state.autoSaveGoalId)){
     state.autoSaveGoalId = '';
     save();
@@ -1906,6 +1927,12 @@ const MASCOT_TIERS = [
 ];
 
 function renderMascot(){
+  const card = document.querySelector('[data-widget-id="mascot"]');
+  if(state.mascotEnabled === false){
+    card.style.display = 'none';
+    return;
+  }
+  card.style.display = '';
   const wrap = document.getElementById('mascotWrap');
   const available = totalSavedAvailable();
   const dailyBudget = dailyBudgetMXNToday();
@@ -2316,6 +2343,11 @@ document.getElementById('dragModeToggle').addEventListener('change', e=>{
   state.dragModeEnabled = e.target.checked;
   save();
   updateDragModeUI();
+});
+document.getElementById('mascotToggle').addEventListener('change', e=>{
+  state.mascotEnabled = e.target.checked;
+  save();
+  renderMascot();
 });
 
 let onboardingStep = 1;
