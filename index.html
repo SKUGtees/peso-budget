@@ -315,7 +315,7 @@
 
     <div class="onboarding-step" data-step="4">
       <h2 data-i18n="ob_budget_title">Set your budget</h2>
-      <p class="onboarding-intro" data-i18n="ob_budget_desc">Tell us your income and how many days it needs to cover — we'll split it into a daily spending budget for you automatically.</p>
+      <p class="onboarding-intro" data-i18n="ob_budget_desc">Tell us your income and how many days it needs to cover - we'll split it into a daily spending budget for you automatically.</p>
       <div class="field">
         <label data-i18n="ob_monthly_income">Monthly income</label>
         <input type="number" id="onboardingIncome" inputmode="decimal">
@@ -377,7 +377,7 @@
     </div>
     <div class="entry-preview">
       <span data-i18n="budget_for_day">Budget for this day</span>
-      <b id="previewBudget">—</b>
+      <b id="previewBudget">-</b>
     </div>
     <button class="btn-primary" id="addBtn" data-i18n="add_entry">Add Entry</button>
   </div>
@@ -393,7 +393,7 @@
     <div class="total-banner">
       <div class="label" data-i18n="total_saved_so_far">Total saved so far</div>
       <div class="amount" id="totalSaved">$0</div>
-      <div class="label" style="margin-top:4px;" data-i18n="total_saved_note">Available — money added to goals is set aside separately</div>
+      <div class="label" style="margin-top:4px;" data-i18n="total_saved_note">Available - money added to goals is set aside separately</div>
     </div>
   </div>
 
@@ -424,7 +424,7 @@
 
   <div class="card" data-widget-id="forecast">
     <h2 data-i18n="card_forecast">Savings Forecast</h2>
-    <div class="entry-preview" style="display:block; margin-bottom:10px;" data-i18n="forecast_desc">Based on your average daily savings so far — recalculates every time you log a new day.</div>
+    <div class="entry-preview" style="display:block; margin-bottom:10px;" data-i18n="forecast_desc">Based on your average daily savings so far - recalculates every time you log a new day.</div>
     <div id="forecastWrap"></div>
   </div>
 
@@ -438,7 +438,7 @@
     <span class="drag-handle" title="Drag to reorder">⠿</span>
     <h2 data-i18n="card_history">History</h2>
     <div id="historyWrap">
-      <div class="empty" data-i18n="no_entries_yet">No entries yet — add your first day above.</div>
+      <div class="empty" data-i18n="no_entries_yet">No entries yet - add your first day above.</div>
     </div>
   </div>
 
@@ -462,19 +462,19 @@
     <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:12px;">
       <div class="stat">
         <span class="label" id="incomeMxnLabel">Monthly income</span>
-        <span class="value" id="incomeMXN">—</span>
+        <span class="value" id="incomeMXN">-</span>
       </div>
       <div class="stat">
         <span class="label" id="totalCostsLabel">Total monthly costs</span>
-        <span class="value" id="totalCostsStat">—</span>
+        <span class="value" id="totalCostsStat">-</span>
       </div>
       <div class="stat">
         <span class="label" id="moneyLeftLabel">Left after costs</span>
-        <span class="value" id="moneyLeft">—</span>
+        <span class="value" id="moneyLeft">-</span>
       </div>
       <div class="stat">
         <span class="label" id="dailyMxnLabel">Daily spending budget</span>
-        <span class="value big" id="dailyMXN">—</span>
+        <span class="value big" id="dailyMXN">-</span>
       </div>
     </div>
   </div>
@@ -590,20 +590,20 @@
       <input type="file" id="importFile" accept="application/json" style="display:none;">
       <button class="btn-primary" id="importBtn" style="background:var(--card2); color:var(--accent); border:1px solid var(--border); margin-top:10px;" data-i18n="restore_backup">Restore from backup file</button>
       <div class="entry-preview" style="display:block; line-height:1.6; margin-top:10px; margin-bottom:0;" data-i18n="backup_desc">
-        Your data lives only on this device's browser storage. Updates to the app never touch it, but clearing browser data, switching phones, or reinstalling will. Export a backup file now and then to be safe — Restore reads one back in.
+        Your data lives only on this device's browser storage. Updates to the app never touch it, but clearing browser data, switching phones, or reinstalling will. Export a backup file now and then to be safe - Restore reads one back in.
       </div>
     </div>
     <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:14px;">
       <label style="display:block; font-size:0.82rem; color:var(--muted); margin-bottom:10px;" data-i18n="danger_zone">Danger Zone</label>
       <button class="btn-primary" id="resetDataBtn" style="background:var(--danger); color:#3a0d0d;" data-i18n="reset_all_data">Reset all data</button>
       <div class="entry-preview" style="display:block; line-height:1.6; margin-top:10px; margin-bottom:0;" data-i18n="reset_desc">
-        Permanently erases every entry, goal, cost, and setting on this device and starts over from scratch. This cannot be undone — export a backup first if you want to keep a copy.
+        Permanently erases every entry, goal, cost, and setting on this device and starts over from scratch. This cannot be undone - export a backup first if you want to keep a copy.
       </div>
     </div>
   </div>
 
   <div class="footer-note" data-i18n="footer_note">
-    Exchange rates refresh once every 24 hours (source: exchangerate-api.com), not continuously — that's normal, not a bug. Each entry stores the rate at the moment you log it, so past days never change when the rate updates. All data is saved on this device only.
+    Exchange rates refresh once every 24 hours (source: exchangerate-api.com), not continuously - that's normal, not a bug. Each entry stores the rate at the moment you log it, so past days never change when the rate updates. All data is saved on this device only.
   </div>
 </div>
 
@@ -622,7 +622,7 @@
 const STORE_KEY = 'pesoBudget_v1';
 const BACKUP_KEY = 'pesoBudget_v1_backup';
 
-// Only true while running in closed testing — flip to false before applying for production.
+// Only true while running in closed testing - flip to false before applying for production.
 const IS_TESTING_BUILD = true;
 const TESTER_FEEDBACK_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdemv1Q9b7PtFen3OOsTiFeJxPZxdQvIupL44HVsgaYaY3WAw/formResponse';
 const TESTER_FEEDBACK_ENTRY_ID = 'entry.678498490';
@@ -661,25 +661,25 @@ en: {
   budget_for_day: "Budget for this day",
   add_entry: "Add Entry",
   total_saved_so_far: "Total saved so far",
-  total_saved_note: "Available — money added to goals is set aside separately",
+  total_saved_note: "Available - money added to goals is set aside separately",
   goal_name_ph: "e.g. New laptop",
   goal_target_ph: "Target amount ({cur})",
   add_goal: "Add Goal",
   no_goals_yet: "No savings goals yet.",
   card_forecast: "Savings Forecast",
-  forecast_desc: "Based on your average daily savings so far — recalculates every time you log a new day.",
+  forecast_desc: "Based on your average daily savings so far - recalculates every time you log a new day.",
   forecast_empty: "Log a few days of spending to see your savings forecast.",
   forecast_week: "Next week", forecast_month: "Next month", forecast_year: "Next year",
   forecast_axis_today: "Today", forecast_axis_week: "1wk", forecast_axis_month: "1mo", forecast_axis_year: "1yr",
   card_mascot: "Your Savings Buddy",
-  mascot_tier_1: "Every bit counts — keep going!",
+  mascot_tier_1: "Every bit counts - keep going!",
   mascot_tier_2: "You're building a stash!",
   mascot_tier_3: "Nice nest egg forming!",
   mascot_tier_4: "Living large!",
   mascot_tier_5: "Certified money mogul!",
   mascot_toggle: "Show savings mascot",
   mascot_toggle_desc: "Shows a character on the Home tab that changes as your savings grow. Turn off to hide it.",
-  no_entries_yet: "No entries yet — add your first day above.",
+  no_entries_yet: "No entries yet - add your first day above.",
   monthly_income_label: "Monthly income ({cur})",
   days_in_period: "Days in period",
   monthly_income_mxn: "Monthly income ({cur})",
@@ -716,11 +716,11 @@ en: {
   backup_restore: "Backup & Restore",
   export_backup: "Export backup file",
   restore_backup: "Restore from backup file",
-  backup_desc: "Your data lives only on this device's browser storage. Updates to the app never touch it, but clearing browser data, switching phones, or reinstalling will. Export a backup file now and then to be safe — Restore reads one back in.",
+  backup_desc: "Your data lives only on this device's browser storage. Updates to the app never touch it, but clearing browser data, switching phones, or reinstalling will. Export a backup file now and then to be safe - Restore reads one back in.",
   danger_zone: "Danger Zone",
   reset_all_data: "Reset all data",
-  reset_desc: "Permanently erases every entry, goal, cost, and setting on this device and starts over from scratch. This cannot be undone — export a backup first if you want to keep a copy.",
-  footer_note: "Exchange rates refresh once every 24 hours (source: exchangerate-api.com), not continuously — that's normal, not a bug. Each entry stores the rate at the moment you log it, so past days never change when the rate updates. All data is saved on this device only.",
+  reset_desc: "Permanently erases every entry, goal, cost, and setting on this device and starts over from scratch. This cannot be undone - export a backup first if you want to keep a copy.",
+  footer_note: "Exchange rates refresh once every 24 hours (source: exchangerate-api.com), not continuously - that's normal, not a bug. Each entry stores the rate at the moment you log it, so past days never change when the rate updates. All data is saved on this device only.",
   hide_amounts: "Hide amounts", show_amounts: "Show amounts",
   ob_choose_language: "Choose your language",
   ob_choose_language_desc: "You can change this later anytime in Settings.",
@@ -735,7 +735,7 @@ en: {
   ob_currency_title: "What currency do you get paid in?",
   ob_currency_desc: "Pick the currency you get paid in. We'll automatically convert it into your local spending currency (set anytime in Settings) using live exchange rates.<br><br>If you're already paid directly in your local currency, the app skips conversion entirely and just becomes a simple savings tracker.",
   ob_budget_title: "Set your budget",
-  ob_budget_desc: "Tell us your income and how many days it needs to cover — we'll split it into a daily spending budget for you automatically.",
+  ob_budget_desc: "Tell us your income and how many days it needs to cover - we'll split it into a daily spending budget for you automatically.",
   ob_monthly_income: "Monthly income",
   goal_delete_title: "Delete \"{name}\"?",
   goal_delete_msg: "This goal has {amount} saved toward it. What should happen to that money?",
@@ -756,7 +756,7 @@ en: {
   no_conversion_needed: "No conversion needed",
   budgeting_directly_pesos: "You're budgeting directly in {cur}.",
   manually_set_on: "Manually set on {time} · new entries will use this rate",
-  offline_last_saved: "Offline — showing last saved rate from {time}",
+  offline_last_saved: "Offline - showing last saved rate from {time}",
   checked_at: "Checked {time}",
   next_rate_update: " · next rate update ~{time}",
   no_rate_available: "No rate available",
@@ -790,25 +790,25 @@ es: {
   budget_for_day: "Presupuesto para este día",
   add_entry: "Agregar Registro",
   total_saved_so_far: "Total ahorrado hasta ahora",
-  total_saved_note: "Disponible — el dinero destinado a metas se aparta por separado",
+  total_saved_note: "Disponible - el dinero destinado a metas se aparta por separado",
   goal_name_ph: "ej. Laptop nueva",
   goal_target_ph: "Monto objetivo ({cur})",
   add_goal: "Agregar Meta",
   no_goals_yet: "Aún no hay metas de ahorro.",
   card_forecast: "Pronóstico de Ahorro",
-  forecast_desc: "Basado en tu ahorro diario promedio hasta ahora — se recalcula cada vez que registras un nuevo día.",
+  forecast_desc: "Basado en tu ahorro diario promedio hasta ahora - se recalcula cada vez que registras un nuevo día.",
   forecast_empty: "Registra algunos días de gastos para ver tu pronóstico de ahorro.",
   forecast_week: "Próxima semana", forecast_month: "Próximo mes", forecast_year: "Próximo año",
   forecast_axis_today: "Hoy", forecast_axis_week: "1sem", forecast_axis_month: "1mes", forecast_axis_year: "1año",
   card_mascot: "Tu Compañero de Ahorro",
-  mascot_tier_1: "Cada poco cuenta — ¡sigue así!",
+  mascot_tier_1: "Cada poco cuenta - ¡sigue así!",
   mascot_tier_2: "¡Estás formando una reserva!",
   mascot_tier_3: "¡Se está formando un buen colchón!",
   mascot_tier_4: "¡Viviendo a lo grande!",
   mascot_tier_5: "¡Magnate del dinero certificado!",
   mascot_toggle: "Mostrar compañero de ahorro",
   mascot_toggle_desc: "Muestra un personaje en la pestaña de Inicio que cambia a medida que crecen tus ahorros. Desactívalo para ocultarlo.",
-  no_entries_yet: "Aún no hay registros — agrega tu primer día arriba.",
+  no_entries_yet: "Aún no hay registros - agrega tu primer día arriba.",
   monthly_income_label: "Ingreso mensual ({cur})",
   days_in_period: "Días en el periodo",
   monthly_income_mxn: "Ingreso mensual ({cur})",
@@ -845,11 +845,11 @@ es: {
   backup_restore: "Copia de Seguridad y Restauración",
   export_backup: "Exportar copia de seguridad",
   restore_backup: "Restaurar desde copia de seguridad",
-  backup_desc: "Tus datos viven solo en el almacenamiento del navegador de este dispositivo. Las actualizaciones de la app nunca los tocan, pero borrar los datos del navegador, cambiar de teléfono o reinstalar sí lo hará. Exporta una copia de seguridad de vez en cuando — Restaurar la vuelve a cargar.",
+  backup_desc: "Tus datos viven solo en el almacenamiento del navegador de este dispositivo. Las actualizaciones de la app nunca los tocan, pero borrar los datos del navegador, cambiar de teléfono o reinstalar sí lo hará. Exporta una copia de seguridad de vez en cuando - Restaurar la vuelve a cargar.",
   danger_zone: "Zona de Peligro",
   reset_all_data: "Restablecer todos los datos",
-  reset_desc: "Borra permanentemente cada registro, meta, costo y ajuste en este dispositivo y empieza de cero. Esto no se puede deshacer — exporta una copia de seguridad primero si quieres conservar una copia.",
-  footer_note: "El tipo de cambio se actualiza cada 24 horas (fuente: exchangerate-api.com), no continuamente — eso es normal, no un error. Cada registro guarda el tipo de cambio del momento en que lo agregaste, así que los días pasados nunca cambian cuando se actualiza el tipo. Todos los datos se guardan solo en este dispositivo.",
+  reset_desc: "Borra permanentemente cada registro, meta, costo y ajuste en este dispositivo y empieza de cero. Esto no se puede deshacer - exporta una copia de seguridad primero si quieres conservar una copia.",
+  footer_note: "El tipo de cambio se actualiza cada 24 horas (fuente: exchangerate-api.com), no continuamente - eso es normal, no un error. Cada registro guarda el tipo de cambio del momento en que lo agregaste, así que los días pasados nunca cambian cuando se actualiza el tipo. Todos los datos se guardan solo en este dispositivo.",
   hide_amounts: "Ocultar montos", show_amounts: "Mostrar montos",
   ob_choose_language: "Elige tu idioma",
   ob_choose_language_desc: "Puedes cambiarlo después en cualquier momento desde Ajustes.",
@@ -864,7 +864,7 @@ es: {
   ob_currency_title: "¿En qué moneda te pagan?",
   ob_currency_desc: "Elige la moneda en la que te pagan. La convertiremos automáticamente a tu moneda local de gasto (configurable en cualquier momento en Ajustes) usando el tipo de cambio en vivo.<br><br>Si ya te pagan directamente en tu moneda local, la app se salta toda conversión y se convierte en un simple rastreador de ahorros.",
   ob_budget_title: "Define tu presupuesto",
-  ob_budget_desc: "Dinos tu ingreso y cuántos días debe cubrir — lo dividiremos automáticamente en un presupuesto diario de gasto.",
+  ob_budget_desc: "Dinos tu ingreso y cuántos días debe cubrir - lo dividiremos automáticamente en un presupuesto diario de gasto.",
   ob_monthly_income: "Ingreso mensual",
   goal_delete_title: "¿Eliminar \"{name}\"?",
   goal_delete_msg: "Esta meta tiene {amount} ahorrados. ¿Qué debe pasar con ese dinero?",
@@ -885,7 +885,7 @@ es: {
   no_conversion_needed: "No se necesita conversión",
   budgeting_directly_pesos: "Estás presupuestando directamente en {cur}.",
   manually_set_on: "Establecido manualmente el {time} · los nuevos registros usarán este tipo de cambio",
-  offline_last_saved: "Sin conexión — mostrando el último tipo de cambio guardado de {time}",
+  offline_last_saved: "Sin conexión - mostrando el último tipo de cambio guardado de {time}",
   checked_at: "Verificado {time}",
   next_rate_update: " · próxima actualización ~{time}",
   no_rate_available: "Tipo de cambio no disponible",
@@ -919,25 +919,25 @@ fr: {
   budget_for_day: "Budget pour ce jour",
   add_entry: "Ajouter une Entrée",
   total_saved_so_far: "Total épargné jusqu'à présent",
-  total_saved_note: "Disponible — l'argent affecté aux objectifs est mis de côté séparément",
+  total_saved_note: "Disponible - l'argent affecté aux objectifs est mis de côté séparément",
   goal_name_ph: "ex. Nouvel ordinateur",
   goal_target_ph: "Montant cible ({cur})",
   add_goal: "Ajouter un Objectif",
   no_goals_yet: "Aucun objectif d'épargne pour l'instant.",
   card_forecast: "Prévision d'Épargne",
-  forecast_desc: "Basé sur votre épargne quotidienne moyenne jusqu'à présent — recalculé à chaque nouveau jour enregistré.",
+  forecast_desc: "Basé sur votre épargne quotidienne moyenne jusqu'à présent - recalculé à chaque nouveau jour enregistré.",
   forecast_empty: "Enregistrez quelques jours de dépenses pour voir votre prévision d'épargne.",
   forecast_week: "Semaine prochaine", forecast_month: "Mois prochain", forecast_year: "Année prochaine",
   forecast_axis_today: "Aujourd'hui", forecast_axis_week: "1sem", forecast_axis_month: "1mois", forecast_axis_year: "1an",
   card_mascot: "Ton Copain d'Épargne",
-  mascot_tier_1: "Chaque petit geste compte — continue !",
+  mascot_tier_1: "Chaque petit geste compte - continue !",
   mascot_tier_2: "Tu te constitues une réserve !",
   mascot_tier_3: "Un joli pécule se forme !",
   mascot_tier_4: "La grande vie !",
   mascot_tier_5: "Magnat de l'argent certifié !",
   mascot_toggle: "Afficher le copain d'épargne",
   mascot_toggle_desc: "Affiche un personnage dans l'onglet Accueil qui évolue avec tes économies. Désactive pour le masquer.",
-  no_entries_yet: "Aucune entrée pour l'instant — ajoutez votre premier jour ci-dessus.",
+  no_entries_yet: "Aucune entrée pour l'instant - ajoutez votre premier jour ci-dessus.",
   monthly_income_label: "Revenu mensuel ({cur})",
   days_in_period: "Jours dans la période",
   monthly_income_mxn: "Revenu mensuel ({cur})",
@@ -974,11 +974,11 @@ fr: {
   backup_restore: "Sauvegarde et Restauration",
   export_backup: "Exporter une sauvegarde",
   restore_backup: "Restaurer depuis une sauvegarde",
-  backup_desc: "Vos données ne vivent que dans le stockage du navigateur de cet appareil. Les mises à jour de l'app n'y touchent jamais, mais effacer les données du navigateur, changer de téléphone ou réinstaller le fera. Exportez une sauvegarde de temps en temps par sécurité — Restaurer la recharge.",
+  backup_desc: "Vos données ne vivent que dans le stockage du navigateur de cet appareil. Les mises à jour de l'app n'y touchent jamais, mais effacer les données du navigateur, changer de téléphone ou réinstaller le fera. Exportez une sauvegarde de temps en temps par sécurité - Restaurer la recharge.",
   danger_zone: "Zone de Danger",
   reset_all_data: "Réinitialiser toutes les données",
-  reset_desc: "Efface définitivement chaque entrée, objectif, charge et réglage sur cet appareil et repart de zéro. Ceci est irréversible — exportez d'abord une sauvegarde si vous voulez garder une copie.",
-  footer_note: "Les taux de change se rafraîchissent une fois toutes les 24 heures (source : exchangerate-api.com), pas en continu — c'est normal, pas un bug. Chaque entrée enregistre le taux au moment où vous la créez, donc les jours passés ne changent jamais quand le taux est mis à jour. Toutes les données sont enregistrées uniquement sur cet appareil.",
+  reset_desc: "Efface définitivement chaque entrée, objectif, charge et réglage sur cet appareil et repart de zéro. Ceci est irréversible - exportez d'abord une sauvegarde si vous voulez garder une copie.",
+  footer_note: "Les taux de change se rafraîchissent une fois toutes les 24 heures (source : exchangerate-api.com), pas en continu - c'est normal, pas un bug. Chaque entrée enregistre le taux au moment où vous la créez, donc les jours passés ne changent jamais quand le taux est mis à jour. Toutes les données sont enregistrées uniquement sur cet appareil.",
   hide_amounts: "Masquer les montants", show_amounts: "Afficher les montants",
   ob_choose_language: "Choisissez votre langue",
   ob_choose_language_desc: "Vous pourrez le changer plus tard à tout moment dans les Réglages.",
@@ -993,7 +993,7 @@ fr: {
   ob_currency_title: "Dans quelle devise êtes-vous payé ?",
   ob_currency_desc: "Choisissez la devise dans laquelle vous êtes payé. Nous la convertirons automatiquement dans votre devise locale de dépense (modifiable à tout moment dans les Réglages) avec le taux de change en direct.<br><br>Si vous êtes déjà payé directement dans votre devise locale, l'app saute toute conversion et devient un simple suivi d'épargne.",
   ob_budget_title: "Définissez votre budget",
-  ob_budget_desc: "Indiquez-nous votre revenu et le nombre de jours qu'il doit couvrir — nous le diviserons automatiquement en budget quotidien.",
+  ob_budget_desc: "Indiquez-nous votre revenu et le nombre de jours qu'il doit couvrir - nous le diviserons automatiquement en budget quotidien.",
   ob_monthly_income: "Revenu mensuel",
   goal_delete_title: "Supprimer « {name} » ?",
   goal_delete_msg: "Cet objectif a {amount} épargnés. Que faire de cet argent ?",
@@ -1014,7 +1014,7 @@ fr: {
   no_conversion_needed: "Aucune conversion nécessaire",
   budgeting_directly_pesos: "Vous établissez votre budget directement en {cur}.",
   manually_set_on: "Défini manuellement le {time} · les nouvelles entrées utiliseront ce taux",
-  offline_last_saved: "Hors ligne — affichage du dernier taux enregistré du {time}",
+  offline_last_saved: "Hors ligne - affichage du dernier taux enregistré du {time}",
   checked_at: "Vérifié {time}",
   next_rate_update: " · prochaine mise à jour ~{time}",
   no_rate_available: "Aucun taux disponible",
@@ -1048,25 +1048,25 @@ de: {
   budget_for_day: "Budget für diesen Tag",
   add_entry: "Eintrag Hinzufügen",
   total_saved_so_far: "Bisher gespart",
-  total_saved_note: "Verfügbar — Geld für Ziele wird separat zurückgelegt",
+  total_saved_note: "Verfügbar - Geld für Ziele wird separat zurückgelegt",
   goal_name_ph: "z.B. Neuer Laptop",
   goal_target_ph: "Zielbetrag ({cur})",
   add_goal: "Ziel Hinzufügen",
   no_goals_yet: "Noch keine Sparziele.",
   card_forecast: "Sparprognose",
-  forecast_desc: "Basierend auf deinem durchschnittlichen täglichen Sparbetrag bisher — wird bei jedem neu erfassten Tag neu berechnet.",
+  forecast_desc: "Basierend auf deinem durchschnittlichen täglichen Sparbetrag bisher - wird bei jedem neu erfassten Tag neu berechnet.",
   forecast_empty: "Erfasse ein paar Tage an Ausgaben, um deine Sparprognose zu sehen.",
   forecast_week: "Nächste Woche", forecast_month: "Nächster Monat", forecast_year: "Nächstes Jahr",
   forecast_axis_today: "Heute", forecast_axis_week: "1Wo", forecast_axis_month: "1Mo", forecast_axis_year: "1J",
   card_mascot: "Dein Spar-Kumpel",
-  mascot_tier_1: "Jeder Betrag zählt — weiter so!",
+  mascot_tier_1: "Jeder Betrag zählt - weiter so!",
   mascot_tier_2: "Du baust dir einen Vorrat auf!",
   mascot_tier_3: "Ein schönes Polster entsteht!",
   mascot_tier_4: "Lebst groß auf!",
   mascot_tier_5: "Zertifizierter Geld-Mogul!",
   mascot_toggle: "Spar-Kumpel anzeigen",
   mascot_toggle_desc: "Zeigt einen Charakter im Home-Tab, der sich mit deinen Ersparnissen verändert. Schalte ihn aus, um ihn auszublenden.",
-  no_entries_yet: "Noch keine Einträge — füge oben deinen ersten Tag hinzu.",
+  no_entries_yet: "Noch keine Einträge - füge oben deinen ersten Tag hinzu.",
   monthly_income_label: "Monatliches Einkommen ({cur})",
   days_in_period: "Tage im Zeitraum",
   monthly_income_mxn: "Monatliches Einkommen ({cur})",
@@ -1103,11 +1103,11 @@ de: {
   backup_restore: "Sicherung & Wiederherstellung",
   export_backup: "Sicherungsdatei Exportieren",
   restore_backup: "Aus Sicherungsdatei Wiederherstellen",
-  backup_desc: "Deine Daten leben nur im Browser-Speicher dieses Geräts. App-Updates berühren sie nie, aber das Löschen von Browserdaten, ein Telefonwechsel oder eine Neuinstallation schon. Exportiere ab und zu eine Sicherungsdatei zur Sicherheit — Wiederherstellen liest sie wieder ein.",
+  backup_desc: "Deine Daten leben nur im Browser-Speicher dieses Geräts. App-Updates berühren sie nie, aber das Löschen von Browserdaten, ein Telefonwechsel oder eine Neuinstallation schon. Exportiere ab und zu eine Sicherungsdatei zur Sicherheit - Wiederherstellen liest sie wieder ein.",
   danger_zone: "Gefahrenzone",
   reset_all_data: "Alle Daten Zurücksetzen",
-  reset_desc: "Löscht dauerhaft jeden Eintrag, jedes Ziel, jede Kostenposition und Einstellung auf diesem Gerät und beginnt von vorne. Dies kann nicht rückgängig gemacht werden — exportiere zuerst eine Sicherung, wenn du eine Kopie behalten möchtest.",
-  footer_note: "Wechselkurse werden alle 24 Stunden aktualisiert (Quelle: exchangerate-api.com), nicht fortlaufend — das ist normal, kein Fehler. Jeder Eintrag speichert den Kurs zum Zeitpunkt der Erfassung, sodass sich vergangene Tage nie ändern, wenn der Kurs aktualisiert wird. Alle Daten werden nur auf diesem Gerät gespeichert.",
+  reset_desc: "Löscht dauerhaft jeden Eintrag, jedes Ziel, jede Kostenposition und Einstellung auf diesem Gerät und beginnt von vorne. Dies kann nicht rückgängig gemacht werden - exportiere zuerst eine Sicherung, wenn du eine Kopie behalten möchtest.",
+  footer_note: "Wechselkurse werden alle 24 Stunden aktualisiert (Quelle: exchangerate-api.com), nicht fortlaufend - das ist normal, kein Fehler. Jeder Eintrag speichert den Kurs zum Zeitpunkt der Erfassung, sodass sich vergangene Tage nie ändern, wenn der Kurs aktualisiert wird. Alle Daten werden nur auf diesem Gerät gespeichert.",
   hide_amounts: "Beträge ausblenden", show_amounts: "Beträge anzeigen",
   ob_choose_language: "Wähle deine Sprache",
   ob_choose_language_desc: "Du kannst dies später jederzeit in den Einstellungen ändern.",
@@ -1120,9 +1120,9 @@ de: {
   ob_tour_history_title: "Verlauf", ob_tour_history_desc: "Jeder erfasste Tag, mit laufenden Summen.",
   ob_tour_settings_title: "Einstellungen", ob_tour_settings_desc: "Währung, App-Farbe, Sicherungen und diese Anleitung, falls du sie noch einmal sehen möchtest.",
   ob_currency_title: "In welcher Währung wirst du bezahlt?",
-  ob_currency_desc: "Wähle die Währung, in der du bezahlt wirst. Wir rechnen sie automatisch in deine lokale Ausgabenwährung um (jederzeit in den Einstellungen änderbar) — mit aktuellen Wechselkursen.<br><br>Wenn du bereits direkt in deiner lokalen Währung bezahlt wirst, überspringt die App jede Umrechnung und wird zu einem einfachen Spartracker.",
+  ob_currency_desc: "Wähle die Währung, in der du bezahlt wirst. Wir rechnen sie automatisch in deine lokale Ausgabenwährung um (jederzeit in den Einstellungen änderbar) - mit aktuellen Wechselkursen.<br><br>Wenn du bereits direkt in deiner lokalen Währung bezahlt wirst, überspringt die App jede Umrechnung und wird zu einem einfachen Spartracker.",
   ob_budget_title: "Lege dein Budget fest",
-  ob_budget_desc: "Nenne uns dein Einkommen und wie viele Tage es abdecken muss — wir teilen es automatisch in ein tägliches Ausgabenbudget auf.",
+  ob_budget_desc: "Nenne uns dein Einkommen und wie viele Tage es abdecken muss - wir teilen es automatisch in ein tägliches Ausgabenbudget auf.",
   ob_monthly_income: "Monatliches Einkommen",
   goal_delete_title: "„{name}“ löschen?",
   goal_delete_msg: "Für dieses Ziel wurden {amount} gespart. Was soll mit diesem Geld passieren?",
@@ -1143,7 +1143,7 @@ de: {
   no_conversion_needed: "Keine Umrechnung nötig",
   budgeting_directly_pesos: "Du budgetierst direkt in {cur}.",
   manually_set_on: "Manuell festgelegt am {time} · neue Einträge verwenden diesen Kurs",
-  offline_last_saved: "Offline — zeigt zuletzt gespeicherten Kurs vom {time}",
+  offline_last_saved: "Offline - zeigt zuletzt gespeicherten Kurs vom {time}",
   checked_at: "Geprüft {time}",
   next_rate_update: " · nächste Aktualisierung ~{time}",
   no_rate_available: "Kein Kurs verfügbar",
@@ -1177,25 +1177,25 @@ pt: {
   budget_for_day: "Orçamento para este dia",
   add_entry: "Adicionar Registro",
   total_saved_so_far: "Total economizado até agora",
-  total_saved_note: "Disponível — dinheiro adicionado a metas é reservado separadamente",
+  total_saved_note: "Disponível - dinheiro adicionado a metas é reservado separadamente",
   goal_name_ph: "ex. Novo laptop",
   goal_target_ph: "Valor alvo ({cur})",
   add_goal: "Adicionar Meta",
   no_goals_yet: "Ainda não há metas de economia.",
   card_forecast: "Previsão de Economia",
-  forecast_desc: "Baseado na sua economia diária média até agora — recalculado a cada novo dia registrado.",
+  forecast_desc: "Baseado na sua economia diária média até agora - recalculado a cada novo dia registrado.",
   forecast_empty: "Registre alguns dias de gastos para ver sua previsão de economia.",
   forecast_week: "Próxima semana", forecast_month: "Próximo mês", forecast_year: "Próximo ano",
   forecast_axis_today: "Hoje", forecast_axis_week: "1sem", forecast_axis_month: "1mês", forecast_axis_year: "1ano",
   card_mascot: "Seu Amigo da Economia",
-  mascot_tier_1: "Cada pouquinho conta — continue!",
+  mascot_tier_1: "Cada pouquinho conta - continue!",
   mascot_tier_2: "Você está formando uma reserva!",
   mascot_tier_3: "Um belo pé de meia se formando!",
   mascot_tier_4: "Vivendo em grande estilo!",
   mascot_tier_5: "Magnata do dinheiro certificado!",
   mascot_toggle: "Mostrar amigo da economia",
   mascot_toggle_desc: "Mostra um personagem na aba Início que muda conforme suas economias crescem. Desative para ocultá-lo.",
-  no_entries_yet: "Ainda não há registros — adicione seu primeiro dia acima.",
+  no_entries_yet: "Ainda não há registros - adicione seu primeiro dia acima.",
   monthly_income_label: "Renda mensal ({cur})",
   days_in_period: "Dias no período",
   monthly_income_mxn: "Renda mensal ({cur})",
@@ -1232,11 +1232,11 @@ pt: {
   backup_restore: "Backup e Restauração",
   export_backup: "Exportar arquivo de backup",
   restore_backup: "Restaurar de arquivo de backup",
-  backup_desc: "Seus dados vivem apenas no armazenamento do navegador deste dispositivo. Atualizações do app nunca os tocam, mas limpar dados do navegador, trocar de telefone ou reinstalar sim. Exporte um backup de vez em quando por segurança — Restaurar o carrega de volta.",
+  backup_desc: "Seus dados vivem apenas no armazenamento do navegador deste dispositivo. Atualizações do app nunca os tocam, mas limpar dados do navegador, trocar de telefone ou reinstalar sim. Exporte um backup de vez em quando por segurança - Restaurar o carrega de volta.",
   danger_zone: "Zona de Perigo",
   reset_all_data: "Redefinir todos os dados",
-  reset_desc: "Apaga permanentemente cada registro, meta, custo e configuração neste dispositivo e recomeça do zero. Isso não pode ser desfeito — exporte um backup primeiro se quiser manter uma cópia.",
-  footer_note: "As taxas de câmbio são atualizadas a cada 24 horas (fonte: exchangerate-api.com), não continuamente — isso é normal, não um bug. Cada registro guarda a taxa no momento em que foi feito, então dias passados nunca mudam quando a taxa é atualizada. Todos os dados são salvos apenas neste dispositivo.",
+  reset_desc: "Apaga permanentemente cada registro, meta, custo e configuração neste dispositivo e recomeça do zero. Isso não pode ser desfeito - exporte um backup primeiro se quiser manter uma cópia.",
+  footer_note: "As taxas de câmbio são atualizadas a cada 24 horas (fonte: exchangerate-api.com), não continuamente - isso é normal, não um bug. Cada registro guarda a taxa no momento em que foi feito, então dias passados nunca mudam quando a taxa é atualizada. Todos os dados são salvos apenas neste dispositivo.",
   hide_amounts: "Ocultar valores", show_amounts: "Mostrar valores",
   ob_choose_language: "Escolha seu idioma",
   ob_choose_language_desc: "Você pode mudar isso depois a qualquer momento nos Ajustes.",
@@ -1251,7 +1251,7 @@ pt: {
   ob_currency_title: "Em qual moeda você recebe?",
   ob_currency_desc: "Escolha a moeda em que você recebe. Vamos convertê-la automaticamente para sua moeda local de gastos (configurável a qualquer momento nos Ajustes) usando taxas de câmbio ao vivo.<br><br>Se você já recebe diretamente na sua moeda local, o app pula toda conversão e vira um simples rastreador de economia.",
   ob_budget_title: "Defina seu orçamento",
-  ob_budget_desc: "Diga-nos sua renda e quantos dias ela precisa cobrir — vamos dividir automaticamente em um orçamento diário de gastos.",
+  ob_budget_desc: "Diga-nos sua renda e quantos dias ela precisa cobrir - vamos dividir automaticamente em um orçamento diário de gastos.",
   ob_monthly_income: "Renda mensal",
   goal_delete_title: "Excluir \"{name}\"?",
   goal_delete_msg: "Esta meta tem {amount} economizados. O que deve acontecer com esse dinheiro?",
@@ -1272,7 +1272,7 @@ pt: {
   no_conversion_needed: "Nenhuma conversão necessária",
   budgeting_directly_pesos: "Você está orçando diretamente em {cur}.",
   manually_set_on: "Definido manualmente em {time} · novos registros usarão esta taxa",
-  offline_last_saved: "Offline — mostrando última taxa salva de {time}",
+  offline_last_saved: "Offline - mostrando última taxa salva de {time}",
   checked_at: "Verificado {time}",
   next_rate_update: " · próxima atualização ~{time}",
   no_rate_available: "Nenhuma taxa disponível",
@@ -1589,12 +1589,12 @@ function renderSettings(){
   document.getElementById('manualRateFields').style.display = state.manualRateOverride ? 'flex' : 'none';
   document.getElementById('manualRateValue').placeholder = t('manual_rate_ph', {cur: state.incomeCurrency || 'EUR', local: localCur});
   const incomeMXN = monthlyIncomeMXN();
-  document.getElementById('incomeMXN').textContent = incomeMXN!=null ? fmtMXN(incomeMXN) : '—';
+  document.getElementById('incomeMXN').textContent = incomeMXN!=null ? fmtMXN(incomeMXN) : '-';
   document.getElementById('totalCostsStat').textContent = fmtMXN(totalMonthlyCosts());
   const left = moneyLeftAfterCosts();
-  document.getElementById('moneyLeft').textContent = left!=null ? fmtMXN(left) : '—';
+  document.getElementById('moneyLeft').textContent = left!=null ? fmtMXN(left) : '-';
   const mxnToday = dailyBudgetMXNToday();
-  document.getElementById('dailyMXN').textContent = mxnToday!=null ? fmtMXN(mxnToday) : '—';
+  document.getElementById('dailyMXN').textContent = mxnToday!=null ? fmtMXN(mxnToday) : '-';
 }
 
 const COSTS_COLLAPSED_LIMIT = 2;
@@ -2450,7 +2450,7 @@ if('serviceWorker' in navigator){
 
 // Ads only run inside the native Android app (Capacitor). On the regular
 // website/PWA, window.Capacitor doesn't exist, so this quietly does nothing.
-// Temporarily disabled while the app is still in closed testing — flip back
+// Temporarily disabled while the app is still in closed testing - flip back
 // to true once it's out of testing and ready to monetize.
 const ADS_ENABLED = false;
 if(ADS_ENABLED && window.Capacitor && Capacitor.isNativePlatform()){
