@@ -296,6 +296,13 @@
         <label data-i18n="ob_currency_title">What currency do you get paid in?</label>
         <select id="onboardingCurrency"></select>
       </div>
+      <div class="field">
+        <label data-i18n="local_currency_label">Local currency</label>
+        <select id="onboardingLocalCurrency"></select>
+        <div class="entry-preview" style="display:block; margin-top:6px;" data-i18n="local_currency_desc">
+          The currency you spend day-to-day and track your budget and savings in. Changing this does not convert past entries.
+        </div>
+      </div>
       <div class="onboarding-nav">
         <button class="btn-secondary" id="onboardingBack2" type="button" data-i18n="ob_back">Back</button>
         <button class="btn-primary" id="onboardingNext2" type="button" data-i18n="ob_next">Next</button>
@@ -1244,7 +1251,7 @@ function populateLanguageSelects(){
 
 function populateCurrencySelects(){
   const optionsHtml = Object.keys(CURRENCIES).map(code=>`<option value="${code}">${CURRENCIES[code]} (${code})</option>`).join('');
-  ['onboardingCurrency','incomeCurrency','localCurrencySelect'].forEach(id=>{
+  ['onboardingCurrency','onboardingLocalCurrency','incomeCurrency','localCurrencySelect'].forEach(id=>{
     const el = document.getElementById(id);
     if(el) el.innerHTML = optionsHtml;
   });
@@ -2266,6 +2273,7 @@ function showOnboardingStep(step){
 function openOnboarding(){
   document.getElementById('onboardingLanguage').value = state.language || 'en';
   document.getElementById('onboardingCurrency').value = state.incomeCurrency || 'EUR';
+  document.getElementById('onboardingLocalCurrency').value = state.localCurrency || 'MXN';
   document.getElementById('onboardingIncome').value = state.income ?? 1500;
   document.getElementById('onboardingDays').value = state.days ?? 30;
   // New installs start at the language picker; reopening the guide later (language
@@ -2300,10 +2308,12 @@ document.getElementById('onboardingStartBtn').addEventListener('click', ()=>{
   const income = Number(document.getElementById('onboardingIncome').value)||0;
   const days = Number(document.getElementById('onboardingDays').value)||30;
   const currency = document.getElementById('onboardingCurrency').value;
-  const currencyChanged = currency !== state.incomeCurrency;
+  const localCurrency = document.getElementById('onboardingLocalCurrency').value;
+  const currencyChanged = currency !== state.incomeCurrency || localCurrency !== state.localCurrency;
   state.income = income;
   state.days = days;
   state.incomeCurrency = currency;
+  state.localCurrency = localCurrency;
   if(currencyChanged) state.liveRate = null;
   closeOnboarding();
   renderAll();
