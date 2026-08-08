@@ -2477,11 +2477,16 @@ if('serviceWorker' in navigator){
 // Ads only run inside the native Android app (Capacitor). On the regular
 // website/PWA, window.Capacitor doesn't exist, so this quietly does nothing.
 const ADS_ENABLED = true;
+// Using Google's official test banner ad unit for now - the real ad unit
+// (ca-app-pub-2619577988675093/7974066196) can't serve real ads until the
+// app is publicly listed on Play (AdMob can't link/review an app confined
+// to closed testing). Swap this back once the app goes public.
+const AD_UNIT_ID = 'ca-app-pub-3940256099942544/6300978111';
 if(ADS_ENABLED && window.Capacitor && Capacitor.isNativePlatform()){
   const { AdMob } = Capacitor.Plugins;
   AdMob.initialize().then(()=>{
     return AdMob.showBanner({
-      adId: 'ca-app-pub-2619577988675093/7974066196',
+      adId: AD_UNIT_ID,
       adSize: 'BANNER',
       position: 'BOTTOM_CENTER',
       margin: 0
