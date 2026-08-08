@@ -2659,13 +2659,17 @@ const ADS_ENABLED = true;
 const AD_UNIT_ID = 'ca-app-pub-3940256099942544/6300978111';
 if(ADS_ENABLED && window.Capacitor && Capacitor.isNativePlatform()){
   const { AdMob } = Capacitor.Plugins;
-  // The actual rendered banner height varies by device/ad size (e.g. a
-  // 320x50 BANNER request can still come back as a 468x60 creative), so
-  // reserving a hardcoded height risks the banner overlapping the tab bar.
-  // Listen for the real size instead of guessing.
+  // The banner is a native view stacked on top of the WebView, not part of
+  // the DOM, so this reserved CSS height is only a best-effort hint - the
+  // plugin has known issues (especially on newer Android versions) where
+  // it doesn't reliably resize/report around it, and the real ad size can
+  // exceed what was requested. So: always reserve a generously large
+  // minimum, and only grow (never shrink) if a bigger size is reported.
+  const AD_BANNER_MIN_HEIGHT = 100;
+  document.documentElement.style.setProperty('--ad-banner-height', AD_BANNER_MIN_HEIGHT + 'px');
   AdMob.addListener('bannerAdSizeChanged', size=>{
-    if(size && size.height){
-      document.documentElement.style.setProperty('--ad-banner-height', size.height + 'px');
+    if(size && size.height && size.height + 20 > AD_BANNER_MIN_HEIGHT){
+      document.documentElement.style.setProperty('--ad-banner-height', (size.height + 20) + 'px');
     }
   });
   AdMob.initialize().then(()=>{
@@ -2675,8 +2679,6 @@ if(ADS_ENABLED && window.Capacitor && Capacitor.isNativePlatform()){
       position: 'BOTTOM_CENTER',
       margin: 0
     });
-  }).then(()=>{
-    document.documentElement.style.setProperty('--ad-banner-height', '60px');
   }).catch(err=>{
     console.log('AdMob banner failed to show:', err);
   });
