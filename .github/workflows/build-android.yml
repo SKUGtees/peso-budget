@@ -30,7 +30,7 @@ jobs:
       - name: Add Android platform (first run only)
         run: |
           if [ ! -d "android" ]; then
-            echo "No android/ folder yet — scaffolding it now."
+            echo "No android/ folder yet - scaffolding it now."
             npx cap add android
             NEW_PLATFORM=true
           else
