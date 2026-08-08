@@ -2659,6 +2659,15 @@ const ADS_ENABLED = true;
 const AD_UNIT_ID = 'ca-app-pub-3940256099942544/6300978111';
 if(ADS_ENABLED && window.Capacitor && Capacitor.isNativePlatform()){
   const { AdMob } = Capacitor.Plugins;
+  // The actual rendered banner height varies by device/ad size (e.g. a
+  // 320x50 BANNER request can still come back as a 468x60 creative), so
+  // reserving a hardcoded height risks the banner overlapping the tab bar.
+  // Listen for the real size instead of guessing.
+  AdMob.addListener('bannerAdSizeChanged', size=>{
+    if(size && size.height){
+      document.documentElement.style.setProperty('--ad-banner-height', size.height + 'px');
+    }
+  });
   AdMob.initialize().then(()=>{
     return AdMob.showBanner({
       adId: AD_UNIT_ID,
@@ -2667,7 +2676,7 @@ if(ADS_ENABLED && window.Capacitor && Capacitor.isNativePlatform()){
       margin: 0
     });
   }).then(()=>{
-    document.documentElement.style.setProperty('--ad-banner-height', '50px');
+    document.documentElement.style.setProperty('--ad-banner-height', '60px');
   }).catch(err=>{
     console.log('AdMob banner failed to show:', err);
   });
