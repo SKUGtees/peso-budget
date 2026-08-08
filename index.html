@@ -410,7 +410,6 @@
 <div id="tab-goals-widgets" class="widgets-list">
 
   <div class="card" data-widget-id="goals">
-    <span class="drag-handle" title="Drag to reorder">⠿</span>
     <h2 data-i18n="card_savings_goals">Savings Goals</h2>
     <div class="entry-form">
       <input type="text" id="goalName" data-i18n-ph="goal_name_ph" placeholder="e.g. New laptop">
@@ -435,7 +434,6 @@
 <div id="tab-history-widgets" class="widgets-list">
 
   <div class="card" data-widget-id="history">
-    <span class="drag-handle" title="Drag to reorder">⠿</span>
     <h2 data-i18n="card_history">History</h2>
     <div id="historyWrap">
       <div class="empty" data-i18n="no_entries_yet">No entries yet - add your first day above.</div>
@@ -1855,17 +1853,22 @@ let historyExpanded = false;
 function renderHistory(){
   const wrap = document.getElementById('historyWrap');
   document.getElementById('startingBalance').value = state.startingBalance ?? '';
-  const entries = [...state.entries].sort((a,b)=> a.date.localeCompare(b.date));
-  let running = Number(state.startingBalance)||0;
-  if(entries.length===0){
+  const entriesAsc = [...state.entries].sort((a,b)=> a.date.localeCompare(b.date));
+  if(entriesAsc.length===0){
     wrap.innerHTML = `<div class="empty">${t('no_entries_yet')}</div>`;
     document.getElementById('totalSaved').textContent = fmtMXN(totalSavedAvailable());
     return;
   }
+  // Running totals only make sense accumulated oldest-to-newest, so compute
+  // them in that order first, then reverse for newest-first display.
+  let running = Number(state.startingBalance)||0;
+  const entries = entriesAsc.map(e=>{
+    running += e.saved;
+    return { ...e, runningTotal: running };
+  }).reverse();
   const showAll = historyExpanded || editingEntryId!=null || entries.length<=HISTORY_COLLAPSED_LIMIT;
   const allRows = [];
   entries.forEach(e=>{
-    running += e.saved;
     if(editingEntryId === e.id){
       allRows.push(`<tr>
         <td><input type="date" class="inline-edit-input" id="editEntryDate-${e.id}" value="${escapeAttr(e.date)}"></td>
@@ -1883,7 +1886,7 @@ function renderHistory(){
         <td>${escapeAttr(e.date)}</td>
         <td>${fmtCur(e.spent, entryCur)}</td>
         <td class="${cls}">${fmtCur(e.saved, entryCur)}</td>
-        <td>${fmtMXN(running)}</td>
+        <td>${fmtMXN(e.runningTotal)}</td>
         <td class="actions-cell">
           <button class="del-btn" onclick="startEntryEdit('${e.id}')">${ICON_PENCIL}</button>
           <button class="del-btn" onclick="deleteEntry('${e.id}')">${ICON_X}</button>
@@ -1891,7 +1894,7 @@ function renderHistory(){
       </tr>`);
     }
   });
-  const visibleRows = showAll ? allRows : allRows.slice(-HISTORY_COLLAPSED_LIMIT);
+  const visibleRows = showAll ? allRows : allRows.slice(0, HISTORY_COLLAPSED_LIMIT);
   const hiddenCount = entries.length - HISTORY_COLLAPSED_LIMIT;
   let toggleHtml = '';
   if(entries.length > HISTORY_COLLAPSED_LIMIT && editingEntryId==null){
