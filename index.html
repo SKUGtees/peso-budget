@@ -93,6 +93,39 @@
     width:100%; background:var(--input-bg); border:1px solid var(--border); color:var(--text);
     border-radius:8px; padding:10px 12px; font-size:1rem; margin-bottom:10px;
   }
+  .date-picker-wrap{ position:relative; margin-bottom:10px; }
+  .date-picker-trigger{
+    width:100%; display:flex; align-items:center; justify-content:space-between;
+    background:var(--input-bg); border:1px solid var(--border); color:var(--text);
+    border-radius:8px; padding:10px 12px; font-size:1rem; font-family:inherit; cursor:pointer; text-align:left;
+  }
+  .date-picker-trigger .icon-svg{ color:var(--muted); width:18px; height:18px; flex-shrink:0; margin-left:8px; }
+  .date-picker-popup{
+    position:absolute; top:calc(100% + 6px); left:0; right:0; z-index:60;
+    background:var(--card); border:1px solid var(--border); border-radius:14px;
+    padding:14px; box-shadow:0 12px 30px rgba(0,0,0,0.4);
+  }
+  .date-picker-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .date-picker-month-label{ font-weight:700; font-size:0.95rem; }
+  .date-picker-nav{
+    background:var(--card2); border:1px solid var(--border); color:var(--text);
+    width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0;
+  }
+  .date-picker-nav .icon-svg{ width:16px; height:16px; }
+  .date-picker-weekdays{
+    display:grid; grid-template-columns:repeat(7, 1fr); text-align:center;
+    font-size:0.68rem; font-weight:700; color:var(--muted); margin-bottom:4px;
+  }
+  .date-picker-grid{ display:grid; grid-template-columns:repeat(7, 1fr); gap:2px; }
+  .date-picker-day{
+    aspect-ratio:1; display:flex; align-items:center; justify-content:center;
+    border-radius:50%; font-size:0.85rem; cursor:pointer; color:var(--text); background:none; border:none; font-family:inherit;
+  }
+  .date-picker-day.other-month{ color:var(--muted); opacity:0.4; }
+  .date-picker-day.today{ box-shadow:0 0 0 1.5px var(--accent); }
+  .date-picker-day.selected{ background:var(--accent); color:var(--accent-text); font-weight:700; }
+  .date-picker-footer{ text-align:center; margin-top:10px; padding-top:10px; border-top:1px solid var(--border); }
+  .date-picker-today-btn{ background:none; border:none; color:var(--accent); font-weight:700; font-size:0.85rem; cursor:pointer; font-family:inherit; padding:6px; }
   .entry-preview{
     background:var(--input-bg); border-radius:10px; padding:10px 12px; margin-bottom:10px;
     font-size:0.85rem; color:var(--muted); display:flex; justify-content:space-between;
@@ -372,7 +405,25 @@
     <span class="drag-handle" title="Drag to reorder">⠿</span>
     <h2 data-i18n="card_log_spending">Log Today's Spending</h2>
     <div class="entry-form">
-      <input type="date" id="entryDate">
+      <div class="date-picker-wrap">
+        <input type="date" id="entryDate" style="display:none;">
+        <button type="button" class="date-picker-trigger" id="entryDateTrigger">
+          <span id="entryDateDisplay"></span>
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        </button>
+        <div class="date-picker-popup" id="entryDatePopup" style="display:none;">
+          <div class="date-picker-header">
+            <button type="button" class="date-picker-nav" id="datePickerPrev"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+            <span id="datePickerMonthLabel" class="date-picker-month-label"></span>
+            <button type="button" class="date-picker-nav" id="datePickerNext"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
+          </div>
+          <div class="date-picker-weekdays" id="datePickerWeekdays"></div>
+          <div class="date-picker-grid" id="datePickerGrid"></div>
+          <div class="date-picker-footer">
+            <button type="button" class="date-picker-today-btn" id="datePickerToday" data-i18n="today">Today</button>
+          </div>
+        </div>
+      </div>
       <input type="number" id="entrySpent" inputmode="decimal" placeholder="Amount spent">
     </div>
     <div class="entry-preview">
@@ -747,6 +798,7 @@ en: {
   goal_delete_return: "Return money to Total Saved",
   goal_delete_spent: "It was already spent, don't return it",
   cancel: "Cancel",
+  today: "Today",
   goal_reached_alert: "Goal reached! \"{name}\" is fully funded.",
   only_have_available: "You only have {amount} available in Total Saved.",
   confirm_delete_entry: "Delete this entry? This cannot be undone.",
@@ -877,6 +929,7 @@ es: {
   goal_delete_return: "Devolver dinero al Total Ahorrado",
   goal_delete_spent: "Ya se gastó, no lo devuelvas",
   cancel: "Cancelar",
+  today: "Hoy",
   goal_reached_alert: "¡Meta alcanzada! \"{name}\" está completamente financiada.",
   only_have_available: "Solo tienes {amount} disponible en Total Ahorrado.",
   confirm_delete_entry: "¿Eliminar este registro? Esto no se puede deshacer.",
@@ -1007,6 +1060,7 @@ fr: {
   goal_delete_return: "Remettre l'argent dans le Total Épargné",
   goal_delete_spent: "Déjà dépensé, ne pas le remettre",
   cancel: "Annuler",
+  today: "Aujourd'hui",
   goal_reached_alert: "Objectif atteint ! « {name} » est entièrement financé.",
   only_have_available: "Vous n'avez que {amount} disponible dans le Total Épargné.",
   confirm_delete_entry: "Supprimer cette entrée ? Ceci est irréversible.",
@@ -1137,6 +1191,7 @@ de: {
   goal_delete_return: "Geld zurück in Gesamt Gespart legen",
   goal_delete_spent: "Wurde bereits ausgegeben, nicht zurücklegen",
   cancel: "Abbrechen",
+  today: "Heute",
   goal_reached_alert: "Ziel erreicht! „{name}“ ist vollständig finanziert.",
   only_have_available: "Du hast nur {amount} in Gesamt Gespart verfügbar.",
   confirm_delete_entry: "Diesen Eintrag löschen? Dies kann nicht rückgängig gemacht werden.",
@@ -1267,6 +1322,7 @@ pt: {
   goal_delete_return: "Devolver dinheiro ao Total Economizado",
   goal_delete_spent: "Já foi gasto, não devolver",
   cancel: "Cancelar",
+  today: "Hoje",
   goal_reached_alert: "Meta alcançada! \"{name}\" está totalmente financiada.",
   only_have_available: "Você só tem {amount} disponível no Total Economizado.",
   confirm_delete_entry: "Excluir este registro? Isso não pode ser desfeito.",
@@ -1340,6 +1396,7 @@ function applyTranslations(){
   document.querySelectorAll('[data-i18n-title]').forEach(el=>{
     el.title = t(el.getAttribute('data-i18n-title'));
   });
+  if(typeof updateEntryDateDisplay === 'function') updateEntryDateDisplay();
   renderRate();
 }
 
@@ -2316,6 +2373,121 @@ document.getElementById('addBtn').addEventListener('click', ()=>{
 });
 
 document.getElementById('entryDate').value = localDateStr(new Date());
+
+const DATE_LOCALE_MAP = { en:'en-US', es:'es-ES', fr:'fr-FR', de:'de-DE', pt:'pt-PT' };
+function currentDateLocale(){ return DATE_LOCALE_MAP[state.language] || 'en-US'; }
+
+function getWeekdayLabels(){
+  const fmt = new Intl.DateTimeFormat(currentDateLocale(), { weekday:'short' });
+  const base = new Date(2023, 0, 1); // a known Sunday
+  const labels = [];
+  for(let i=0;i<7;i++){
+    const d = new Date(base);
+    d.setDate(base.getDate()+i);
+    labels.push(fmt.format(d));
+  }
+  return labels;
+}
+
+function formatDateDisplay(dateStr){
+  const [y,m,d] = dateStr.split('-').map(Number);
+  const dt = new Date(y, m-1, d);
+  return dt.toLocaleDateString(currentDateLocale(), { day:'numeric', month:'long', year:'numeric' });
+}
+
+function updateEntryDateDisplay(){
+  const val = document.getElementById('entryDate').value || localDateStr(new Date());
+  document.getElementById('entryDateDisplay').textContent = formatDateDisplay(val);
+}
+
+let datePickerViewDate = new Date();
+
+function pad2(n){ return String(n).padStart(2,'0'); }
+
+function renderDatePickerGrid(){
+  const grid = document.getElementById('datePickerGrid');
+  const weekdaysEl = document.getElementById('datePickerWeekdays');
+  const monthLabelEl = document.getElementById('datePickerMonthLabel');
+  const year = datePickerViewDate.getFullYear();
+  const month = datePickerViewDate.getMonth();
+  monthLabelEl.textContent = datePickerViewDate.toLocaleDateString(currentDateLocale(), { month:'long', year:'numeric' });
+  weekdaysEl.innerHTML = getWeekdayLabels().map(w=>`<span>${escapeAttr(w)}</span>`).join('');
+
+  const firstOfMonth = new Date(year, month, 1);
+  const startDay = firstOfMonth.getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const daysInPrevMonth = new Date(year, month, 0).getDate();
+  const todayStr = localDateStr(new Date());
+  const selectedStr = document.getElementById('entryDate').value || todayStr;
+
+  const cells = [];
+  for(let i=startDay-1;i>=0;i--){
+    cells.push({ d: daysInPrevMonth - i, month: month-1, year, other:true });
+  }
+  for(let d=1; d<=daysInMonth; d++){
+    cells.push({ d, month, year, other:false });
+  }
+  const remaining = 42 - cells.length;
+  for(let d=1; d<=remaining; d++){
+    cells.push({ d, month: month+1, year, other:true });
+  }
+
+  grid.innerHTML = cells.map(c=>{
+    let cy = c.year, cm = c.month;
+    if(cm < 0){ cm = 11; cy -= 1; }
+    if(cm > 11){ cm = 0; cy += 1; }
+    const dateStr = `${cy}-${pad2(cm+1)}-${pad2(c.d)}`;
+    const classes = ['date-picker-day'];
+    if(c.other) classes.push('other-month');
+    if(dateStr === todayStr) classes.push('today');
+    if(dateStr === selectedStr) classes.push('selected');
+    return `<button type="button" class="${classes.join(' ')}" data-date="${dateStr}">${c.d}</button>`;
+  }).join('');
+}
+
+function openDatePicker(){
+  const val = document.getElementById('entryDate').value || localDateStr(new Date());
+  const [y,m] = val.split('-').map(Number);
+  datePickerViewDate = new Date(y, m-1, 1);
+  renderDatePickerGrid();
+  document.getElementById('entryDatePopup').style.display = 'block';
+}
+function closeDatePicker(){
+  document.getElementById('entryDatePopup').style.display = 'none';
+}
+
+document.getElementById('entryDateTrigger').addEventListener('click', e=>{
+  e.stopPropagation();
+  const popup = document.getElementById('entryDatePopup');
+  if(popup.style.display === 'block') closeDatePicker(); else openDatePicker();
+});
+document.getElementById('datePickerPrev').addEventListener('click', ()=>{
+  datePickerViewDate.setMonth(datePickerViewDate.getMonth()-1);
+  renderDatePickerGrid();
+});
+document.getElementById('datePickerNext').addEventListener('click', ()=>{
+  datePickerViewDate.setMonth(datePickerViewDate.getMonth()+1);
+  renderDatePickerGrid();
+});
+document.getElementById('datePickerGrid').addEventListener('click', e=>{
+  const btn = e.target.closest('.date-picker-day');
+  if(!btn) return;
+  document.getElementById('entryDate').value = btn.dataset.date;
+  updateEntryDateDisplay();
+  closeDatePicker();
+});
+document.getElementById('datePickerToday').addEventListener('click', ()=>{
+  document.getElementById('entryDate').value = localDateStr(new Date());
+  updateEntryDateDisplay();
+  closeDatePicker();
+});
+document.addEventListener('click', e=>{
+  const popup = document.getElementById('entryDatePopup');
+  if(popup.style.display==='block' && !e.target.closest('.date-picker-wrap')){
+    closeDatePicker();
+  }
+});
+updateEntryDateDisplay();
 
 const DRAGGABLE_TABS = ['home','budget'];
 
