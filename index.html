@@ -349,7 +349,7 @@
 <div id="scrollArea">
 <header>
   <h1>Budget <span>Abroad</span></h1>
-  <p data-i18n="tagline">Foreign income, daily peso spending, tracked automatically</p>
+  <p data-i18n="tagline">Foreign income, daily spending budget, tracked automatically</p>
 </header>
 
 <div class="wrap">
@@ -1624,7 +1624,7 @@ function renderCosts(){
     if(editingCostId === c.id){
       rows += `<tr>
         <td><input type="text" class="inline-edit-input" id="editCostName-${c.id}" value="${escapeAttr(c.name)}"></td>
-        <td><input type="number" class="inline-edit-input" id="editCostAmount-${c.id}" value="${c.amount}"></td>
+        <td><input type="number" class="inline-edit-input" id="editCostAmount-${c.id}" value="${escapeAttr(c.amount)}"></td>
         <td class="actions-cell">
           <button class="save-btn" onclick="saveCostEdit('${c.id}')">${ICON_CHECK}</button>
           <button class="del-btn" onclick="cancelCostEdit()">${ICON_X}</button>
@@ -1632,7 +1632,7 @@ function renderCosts(){
       </tr>`;
     } else {
       rows += `<tr>
-        <td>${c.name || t('unnamed')}</td>
+        <td>${escapeAttr(c.name) || t('unnamed')}</td>
         <td>${fmtMXN(c.amount)}</td>
         <td class="actions-cell">
           <button class="del-btn" onclick="startCostEdit('${c.id}')">${ICON_PENCIL}</button>
@@ -1703,7 +1703,7 @@ function renderGoals(){
     } else {
       html += `<div class="goal-item">
         <div class="goal-header">
-          <span class="goal-name">${g.name}</span>
+          <span class="goal-name">${escapeAttr(g.name)}</span>
           <span class="actions-cell">
             <button class="del-btn" onclick="startGoalEdit('${g.id}')">${ICON_PENCIL}</button>
             <button class="del-btn" onclick="deleteGoal('${g.id}')">${ICON_X}</button>
@@ -1868,8 +1868,8 @@ function renderHistory(){
     running += e.saved;
     if(editingEntryId === e.id){
       allRows.push(`<tr>
-        <td><input type="date" class="inline-edit-input" id="editEntryDate-${e.id}" value="${e.date}"></td>
-        <td><input type="number" class="inline-edit-input" id="editEntrySpent-${e.id}" value="${e.spent}"></td>
+        <td><input type="date" class="inline-edit-input" id="editEntryDate-${e.id}" value="${escapeAttr(e.date)}"></td>
+        <td><input type="number" class="inline-edit-input" id="editEntrySpent-${e.id}" value="${escapeAttr(e.spent)}"></td>
         <td colspan="2" style="text-align:center; color:var(--muted); font-size:0.78rem;">${t('will_recalculate')}</td>
         <td class="actions-cell">
           <button class="save-btn" onclick="saveEntryEdit('${e.id}')">${ICON_CHECK}</button>
@@ -1880,7 +1880,7 @@ function renderHistory(){
       const cls = e.saved>=0 ? 'saved-pos' : 'saved-neg';
       const entryCur = e.currency || 'MXN';
       allRows.push(`<tr>
-        <td>${e.date}</td>
+        <td>${escapeAttr(e.date)}</td>
         <td>${fmtCur(e.spent, entryCur)}</td>
         <td class="${cls}">${fmtCur(e.saved, entryCur)}</td>
         <td>${fmtMXN(running)}</td>
@@ -2106,7 +2106,7 @@ document.getElementById('exportBtn').addEventListener('click', ()=>{
   const a = document.createElement('a');
   const stamp = new Date().toISOString().slice(0,10);
   a.href = url;
-  a.download = `peso-budget-backup-${stamp}.json`;
+  a.download = `budget-abroad-backup-${stamp}.json`;
   document.body.appendChild(a);
   a.click();
   a.remove();
