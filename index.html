@@ -2476,9 +2476,7 @@ if('serviceWorker' in navigator){
 
 // Ads only run inside the native Android app (Capacitor). On the regular
 // website/PWA, window.Capacitor doesn't exist, so this quietly does nothing.
-// Temporarily disabled while the app is still in closed testing - flip back
-// to true once it's out of testing and ready to monetize.
-const ADS_ENABLED = false;
+const ADS_ENABLED = true;
 if(ADS_ENABLED && window.Capacitor && Capacitor.isNativePlatform()){
   const { AdMob } = Capacitor.Plugins;
   AdMob.initialize().then(()=>{
