@@ -3,6 +3,7 @@ www/
 *.jks
 *.keystore
 aab-download/
+build-downloads/
 peso-budget-release-aab.zip
 screenshots/
 feature-graphic.html
