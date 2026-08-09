@@ -2690,7 +2690,11 @@ if('serviceWorker' in navigator){
 
 // Ads only run inside the native Android app (Capacitor). On the regular
 // website/PWA, window.Capacitor doesn't exist, so this quietly does nothing.
-const ADS_ENABLED = true;
+// Disabled: the @capacitor-community/admob banner never reliably matched
+// its reserved CSS space on the test device across several fix attempts
+// (documented plugin issue - the native view's real position/size isn't
+// consistently reported/resizable). Turn back on only once that's solved.
+const ADS_ENABLED = false;
 // Using Google's official test banner ad unit for now - the real ad unit
 // (ca-app-pub-2619577988675093/7974066196) can't serve real ads until the
 // app is publicly listed on Play (AdMob can't link/review an app confined
