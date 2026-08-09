@@ -2958,6 +2958,19 @@ if(ADS_ENABLED && window.Capacitor && Capacitor.isNativePlatform()){
 }
 
 // --- Budget Abroad Pro (one-time unlock via Google Play Billing) ---------
+// Temporary on-screen debug log for the purchase flow - lets the user read
+// what's happening directly off their phone screen without needing a
+// computer/USB debugging, while we track down why purchases silently fail.
+const proDebugLines = [];
+function proDebugLog(msg){
+  const line = new Date().toLocaleTimeString() + ' - ' + msg;
+  proDebugLines.push(line);
+  console.log('[ProDebug]', msg);
+  const el = document.getElementById('proDebugLog');
+  if(el) el.textContent = proDebugLines.join('\n');
+}
+proDebugLog('Script loaded. Capacitor=' + !!window.Capacitor + ' isNative=' + !!(window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform()) + ' CdvPurchase=' + !!window.CdvPurchase);
+
 function unlockPro(){
   if(state.isPro) return;
   state.isPro = true;
@@ -2967,33 +2980,43 @@ function unlockPro(){
 }
 
 function purchasePro(){
+  proDebugLog('Upgrade tapped.');
   if(!(window.Capacitor && Capacitor.isNativePlatform())){
+    proDebugLog('Blocked: not running as a native app.');
     alert(t('pro_native_only'));
     return;
   }
   if(!window.CdvPurchase){
+    proDebugLog('Blocked: window.CdvPurchase is not defined.');
     alert(t('pro_billing_unavailable'));
     return;
   }
   try{
+    proDebugLog('Calling store.order("' + PRO_PRODUCT_ID + '")...');
     // store.order() returns a Promise - a plain try/catch only catches
     // synchronous throws, so a rejected order (e.g. the store wasn't
     // finished initializing yet) would otherwise fail silently with no
     // purchase dialog and no visible error at all.
     const result = CdvPurchase.store.order(PRO_PRODUCT_ID);
+    if(result && typeof result.then === 'function'){
+      result.then(()=> proDebugLog('store.order() resolved.'));
+    }
     if(result && typeof result.catch === 'function'){
       result.catch(err=>{
+        proDebugLog('store.order() rejected: ' + (err && err.message ? err.message : JSON.stringify(err)));
         console.log('Pro purchase failed:', err);
         alert(t('pro_billing_unavailable'));
       });
     }
   }catch(err){
+    proDebugLog('store.order() threw synchronously: ' + err.message);
     console.log('Pro purchase failed to start:', err);
     alert(t('pro_billing_unavailable'));
   }
 }
 
 function restorePro(){
+  proDebugLog('Restore purchases tapped.');
   if(!(window.Capacitor && Capacitor.isNativePlatform() && window.CdvPurchase)){
     alert(t('pro_native_only'));
     return;
@@ -3001,9 +3024,13 @@ function restorePro(){
   try{
     const result = CdvPurchase.store.restorePurchases();
     if(result && typeof result.catch === 'function'){
-      result.catch(err=> console.log('Restore purchases failed:', err));
+      result.catch(err=>{
+        proDebugLog('Restore failed: ' + (err && err.message ? err.message : JSON.stringify(err)));
+        console.log('Restore purchases failed:', err);
+      });
     }
   }catch(err){
+    proDebugLog('Restore threw synchronously: ' + err.message);
     console.log('Restore purchases failed:', err);
   }
 }
@@ -3044,24 +3071,42 @@ function renderProCard(){
       <li>🎨 <span data-i18n="pro_feature_themes">Extra premium app colors</span></li>
     </ul>
     <button class="btn-primary" onclick="purchasePro()">${t('pro_upgrade_btn', {price: priceLabel})}</button>
-    <button class="btn-primary" style="background:var(--card2); color:var(--accent); border:1px solid var(--border); margin-top:10px;" onclick="restorePro()" data-i18n="pro_restore_btn">Restore purchases</button>`;
+    <button class="btn-primary" style="background:var(--card2); color:var(--accent); border:1px solid var(--border); margin-top:10px;" onclick="restorePro()" data-i18n="pro_restore_btn">Restore purchases</button>
+    <div style="margin-top:14px; font-size:0.7rem; color:var(--muted);">Debug log (temporary - safe to ignore):</div>
+    <pre id="proDebugLog" style="margin-top:4px; padding:8px; background:var(--card2); border-radius:8px; font-size:0.65rem; white-space:pre-wrap; word-break:break-word; max-height:160px; overflow-y:auto;">${escapeAttr(proDebugLines.join('\n'))}</pre>`;
 }
 
 function initProBilling(){
-  if(!(window.Capacitor && Capacitor.isNativePlatform() && window.CdvPurchase)) return;
+  proDebugLog('initProBilling() called. Capacitor=' + !!window.Capacitor + ' isNative=' + !!(window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform()) + ' CdvPurchase=' + !!window.CdvPurchase);
+  if(!(window.Capacitor && Capacitor.isNativePlatform() && window.CdvPurchase)){
+    proDebugLog('initProBilling() aborted - preconditions not met.');
+    return;
+  }
   try{
     const { store, ProductType, Platform } = CdvPurchase;
     store.register({ id: PRO_PRODUCT_ID, type: ProductType.NON_CONSUMABLE, platform: Platform.GOOGLE_PLAY });
+    proDebugLog('Product registered: ' + PRO_PRODUCT_ID);
     store.when().productUpdated(p=>{
-      if(p.id === PRO_PRODUCT_ID){ proProduct = p; renderProCard(); }
+      if(p.id === PRO_PRODUCT_ID){
+        proProduct = p;
+        proDebugLog('productUpdated: ' + JSON.stringify({id:p.id, canPurchase:p.canPurchase, price: p.pricing && p.pricing.price}));
+        renderProCard();
+      }
     });
-    store.when().approved(transaction=> transaction.verify());
-    store.when().verified(receipt=> receipt.finish());
+    store.when().approved(transaction=>{ proDebugLog('Transaction approved.'); transaction.verify(); });
+    store.when().verified(receipt=>{ proDebugLog('Receipt verified.'); receipt.finish(); });
     store.when().owned(p=>{
+      proDebugLog('Product owned: ' + p.id);
       if(p.id === PRO_PRODUCT_ID) unlockPro();
     });
-    store.initialize([Platform.GOOGLE_PLAY]);
+    store.initialize([Platform.GOOGLE_PLAY]).then(()=>{
+      proDebugLog('store.initialize() resolved.');
+    }).catch(err=>{
+      proDebugLog('store.initialize() rejected: ' + (err && err.message ? err.message : JSON.stringify(err)));
+    });
+    proDebugLog('store.initialize() called.');
   }catch(err){
+    proDebugLog('initProBilling() threw: ' + err.message);
     console.log('Pro billing failed to initialize:', err);
   }
 }
@@ -3072,9 +3117,16 @@ function initProBilling(){
 // (which left the store uninitialized and made purchasePro() fail with
 // no visible error - the "nothing happens" bug).
 if(window.CdvPurchase){
+  proDebugLog('CdvPurchase already present at script load - calling initProBilling() now.');
   initProBilling();
 } else if(window.Capacitor && Capacitor.isNativePlatform()){
-  document.addEventListener('deviceready', initProBilling);
+  proDebugLog('CdvPurchase not present yet - waiting for deviceready event.');
+  document.addEventListener('deviceready', ()=>{
+    proDebugLog('deviceready fired. CdvPurchase=' + !!window.CdvPurchase);
+    initProBilling();
+  });
+} else {
+  proDebugLog('Not a native platform - billing not initialized (expected on web).');
 }
 </script>
 </body>
