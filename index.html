@@ -2976,7 +2976,17 @@ function purchasePro(){
     return;
   }
   try{
-    CdvPurchase.store.order(PRO_PRODUCT_ID);
+    // store.order() returns a Promise - a plain try/catch only catches
+    // synchronous throws, so a rejected order (e.g. the store wasn't
+    // finished initializing yet) would otherwise fail silently with no
+    // purchase dialog and no visible error at all.
+    const result = CdvPurchase.store.order(PRO_PRODUCT_ID);
+    if(result && typeof result.catch === 'function'){
+      result.catch(err=>{
+        console.log('Pro purchase failed:', err);
+        alert(t('pro_billing_unavailable'));
+      });
+    }
   }catch(err){
     console.log('Pro purchase failed to start:', err);
     alert(t('pro_billing_unavailable'));
@@ -2989,7 +2999,10 @@ function restorePro(){
     return;
   }
   try{
-    CdvPurchase.store.restorePurchases();
+    const result = CdvPurchase.store.restorePurchases();
+    if(result && typeof result.catch === 'function'){
+      result.catch(err=> console.log('Restore purchases failed:', err));
+    }
   }catch(err){
     console.log('Restore purchases failed:', err);
   }
@@ -3034,7 +3047,8 @@ function renderProCard(){
     <button class="btn-primary" style="background:var(--card2); color:var(--accent); border:1px solid var(--border); margin-top:10px;" onclick="restorePro()" data-i18n="pro_restore_btn">Restore purchases</button>`;
 }
 
-if(window.Capacitor && Capacitor.isNativePlatform() && window.CdvPurchase){
+function initProBilling(){
+  if(!(window.Capacitor && Capacitor.isNativePlatform() && window.CdvPurchase)) return;
   try{
     const { store, ProductType, Platform } = CdvPurchase;
     store.register({ id: PRO_PRODUCT_ID, type: ProductType.NON_CONSUMABLE, platform: Platform.GOOGLE_PLAY });
@@ -3050,6 +3064,17 @@ if(window.Capacitor && Capacitor.isNativePlatform() && window.CdvPurchase){
   }catch(err){
     console.log('Pro billing failed to initialize:', err);
   }
+}
+// Cordova plugins (including cordova-plugin-purchase) aren't guaranteed
+// available until 'deviceready' fires - this script runs on normal page
+// load, which can happen before that. If CdvPurchase isn't there yet,
+// wait for deviceready instead of silently skipping registration forever
+// (which left the store uninitialized and made purchasePro() fail with
+// no visible error - the "nothing happens" bug).
+if(window.CdvPurchase){
+  initProBilling();
+} else if(window.Capacitor && Capacitor.isNativePlatform()){
+  document.addEventListener('deviceready', initProBilling);
 }
 </script>
 </body>
