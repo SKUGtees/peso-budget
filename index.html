@@ -50,13 +50,15 @@
      we shrink the scrollable area itself by their combined height, keeping that strip
      permanently clear at every scroll position. */
   :root{ --tabbar-height:64px; --ad-banner-height:0px; }
-  body{ height:100vh; height:100dvh; overflow:hidden; }
+  body{ height:100vh; height:100dvh; overflow:hidden; display:flex; flex-direction:column; }
+  #adTopSpacer{ flex-shrink:0; height:var(--ad-banner-height); }
   #scrollArea{
-    height:calc(100vh - var(--tabbar-height) - var(--ad-banner-height)); height:calc(100dvh - var(--tabbar-height) - var(--ad-banner-height));
+    flex:1; min-height:0;
+    height:calc(100vh - var(--tabbar-height)); height:calc(100dvh - var(--tabbar-height));
     overflow-y:auto; -webkit-overflow-scrolling:touch;
   }
   .tab-bar{
-    position:fixed; left:0; right:0; bottom:var(--ad-banner-height); height:var(--tabbar-height);
+    position:fixed; left:0; right:0; bottom:0; height:var(--tabbar-height);
     background:var(--card); border-top:1px solid var(--border);
     display:flex; z-index:45;
   }
@@ -67,7 +69,7 @@
   .tab-bar-btn .icon-svg{ width:22px; height:22px; }
   .tab-bar-btn.active{ color:var(--accent); }
   #adDebugOutline{
-    display:none; position:fixed; left:0; right:0; bottom:0; height:var(--ad-banner-height);
+    display:none; position:fixed; left:0; right:0; top:0; height:var(--ad-banner-height);
     border:2px dashed #ef4444; background:rgba(239,68,68,0.12); box-sizing:border-box;
     z-index:200; pointer-events:none;
     color:#ef4444; font-size:0.7rem; font-weight:700; text-align:center;
@@ -236,7 +238,7 @@
     border-radius:6px; padding:5px 7px; font-size:0.85rem;
   }
   .privacy-toggle{
-    position:fixed; top:14px; right:14px; z-index:50;
+    position:fixed; top:calc(14px + var(--ad-banner-height)); right:14px; z-index:50;
     width:38px; height:38px; border-radius:50%;
     background:var(--card2); border:1px solid var(--border); color:var(--text);
     display:flex; align-items:center; justify-content:center; font-size:1.1rem;
@@ -280,6 +282,7 @@
 </style>
 </head>
 <body>
+<div id="adTopSpacer"></div>
 <div class="onboarding-overlay" id="onboardingOverlay" style="display:none;">
   <div class="onboarding-card">
 
@@ -610,7 +613,7 @@
         <input type="checkbox" id="adDebugToggle" style="width:18px; height:18px; accent-color:var(--accent); cursor:pointer;">
       </label>
       <div class="entry-preview" style="display:block; margin-top:6px;" data-i18n="ad_debug_toggle_desc">
-        Draws a red dashed box over the space reserved for the bottom ad banner, so you can check its position without publishing a new build first.
+        Draws a red dashed box over the space reserved for the ad banner, so you can check its position without publishing a new build first.
       </div>
     </div>
     <div class="field">
@@ -772,7 +775,7 @@ en: {
   rearrange_widgets: "Rearrange widgets",
   rearrange_widgets_desc: "Turn this on to drag widgets into a new order, then off again to lock them in place and stop them moving by accident.",
   ad_debug_toggle: "Show ad position outline",
-  ad_debug_toggle_desc: "Draws a red dashed box over the space reserved for the bottom ad banner, so you can check its position without publishing a new build first.",
+  ad_debug_toggle_desc: "Draws a red dashed box over the space reserved for the ad banner, so you can check its position without publishing a new build first.",
   autosave_toggle: "Auto-save towards a goal",
   autosave_toggle_desc: "Automatically move newly saved money into the goal below, up to its target. You'll get a message once it's fully funded.",
   select_a_goal: "Select a goal…",
@@ -2699,12 +2702,13 @@ const AD_UNIT_ID = 'ca-app-pub-3940256099942544/6300978111';
 if(ADS_ENABLED && window.Capacitor && Capacitor.isNativePlatform()){
   const { AdMob } = Capacitor.Plugins;
   // The banner is a native view stacked on top of the WebView, not part of
-  // the DOM, so this reserved CSS height is only a best-effort hint - and on
-  // this device bannerAdSizeChanged's reported height alone under-reserves:
-  // debug testing showed the ad rendering higher than a reservation sized
-  // to exactly that height, overlapping the tab bar above it. Adding a
-  // fixed buffer on top of the reported height compensates for whatever
-  // extra native offset/padding the plugin isn't reporting.
+  // the DOM, so this reserved CSS height is only a best-effort hint. Moved
+  // to the top of the screen instead of the bottom: BOTTOM_CENTER kept
+  // rendering the ad overlapping the tab bar above it no matter how much
+  // reserved space or buffer was added (a known plugin/device quirk around
+  // the bottom nav area), so this sidesteps that entirely by placing the ad
+  // somewhere with no other fixed UI to conflict with. A buffer is still
+  // added on top of the reported height as a margin of safety.
   const AD_BANNER_BUFFER = 28;
   document.documentElement.style.setProperty('--ad-banner-height', (50 + AD_BANNER_BUFFER) + 'px');
   AdMob.addListener('bannerAdSizeChanged', size=>{
@@ -2716,7 +2720,7 @@ if(ADS_ENABLED && window.Capacitor && Capacitor.isNativePlatform()){
     return AdMob.showBanner({
       adId: AD_UNIT_ID,
       adSize: 'BANNER',
-      position: 'BOTTOM_CENTER',
+      position: 'TOP_CENTER',
       margin: 0
     });
   }).catch(err=>{
