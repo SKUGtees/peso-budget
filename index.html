@@ -2699,15 +2699,17 @@ const AD_UNIT_ID = 'ca-app-pub-3940256099942544/6300978111';
 if(ADS_ENABLED && window.Capacitor && Capacitor.isNativePlatform()){
   const { AdMob } = Capacitor.Plugins;
   // The banner is a native view stacked on top of the WebView, not part of
-  // the DOM, so this reserved CSS height is only a best-effort hint. Start
-  // with the standard BANNER size (320x50dp) as a default, then trust
-  // bannerAdSizeChanged's real reported height exactly - it fires reliably
-  // and an over-generous fixed reservation just leaves a visible gap above
-  // whatever size the ad actually renders at.
-  document.documentElement.style.setProperty('--ad-banner-height', '50px');
+  // the DOM, so this reserved CSS height is only a best-effort hint - and on
+  // this device bannerAdSizeChanged's reported height alone under-reserves:
+  // debug testing showed the ad rendering higher than a reservation sized
+  // to exactly that height, overlapping the tab bar above it. Adding a
+  // fixed buffer on top of the reported height compensates for whatever
+  // extra native offset/padding the plugin isn't reporting.
+  const AD_BANNER_BUFFER = 28;
+  document.documentElement.style.setProperty('--ad-banner-height', (50 + AD_BANNER_BUFFER) + 'px');
   AdMob.addListener('bannerAdSizeChanged', size=>{
     if(size && size.height){
-      document.documentElement.style.setProperty('--ad-banner-height', size.height + 'px');
+      document.documentElement.style.setProperty('--ad-banner-height', (size.height + AD_BANNER_BUFFER) + 'px');
     }
   });
   AdMob.initialize().then(()=>{
