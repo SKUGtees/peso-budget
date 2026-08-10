@@ -182,27 +182,6 @@
     width:32px; height:32px; padding:0; border:2px solid var(--border); border-radius:50%;
     background:none; cursor:pointer; overflow:hidden;
   }
-  .color-swatch.pro-locked{ position:relative; opacity:0.55; }
-  .color-swatch.pro-locked::after{
-    content:"🔒"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-    font-size:14px; filter:drop-shadow(0 1px 1px rgba(0,0,0,0.6));
-  }
-  .pro-badge{
-    display:inline-block; font-size:0.68rem; font-weight:800; letter-spacing:0.03em; text-transform:uppercase;
-    color:#1a1a1a; background:linear-gradient(135deg, #fde68a, #fbbf24); border-radius:999px; padding:2px 8px; margin-left:8px;
-  }
-  .pro-card{
-    background:linear-gradient(135deg, rgba(251,191,36,0.14), rgba(192,132,252,0.10));
-    border:1px solid rgba(251,191,36,0.35);
-  }
-  .pro-feature-list{ list-style:none; padding:0; margin:10px 0 14px 0; }
-  .pro-feature-list li{ display:flex; align-items:center; gap:8px; padding:4px 0; font-size:0.88rem; color:var(--text); }
-  .pro-locked-overlay{
-    position:relative; padding:18px; text-align:center; border:1px dashed var(--border); border-radius:12px;
-    color:var(--muted); font-size:0.85rem;
-  }
-  .pro-locked-overlay button{ margin-top:10px; }
-  .pro-locked-btn{ opacity:0.6; }
   table{ width:100%; border-collapse:collapse; font-size:0.83rem; }
   th{ text-align:right; color:var(--muted); font-weight:600; padding:6px 4px; font-size:0.72rem; text-transform:uppercase;}
   th:first-child, td:first-child{ text-align:left; }
@@ -507,11 +486,6 @@
     <div id="forecastWrap"></div>
   </div>
 
-  <div class="card" data-widget-id="advancedStats">
-    <h2 data-i18n="card_advanced_stats">Advanced Stats<span class="pro-badge" data-i18n="pro_badge">Pro</span></h2>
-    <div id="advancedStatsWrap"></div>
-  </div>
-
 </div>
 </div>
 
@@ -580,11 +554,6 @@
 
 <div class="tab-panel" data-tab="settings" style="display:none;">
 
-  <div class="card pro-card" id="proCard">
-    <h2 data-i18n="pro_card_title">Budget Abroad Pro</h2>
-    <div id="proCardBody"></div>
-  </div>
-
   <div class="card" id="settingsCard">
     <h2 data-i18n="card_settings">Settings</h2>
     <div class="field">
@@ -610,9 +579,6 @@
         <button type="button" class="color-swatch" data-color="#60a5fa" style="background:#60a5fa;" data-i18n-title="color_blue" title="Blue"></button>
         <button type="button" class="color-swatch" data-color="#f472b6" style="background:#f472b6;" data-i18n-title="color_pink" title="Pink"></button>
         <button type="button" class="color-swatch" data-color="#fb923c" style="background:#fb923c;" data-i18n-title="color_orange" title="Orange"></button>
-        <button type="button" class="color-swatch" data-color="#facc15" data-pro="true" style="background:linear-gradient(135deg,#facc15,#f59e0b);" data-i18n-title="color_gold" title="Gold (Pro)"></button>
-        <button type="button" class="color-swatch" data-color="#2dd4bf" data-pro="true" style="background:linear-gradient(135deg,#2dd4bf,#0ea5e9);" data-i18n-title="color_teal" title="Teal (Pro)"></button>
-        <button type="button" class="color-swatch" data-color="#f43f5e" data-pro="true" style="background:linear-gradient(135deg,#f43f5e,#c084fc);" data-i18n-title="color_sunset" title="Sunset (Pro)"></button>
         <input type="color" id="customAccentColor" class="custom-color-input" value="#34d399" data-i18n-title="color_custom" title="Custom color">
       </div>
     </div>
@@ -698,11 +664,6 @@
           Your data lives only on this device's browser storage. Updates to the app never touch it, but clearing browser data, switching phones, or reinstalling will. Export a backup file now and then to be safe - Restore reads one back in.
         </div>
         <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:14px;">
-          <label style="display:flex; align-items:center; font-size:0.82rem; color:var(--muted); margin-bottom:10px;" data-i18n="export_history_label">Export History<span class="pro-badge" data-i18n="pro_badge">Pro</span></label>
-          <button class="btn-primary" id="exportCsvBtn" style="margin-top:0;" data-i18n="export_csv_btn">Export as CSV</button>
-          <button class="btn-primary" id="exportPdfBtn" style="background:var(--card2); color:var(--accent); border:1px solid var(--border); margin-top:10px;" data-i18n="export_pdf_btn">Export as PDF report</button>
-        </div>
-        <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:14px;">
           <label style="display:block; font-size:0.82rem; color:var(--muted); margin-bottom:10px;" data-i18n="danger_zone">Danger Zone</label>
           <button class="btn-primary" id="resetDataBtn" style="background:var(--danger); color:#3a0d0d;" data-i18n="reset_all_data">Reset all data</button>
           <div class="entry-preview" style="display:block; line-height:1.6; margin-top:10px; margin-bottom:0;" data-i18n="reset_desc">
@@ -783,30 +744,6 @@ en: {
   forecast_empty: "Log a few days of spending to see your savings forecast.",
   forecast_week: "Next week", forecast_month: "Next month", forecast_year: "Next year",
   forecast_axis_today: "Today", forecast_axis_week: "1wk", forecast_axis_month: "1mo", forecast_axis_year: "1yr",
-  card_advanced_stats: "Advanced Stats",
-  pro_badge: "Pro",
-  pro_stats_locked: "Unlock weekday breakdowns, week-over-week comparisons, and best/worst days with Pro.",
-  pro_upgrade_short: "Upgrade to Pro",
-  stats_avg_daily: "Avg/day saved",
-  stats_best_day: "Best day",
-  stats_worst_day: "Worst day",
-  stats_week_compare: "This week vs last week",
-  stats_vs_last_week: "vs last week",
-  stats_by_weekday: "Avg saved by day of week",
-  pro_card_title: "Budget Abroad Pro",
-  pro_owned: "You're Pro - thanks for the support!",
-  pro_feature_stats: "Advanced stats & reports",
-  pro_feature_export: "Export your history as CSV or PDF",
-  pro_feature_themes: "Extra premium app colors",
-  pro_upgrade_btn: "Upgrade - {price}",
-  pro_restore_btn: "Restore purchases",
-  pro_price_placeholder: "one-time purchase",
-  pro_native_only: "Purchases are only available in the Budget Abroad Android app.",
-  pro_billing_unavailable: "Purchases aren't available right now. Please try again later.",
-  pro_unlocked_toast: "You're Pro! All Pro features are unlocked.",
-  export_history_label: "Export History",
-  export_csv_btn: "Export as CSV",
-  export_pdf_btn: "Export as PDF report",
   card_mascot: "Your Savings Buddy",
   mascot_tier_1: "Every bit counts - keep going!",
   mascot_tier_2: "You're building a stash!",
@@ -831,7 +768,6 @@ en: {
   local_currency_desc: "The currency you spend day-to-day and track your budget and savings in. Changing this does not convert past entries.",
   app_color: "App color",
   color_green: "Green (default)", color_lilac: "Lilac", color_blue: "Blue", color_pink: "Pink", color_orange: "Orange", color_custom: "Custom color",
-  color_gold: "Gold (Pro)", color_teal: "Teal (Pro)", color_sunset: "Sunset (Pro)",
   already_saved_label: "Already saved before using this app ({cur})",
   rearrange_widgets: "Rearrange widgets",
   rearrange_widgets_desc: "Turn this on to drag widgets into a new order, then off again to lock them in place and stop them moving by accident.",
@@ -1514,19 +1450,12 @@ function normalize(parsed){
   if(!parsed.language) parsed.language = 'en';
   if(!parsed.localCurrency) parsed.localCurrency = 'MXN';
   if(parsed.mascotEnabled==null) parsed.mascotEnabled = true;
-  if(parsed.isPro==null) parsed.isPro = false;
   return parsed;
 }
 
 function defaultState(){
-  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:{}, spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR', dragModeEnabled:false, autoSaveEnabled:false, autoSaveGoalId:'', manualRateOverride:false, accentColor:'#34d399', firstUseDate:localDateStr(new Date()), language:'en', localCurrency:'MXN', mascotEnabled:true, isPro:false };
+  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:{}, spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR', dragModeEnabled:false, autoSaveEnabled:false, autoSaveGoalId:'', manualRateOverride:false, accentColor:'#34d399', firstUseDate:localDateStr(new Date()), language:'en', localCurrency:'MXN', mascotEnabled:true };
 }
-
-function isPro(){ return state.isPro === true; }
-// Product must be created as a managed (non-consumable) in-app product in
-// Play Console with this exact ID before real purchases can succeed.
-const PRO_PRODUCT_ID = 'pro_upgrade';
-let proProduct = null; // filled in with price/title once the store responds
 
 function load(){
   try{
@@ -1717,7 +1646,6 @@ function toggleGoalAutoSave(id, checked){
 }
 
 function renderSettings(){
-  renderProCard();
   const localCur = state.localCurrency || 'MXN';
   document.getElementById('income').value = state.income ?? '';
   document.getElementById('days').value = state.days ?? '';
@@ -1748,7 +1676,6 @@ function renderSettings(){
   document.getElementById('customAccentColor').value = state.accentColor || '#34d399';
   document.querySelectorAll('.color-swatch').forEach(sw=>{
     sw.classList.toggle('active', sw.dataset.color.toLowerCase() === (state.accentColor||'').toLowerCase());
-    sw.classList.toggle('pro-locked', sw.dataset.pro === 'true' && !isPro());
   });
   const noConversionNeeded = (state.incomeCurrency || 'EUR') === localCur;
   document.getElementById('manualRateField').style.display = noConversionNeeded ? 'none' : 'block';
@@ -2190,97 +2117,6 @@ function renderForecast(){
     </svg>`;
 }
 
-function renderAdvancedStats(){
-  const wrap = document.getElementById('advancedStatsWrap');
-  if(!wrap) return;
-  if(!isPro()){
-    wrap.innerHTML = `
-      <div class="pro-locked-overlay">
-        <div data-i18n="pro_stats_locked">Unlock weekday breakdowns, week-over-week comparisons, and best/worst days with Pro.</div>
-        <button class="btn-primary" onclick="showProUpsell()" data-i18n="pro_upgrade_short">Upgrade to Pro</button>
-      </div>`;
-    return;
-  }
-  const entries = state.entries;
-  if(entries.length===0){
-    wrap.innerHTML = `<div class="empty" data-i18n="forecast_empty">Log a few days of spending to see your savings forecast.</div>`;
-    return;
-  }
-  // Group by currency since entries can be tagged with different currencies
-  // (e.g. logged while traveling) - stats stay meaningful per-currency rather
-  // than silently mixing amounts across currencies.
-  const byCurrency = {};
-  entries.forEach(e=>{
-    const cur = e.currency || state.localCurrency || 'MXN';
-    (byCurrency[cur] = byCurrency[cur] || []).push(e);
-  });
-
-  const todayStr = localDateStr(new Date());
-  const today = new Date(todayStr+'T00:00:00');
-  const daysAgo = (dateStr)=> Math.floor((today - new Date(dateStr+'T00:00:00')) / 86400000);
-  const weekdayFmt = new Intl.DateTimeFormat(currentDateLocale(), { weekday:'short' });
-
-  const blocks = Object.keys(byCurrency).map(cur=>{
-    const list = byCurrency[cur];
-    const totalSaved = list.reduce((s,e)=> s + (Number(e.saved)||0), 0);
-    const avgSaved = totalSaved / list.length;
-    const best = list.reduce((a,b)=> (Number(b.saved)||0) > (Number(a.saved)||0) ? b : a);
-    const worst = list.reduce((a,b)=> (Number(b.saved)||0) < (Number(a.saved)||0) ? b : a);
-    const thisWeek = list.filter(e=> daysAgo(e.date) < 7).reduce((s,e)=> s+(Number(e.saved)||0), 0);
-    const lastWeek = list.filter(e=> daysAgo(e.date) >= 7 && daysAgo(e.date) < 14).reduce((s,e)=> s+(Number(e.saved)||0), 0);
-    const weekDelta = thisWeek - lastWeek;
-
-    const weekdayTotals = [0,0,0,0,0,0,0], weekdayCounts = [0,0,0,0,0,0,0];
-    list.forEach(e=>{
-      const d = new Date(e.date+'T00:00:00');
-      const idx = d.getDay();
-      weekdayTotals[idx] += Number(e.saved)||0;
-      weekdayCounts[idx]++;
-    });
-    const weekdayAvgs = weekdayTotals.map((t,i)=> weekdayCounts[i] ? t/weekdayCounts[i] : 0);
-    const maxAbs = Math.max(1, ...weekdayAvgs.map(v=>Math.abs(v)));
-    const bars = weekdayAvgs.map((v,i)=>{
-      const d = new Date(); d.setDate(d.getDate() - d.getDay() + i);
-      const label = weekdayFmt.format(d);
-      const heightPct = Math.max(6, Math.round((Math.abs(v)/maxAbs)*100));
-      const color = v>=0 ? 'var(--accent)' : 'var(--danger)';
-      return `<div style="display:flex; flex-direction:column; align-items:center; gap:4px; flex:1;">
-        <div style="width:100%; max-width:22px; height:60px; display:flex; align-items:flex-end;">
-          <div style="width:100%; height:${heightPct}%; background:${color}; border-radius:4px 4px 0 0;"></div>
-        </div>
-        <div style="font-size:0.65rem; color:var(--muted);">${escapeAttr(label)}</div>
-      </div>`;
-    }).join('');
-
-    return `
-      <div style="margin-bottom:${Object.keys(byCurrency).length>1?'18px':'0'};">
-        ${Object.keys(byCurrency).length>1 ? `<div style="font-size:0.78rem; font-weight:700; color:var(--muted); margin-bottom:8px;">${escapeAttr(cur)}</div>` : ''}
-        <div style="display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap;">
-          <div style="flex:1; min-width:100px;">
-            <div style="font-size:0.7rem; color:var(--muted);" data-i18n="stats_avg_daily">Avg/day saved</div>
-            <div style="font-weight:800; color:${avgSaved>=0?'var(--accent)':'var(--danger)'};">${fmtCur(avgSaved, cur)}</div>
-          </div>
-          <div style="flex:1; min-width:100px;">
-            <div style="font-size:0.7rem; color:var(--muted);" data-i18n="stats_best_day">Best day</div>
-            <div style="font-weight:800; color:var(--accent);">${fmtCur(best.saved, cur)}</div>
-          </div>
-          <div style="flex:1; min-width:100px;">
-            <div style="font-size:0.7rem; color:var(--muted);" data-i18n="stats_worst_day">Worst day</div>
-            <div style="font-weight:800; color:var(--danger);">${fmtCur(worst.saved, cur)}</div>
-          </div>
-        </div>
-        <div style="font-size:0.78rem; color:var(--muted); margin-bottom:8px;" data-i18n-html="stats_week_compare">This week vs last week</div>
-        <div style="font-weight:800; margin-bottom:14px; color:${weekDelta>=0?'var(--accent)':'var(--danger)'};">
-          ${fmtCur(thisWeek, cur)} <span style="font-size:0.78rem; color:var(--muted); font-weight:500;">(${weekDelta>=0?'+':''}${fmtCur(weekDelta, cur)} ${t('stats_vs_last_week')})</span>
-        </div>
-        <div style="font-size:0.78rem; color:var(--muted); margin-bottom:8px;" data-i18n="stats_by_weekday">Avg saved by day of week</div>
-        <div style="display:flex; gap:4px;">${bars}</div>
-      </div>`;
-  }).join('');
-
-  wrap.innerHTML = blocks;
-}
-
 function renderAll(){
   renderCosts();
   renderSettings();
@@ -2290,7 +2126,6 @@ function renderAll(){
   renderPrivacyToggle();
   renderStreak();
   renderForecast();
-  renderAdvancedStats();
   renderMascot();
 }
 
@@ -2336,10 +2171,6 @@ document.getElementById('localCurrencySelect').addEventListener('change', e=>{
 });
 document.querySelectorAll('.color-swatch').forEach(sw=>{
   sw.addEventListener('click', ()=>{
-    if(sw.dataset.pro === 'true' && !isPro()){
-      showProUpsell();
-      return;
-    }
     state.accentColor = sw.dataset.color;
     applyAccentColor(state.accentColor);
     save();
@@ -2371,68 +2202,6 @@ document.getElementById('exportBtn').addEventListener('click', ()=>{
 });
 document.getElementById('importBtn').addEventListener('click', ()=>{
   document.getElementById('importFile').click();
-});
-
-function historyEntriesDesc(){
-  return [...state.entries].sort((a,b)=> b.date.localeCompare(a.date));
-}
-
-function csvEscape(val){
-  const s = String(val);
-  return /[",\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s;
-}
-
-document.getElementById('exportCsvBtn').addEventListener('click', ()=>{
-  if(!isPro()){ showProUpsell(); return; }
-  const rows = [['Date','Spent','Saved','Budget','Currency']];
-  historyEntriesDesc().forEach(e=>{
-    rows.push([e.date, e.spent, e.saved, e.budget, e.currency||state.localCurrency||'MXN']);
-  });
-  const csv = rows.map(r=> r.map(csvEscape).join(',')).join('\n');
-  const blob = new Blob([csv], {type:'text/csv'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  const stamp = new Date().toISOString().slice(0,10);
-  a.href = url;
-  a.download = `budget-abroad-history-${stamp}.csv`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-});
-
-document.getElementById('exportPdfBtn').addEventListener('click', ()=>{
-  if(!isPro()){ showProUpsell(); return; }
-  const entries = historyEntriesDesc();
-  const cur = state.localCurrency || 'MXN';
-  const rowsHtml = entries.map(e=> `<tr>
-      <td>${escapeAttr(e.date)}</td>
-      <td>${escapeAttr(fmtCur(e.spent, e.currency||cur))}</td>
-      <td>${escapeAttr(fmtCur(e.saved, e.currency||cur))}</td>
-      <td>${escapeAttr(fmtCur(e.budget, e.currency||cur))}</td>
-    </tr>`).join('');
-  const totalSaved = entries.reduce((s,e)=> s + (Number(e.saved)||0), 0);
-  const stamp = new Date().toLocaleDateString();
-  const win = window.open('', '_blank');
-  if(!win) return;
-  win.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Budget Abroad - History Report</title>
-    <style>
-      body{ font-family: -apple-system, Arial, sans-serif; color:#111; padding:24px; }
-      h1{ font-size:1.3rem; margin-bottom:2px; }
-      .meta{ color:#555; font-size:0.85rem; margin-bottom:18px; }
-      table{ width:100%; border-collapse:collapse; font-size:0.85rem; }
-      th, td{ text-align:right; padding:6px 8px; border-bottom:1px solid #ddd; }
-      th:first-child, td:first-child{ text-align:left; }
-      .total{ margin-top:16px; font-weight:700; }
-    </style></head><body>
-    <h1>Budget Abroad - History Report</h1>
-    <div class="meta">Generated ${escapeAttr(stamp)} - ${entries.length} entries</div>
-    <table><thead><tr><th>Date</th><th>Spent</th><th>Saved</th><th>Budget</th></tr></thead>
-    <tbody>${rowsHtml}</tbody></table>
-    <div class="total">Total saved: ${escapeAttr(fmtCur(totalSaved, cur))}</div>
-    <script>window.onload = () => window.print();<\/script>
-    </body></html>`);
-  win.document.close();
 });
 document.getElementById('importFile').addEventListener('change', e=>{
   const file = e.target.files[0];
@@ -2955,178 +2724,6 @@ if(ADS_ENABLED && window.Capacitor && Capacitor.isNativePlatform()){
   }).catch(err=>{
     console.log('AdMob banner failed to show:', err);
   });
-}
-
-// --- Budget Abroad Pro (one-time unlock via Google Play Billing) ---------
-// Temporary on-screen debug log for the purchase flow - lets the user read
-// what's happening directly off their phone screen without needing a
-// computer/USB debugging, while we track down why purchases silently fail.
-const proDebugLines = [];
-function proDebugLog(msg){
-  const line = new Date().toLocaleTimeString() + ' - ' + msg;
-  proDebugLines.push(line);
-  console.log('[ProDebug]', msg);
-  const el = document.getElementById('proDebugLog');
-  if(el) el.textContent = proDebugLines.join('\n');
-}
-proDebugLog('Script loaded. Capacitor=' + !!window.Capacitor + ' isNative=' + !!(window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform()) + ' CdvPurchase=' + !!window.CdvPurchase);
-
-function unlockPro(){
-  if(state.isPro) return;
-  state.isPro = true;
-  save();
-  renderAll();
-  showCelebrationToast('🎉', t('pro_unlocked_toast'));
-}
-
-function purchasePro(){
-  proDebugLog('Upgrade tapped.');
-  if(!(window.Capacitor && Capacitor.isNativePlatform())){
-    proDebugLog('Blocked: not running as a native app.');
-    alert(t('pro_native_only'));
-    return;
-  }
-  if(!window.CdvPurchase){
-    proDebugLog('Blocked: window.CdvPurchase is not defined.');
-    alert(t('pro_billing_unavailable'));
-    return;
-  }
-  try{
-    proDebugLog('Calling store.order("' + PRO_PRODUCT_ID + '")...');
-    // store.order() returns a Promise - a plain try/catch only catches
-    // synchronous throws, so a rejected order (e.g. the store wasn't
-    // finished initializing yet) would otherwise fail silently with no
-    // purchase dialog and no visible error at all.
-    const result = CdvPurchase.store.order(PRO_PRODUCT_ID);
-    if(result && typeof result.then === 'function'){
-      result.then(()=> proDebugLog('store.order() resolved.'));
-    }
-    if(result && typeof result.catch === 'function'){
-      result.catch(err=>{
-        proDebugLog('store.order() rejected: ' + (err && err.message ? err.message : JSON.stringify(err)));
-        console.log('Pro purchase failed:', err);
-        alert(t('pro_billing_unavailable'));
-      });
-    }
-  }catch(err){
-    proDebugLog('store.order() threw synchronously: ' + err.message);
-    console.log('Pro purchase failed to start:', err);
-    alert(t('pro_billing_unavailable'));
-  }
-}
-
-function restorePro(){
-  proDebugLog('Restore purchases tapped.');
-  if(!(window.Capacitor && Capacitor.isNativePlatform() && window.CdvPurchase)){
-    alert(t('pro_native_only'));
-    return;
-  }
-  try{
-    const result = CdvPurchase.store.restorePurchases();
-    if(result && typeof result.catch === 'function'){
-      result.catch(err=>{
-        proDebugLog('Restore failed: ' + (err && err.message ? err.message : JSON.stringify(err)));
-        console.log('Restore purchases failed:', err);
-      });
-    }
-  }catch(err){
-    proDebugLog('Restore threw synchronously: ' + err.message);
-    console.log('Restore purchases failed:', err);
-  }
-}
-window.purchasePro = purchasePro;
-window.restorePro = restorePro;
-
-function showProUpsell(){
-  switchTab('settings');
-  const card = document.getElementById('proCard');
-  if(card){
-    card.scrollIntoView({behavior:'smooth', block:'start'});
-    card.style.transition = 'box-shadow 0.2s';
-    card.style.boxShadow = '0 0 0 2px var(--accent)';
-    setTimeout(()=>{ card.style.boxShadow = ''; }, 1200);
-  }
-}
-window.showProUpsell = showProUpsell;
-
-function renderProCard(){
-  ['exportCsvBtn','exportPdfBtn'].forEach(id=>{
-    const el = document.getElementById(id);
-    if(el) el.classList.toggle('pro-locked-btn', !isPro());
-  });
-  const body = document.getElementById('proCardBody');
-  if(!body) return;
-  if(state.isPro){
-    body.innerHTML = `
-      <div style="display:flex; align-items:center; gap:8px; font-weight:700; color:var(--accent); margin-bottom:6px;">
-        ✓ <span data-i18n="pro_owned">You're Pro - thanks for the support!</span>
-      </div>`;
-    return;
-  }
-  const priceLabel = (proProduct && proProduct.pricing && proProduct.pricing.price) ? proProduct.pricing.price : t('pro_price_placeholder');
-  body.innerHTML = `
-    <ul class="pro-feature-list">
-      <li>📊 <span data-i18n="pro_feature_stats">Advanced stats &amp; reports</span></li>
-      <li>📄 <span data-i18n="pro_feature_export">Export your history as CSV or PDF</span></li>
-      <li>🎨 <span data-i18n="pro_feature_themes">Extra premium app colors</span></li>
-    </ul>
-    <button class="btn-primary" onclick="purchasePro()">${t('pro_upgrade_btn', {price: priceLabel})}</button>
-    <button class="btn-primary" style="background:var(--card2); color:var(--accent); border:1px solid var(--border); margin-top:10px;" onclick="restorePro()" data-i18n="pro_restore_btn">Restore purchases</button>
-    <div style="margin-top:14px; font-size:0.7rem; color:var(--muted);">Debug log (temporary - safe to ignore):</div>
-    <pre id="proDebugLog" style="margin-top:4px; padding:8px; background:var(--card2); border-radius:8px; font-size:0.65rem; white-space:pre-wrap; word-break:break-word; max-height:160px; overflow-y:auto;">${escapeAttr(proDebugLines.join('\n'))}</pre>`;
-}
-
-function initProBilling(){
-  proDebugLog('initProBilling() called. Capacitor=' + !!window.Capacitor + ' isNative=' + !!(window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform()) + ' CdvPurchase=' + !!window.CdvPurchase);
-  if(!(window.Capacitor && Capacitor.isNativePlatform() && window.CdvPurchase)){
-    proDebugLog('initProBilling() aborted - preconditions not met.');
-    return;
-  }
-  try{
-    const { store, ProductType, Platform } = CdvPurchase;
-    store.register({ id: PRO_PRODUCT_ID, type: ProductType.NON_CONSUMABLE, platform: Platform.GOOGLE_PLAY });
-    proDebugLog('Product registered: ' + PRO_PRODUCT_ID);
-    store.when().productUpdated(p=>{
-      if(p.id === PRO_PRODUCT_ID){
-        proProduct = p;
-        proDebugLog('productUpdated: ' + JSON.stringify({id:p.id, canPurchase:p.canPurchase, price: p.pricing && p.pricing.price}));
-        renderProCard();
-      }
-    });
-    store.when().approved(transaction=>{ proDebugLog('Transaction approved.'); transaction.verify(); });
-    store.when().verified(receipt=>{ proDebugLog('Receipt verified.'); receipt.finish(); });
-    store.when().owned(p=>{
-      proDebugLog('Product owned: ' + p.id);
-      if(p.id === PRO_PRODUCT_ID) unlockPro();
-    });
-    store.initialize([Platform.GOOGLE_PLAY]).then(()=>{
-      proDebugLog('store.initialize() resolved.');
-    }).catch(err=>{
-      proDebugLog('store.initialize() rejected: ' + (err && err.message ? err.message : JSON.stringify(err)));
-    });
-    proDebugLog('store.initialize() called.');
-  }catch(err){
-    proDebugLog('initProBilling() threw: ' + err.message);
-    console.log('Pro billing failed to initialize:', err);
-  }
-}
-// Cordova plugins (including cordova-plugin-purchase) aren't guaranteed
-// available until 'deviceready' fires - this script runs on normal page
-// load, which can happen before that. If CdvPurchase isn't there yet,
-// wait for deviceready instead of silently skipping registration forever
-// (which left the store uninitialized and made purchasePro() fail with
-// no visible error - the "nothing happens" bug).
-if(window.CdvPurchase){
-  proDebugLog('CdvPurchase already present at script load - calling initProBilling() now.');
-  initProBilling();
-} else if(window.Capacitor && Capacitor.isNativePlatform()){
-  proDebugLog('CdvPurchase not present yet - waiting for deviceready event.');
-  document.addEventListener('deviceready', ()=>{
-    proDebugLog('deviceready fired. CdvPurchase=' + !!window.CdvPurchase);
-    initProBilling();
-  });
-} else {
-  proDebugLog('Not a native platform - billing not initialized (expected on web).');
 }
 </script>
 </body>
