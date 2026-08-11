@@ -2707,13 +2707,14 @@ if(ADS_ENABLED && window.Capacitor && Capacitor.isNativePlatform()){
   // rendering the ad overlapping the tab bar above it no matter how much
   // reserved space or buffer was added (a known plugin/device quirk around
   // the bottom nav area), so this sidesteps that entirely by placing the ad
-  // somewhere with no other fixed UI to conflict with. A buffer is still
-  // added on top of the reported height as a margin of safety.
-  const AD_BANNER_BUFFER = 28;
-  document.documentElement.style.setProperty('--ad-banner-height', (50 + AD_BANNER_BUFFER) + 'px');
+  // somewhere with no other fixed UI to conflict with. No extra buffer here -
+  // testing at the top showed the ad renders flush with the bottom of the
+  // reserved space, so a taller-than-needed reservation just leaves visible
+  // empty space above the ad instead of protecting anything.
+  document.documentElement.style.setProperty('--ad-banner-height', '50px');
   AdMob.addListener('bannerAdSizeChanged', size=>{
     if(size && size.height){
-      document.documentElement.style.setProperty('--ad-banner-height', (size.height + AD_BANNER_BUFFER) + 'px');
+      document.documentElement.style.setProperty('--ad-banner-height', size.height + 'px');
     }
   });
   AdMob.initialize().then(()=>{
