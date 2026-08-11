@@ -59,8 +59,18 @@
   :root{ --tabbar-height:64px; --ad-banner-height:0px; }
   body{ height:100vh; height:100dvh; overflow:hidden; display:flex; flex-direction:column; }
   #adTopSpacer{ flex-shrink:0; height:calc(env(safe-area-inset-top, 0px) + var(--ad-banner-height)); }
+  /* No `flex:1` here on purpose - it's what caused the "can't scroll far
+     enough" bug on tabs with taller content (Goals/Budget). `flex:1` is
+     shorthand for `flex:1 1 0%`, so its flex-basis (0%) beats the explicit
+     `height` below for sizing purposes in this column flex container:
+     the browser was stretching #scrollArea to fill 100% of the remaining
+     body space (all the way behind the fixed tab bar) and ignoring the
+     calc() entirely, permanently hiding the last ~tabbar-height worth of
+     content with no way to scroll to it. Dropping `flex:1` lets the
+     explicit height (which already reacts live to --tabbar-height,
+     --ad-banner-height and the safe-area insets via calc()) actually apply. */
   #scrollArea{
-    flex:1; min-height:0;
+    min-height:0;
     height:calc(100vh - var(--tabbar-height) - env(safe-area-inset-bottom, 0px));
     height:calc(100dvh - var(--tabbar-height) - env(safe-area-inset-bottom, 0px));
     overflow-y:auto; -webkit-overflow-scrolling:touch;
