@@ -98,15 +98,6 @@
   }
   .tab-bar-btn .icon-svg{ width:22px; height:22px; }
   .tab-bar-btn.active{ color:var(--accent); }
-  #adDebugOutline{
-    display:none; position:fixed; left:0; right:0; top:0;
-    height:calc(env(safe-area-inset-top, 0px) + var(--ad-banner-height));
-    border:2px dashed #ef4444; background:rgba(239,68,68,0.12); box-sizing:border-box;
-    z-index:200; pointer-events:none;
-    color:#ef4444; font-size:0.7rem; font-weight:700; text-align:center;
-    align-items:center; justify-content:center;
-  }
-  #adDebugOutline.visible{ display:flex; }
   .row{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:10px;}
   .row:last-child{ margin-bottom:0; }
   .row label{ font-size:0.92rem; color:var(--text); flex-shrink:0; }
@@ -639,15 +630,6 @@
     </div>
     <div class="field">
       <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; margin-bottom:0;">
-        <span data-i18n="ad_debug_toggle">Show ad position outline</span>
-        <input type="checkbox" id="adDebugToggle" style="width:18px; height:18px; accent-color:var(--accent); cursor:pointer;">
-      </label>
-      <div class="entry-preview" style="display:block; margin-top:6px;" data-i18n="ad_debug_toggle_desc">
-        Draws a red dashed box over the space reserved for the ad banner, so you can check its position without publishing a new build first.
-      </div>
-    </div>
-    <div class="field">
-      <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; margin-bottom:0;">
         <span data-i18n="autosave_toggle">Auto-save towards a goal</span>
         <input type="checkbox" id="autoSaveToggle" style="width:18px; height:18px; accent-color:var(--accent); cursor:pointer;">
       </label>
@@ -721,7 +703,6 @@
   <button class="tab-bar-btn" data-tab="history"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 16 14"></polyline></svg><span data-i18n="tab_history">History</span></button>
   <button class="tab-bar-btn" data-tab="settings"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg><span data-i18n="tab_settings">Settings</span></button>
 </nav>
-<div id="adDebugOutline">AD BANNER SPACE</div>
 
 <script src="sortable.min.js"></script>
 <script>
@@ -804,8 +785,6 @@ en: {
   already_saved_label: "Already saved before using this app ({cur})",
   rearrange_widgets: "Rearrange widgets",
   rearrange_widgets_desc: "Turn this on to drag widgets into a new order, then off again to lock them in place and stop them moving by accident.",
-  ad_debug_toggle: "Show ad position outline",
-  ad_debug_toggle_desc: "Draws a red dashed box over the space reserved for the ad banner, so you can check its position without publishing a new build first.",
   autosave_toggle: "Auto-save towards a goal",
   autosave_toggle_desc: "Automatically move newly saved money into the goal below, up to its target. You'll get a message once it's fully funded.",
   select_a_goal: "Select a goal…",
@@ -937,8 +916,6 @@ es: {
   already_saved_label: "Ya ahorrado antes de usar esta app ({cur})",
   rearrange_widgets: "Reorganizar widgets",
   rearrange_widgets_desc: "Actívalo para arrastrar los widgets a un nuevo orden, luego desactívalo para bloquearlos y evitar moverlos por accidente.",
-  ad_debug_toggle: "Mostrar contorno de la posición del anuncio",
-  ad_debug_toggle_desc: "Dibuja un recuadro rojo discontinuo sobre el espacio reservado para el banner de anuncios inferior, para que puedas comprobar su posición sin publicar antes una nueva versión.",
   autosave_toggle: "Ahorrar automáticamente hacia una meta",
   autosave_toggle_desc: "Mueve automáticamente el dinero recién ahorrado hacia la meta de abajo, hasta alcanzar su objetivo. Recibirás un aviso cuando esté completa.",
   select_a_goal: "Selecciona una meta…",
@@ -1070,8 +1047,6 @@ fr: {
   already_saved_label: "Déjà épargné avant d'utiliser cette app ({cur})",
   rearrange_widgets: "Réorganiser les widgets",
   rearrange_widgets_desc: "Activez pour glisser les widgets dans un nouvel ordre, puis désactivez pour les verrouiller et éviter tout déplacement accidentel.",
-  ad_debug_toggle: "Afficher le contour de la position de la publicité",
-  ad_debug_toggle_desc: "Dessine un cadre en pointillés rouges sur l'espace réservé à la bannière publicitaire du bas, pour vérifier sa position sans publier une nouvelle version au préalable.",
   autosave_toggle: "Épargner automatiquement vers un objectif",
   autosave_toggle_desc: "Déplace automatiquement l'argent nouvellement épargné vers l'objectif ci-dessous, jusqu'à sa cible. Vous recevrez un message une fois qu'il sera atteint.",
   select_a_goal: "Sélectionnez un objectif…",
@@ -1203,8 +1178,6 @@ de: {
   already_saved_label: "Bereits gespart vor Nutzung dieser App ({cur})",
   rearrange_widgets: "Widgets neu anordnen",
   rearrange_widgets_desc: "Aktiviere dies, um Widgets in eine neue Reihenfolge zu ziehen, dann wieder deaktivieren, um sie zu sperren und versehentliches Verschieben zu verhindern.",
-  ad_debug_toggle: "Anzeigenposition-Umriss anzeigen",
-  ad_debug_toggle_desc: "Zeichnet einen roten gestrichelten Kasten über dem reservierten Platz für das untere Werbebanner, damit du seine Position prüfen kannst, ohne vorher eine neue Version zu veröffentlichen.",
   autosave_toggle: "Automatisch für ein Ziel sparen",
   autosave_toggle_desc: "Verschiebt neu gespartes Geld automatisch auf das untenstehende Ziel, bis das Ziel erreicht ist. Du erhältst eine Nachricht, sobald es vollständig finanziert ist.",
   select_a_goal: "Ziel auswählen…",
@@ -1336,8 +1309,6 @@ pt: {
   already_saved_label: "Já economizado antes de usar este app ({cur})",
   rearrange_widgets: "Reorganizar widgets",
   rearrange_widgets_desc: "Ative para arrastar os widgets para uma nova ordem, depois desative para travá-los e evitar que se movam por acidente.",
-  ad_debug_toggle: "Mostrar contorno da posição do anúncio",
-  ad_debug_toggle_desc: "Desenha uma caixa tracejada vermelha sobre o espaço reservado para o banner de anúncio inferior, para que você possa conferir a posição sem publicar uma nova versão antes.",
   autosave_toggle: "Economizar automaticamente para uma meta",
   autosave_toggle_desc: "Move automaticamente o dinheiro recém-economizado para a meta abaixo, até atingir seu objetivo. Você receberá um aviso quando estiver totalmente financiada.",
   select_a_goal: "Selecione uma meta…",
@@ -2603,17 +2574,6 @@ document.getElementById('mascotToggle').addEventListener('change', e=>{
   state.mascotEnabled = e.target.checked;
   save();
   renderMascot();
-});
-// Dev/debug-only toggle: not part of the app's saved budget data, so it's
-// kept in its own localStorage key rather than in `state` (which is what
-// gets exported/imported as the user's backup file).
-const adDebugOutlineEl = document.getElementById('adDebugOutline');
-const adDebugToggleEl = document.getElementById('adDebugToggle');
-adDebugToggleEl.checked = localStorage.getItem('adDebugOutline') === '1';
-adDebugOutlineEl.classList.toggle('visible', adDebugToggleEl.checked);
-adDebugToggleEl.addEventListener('change', e=>{
-  localStorage.setItem('adDebugOutline', e.target.checked ? '1' : '0');
-  adDebugOutlineEl.classList.toggle('visible', e.target.checked);
 });
 document.getElementById('dataMgmtChevron').innerHTML = ICON_CHEVRON_DOWN;
 document.getElementById('dataMgmtToggle').addEventListener('click', ()=>{
