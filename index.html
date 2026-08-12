@@ -45,34 +45,37 @@
   .sortable-chosen{ box-shadow:0 10px 26px rgba(0,0,0,0.4); }
   .drag-locked .drag-handle{ display:none; }
   /* The bottom tab bar is fixed to the screen and doesn't scroll with the page, and
-     a native AdMob banner (when shown) stacks on top of it the same way. Padding the
-     end of the page only protects content once scrolled all the way down, so instead
-     we shrink the scrollable area itself by their combined height, keeping that strip
-     permanently clear at every scroll position.
-     The top reservation is env(safe-area-inset-top) + the ad's own height, not just
-     the ad's height alone: the native banner is positioned by AdMob relative to the
+     a native AdMob banner (when shown) stacks on top of it the same way, so
+     #scrollArea needs to fill exactly the gap between them, never running under
+     either.
+     History of getting this wrong, kept here so it isn't relitigated: the first
+     attempt used a flex-column body with a spacer div + `#scrollArea{flex:1; height:
+     calc(...)}` - flex:1 (shorthand for flex:1 1 0%) made the 0% flex-basis win over
+     the explicit height, so the browser silently ignored the calc() and stretched
+     #scrollArea under the tab bar. Removing flex:1 fixed that in every check we could
+     run (desktop preview, math), but a tester on a real device still couldn't scroll
+     all the way down - most likely 100vh/100dvh arithmetic combined with env() and a
+     CSS variable in one calc() being a genuine WebView rendering quirk we can't
+     reproduce off-device, not a logic bug.
+     This version doesn't compute a height at all: #scrollArea is `position:fixed`
+     with `top` and `bottom` set, so the browser derives its size directly from
+     where those two edges land in the viewport - no vh unit, no calc() combining
+     three different kinds of units, nothing to get subtly wrong. `top`/`bottom`
+     anchoring on a fixed element is basic, long-supported CSS with no known mobile
+     WebView quirks, unlike vh/dvh.
+     The top offset is env(safe-area-inset-top) + the ad's own height, not just the
+     ad's height alone: the native banner is positioned by AdMob relative to the
      screen/window, not the WebView's content box, so on any device where the status
      bar overlays the WebView (edge-to-edge - the default Android is moving all apps
      toward) the ad renders further down than y=0 of the page by exactly the status
      bar's height. viewport-fit=cover (see <meta name="viewport"> above) is required
-     for env(safe-area-inset-top) to report a real, non-zero value on Android/iOS. */
+     for env(safe-area-inset-*) to report real, non-zero values on Android/iOS. */
   :root{ --tabbar-height:64px; --ad-banner-height:0px; }
-  body{ height:100vh; height:100dvh; overflow:hidden; display:flex; flex-direction:column; }
-  #adTopSpacer{ flex-shrink:0; height:calc(env(safe-area-inset-top, 0px) + var(--ad-banner-height)); }
-  /* No `flex:1` here on purpose - it's what caused the "can't scroll far
-     enough" bug on tabs with taller content (Goals/Budget). `flex:1` is
-     shorthand for `flex:1 1 0%`, so its flex-basis (0%) beats the explicit
-     `height` below for sizing purposes in this column flex container:
-     the browser was stretching #scrollArea to fill 100% of the remaining
-     body space (all the way behind the fixed tab bar) and ignoring the
-     calc() entirely, permanently hiding the last ~tabbar-height worth of
-     content with no way to scroll to it. Dropping `flex:1` lets the
-     explicit height (which already reacts live to --tabbar-height,
-     --ad-banner-height and the safe-area insets via calc()) actually apply. */
+  body{ overflow:hidden; }
   #scrollArea{
-    min-height:0;
-    height:calc(100vh - var(--tabbar-height) - env(safe-area-inset-bottom, 0px));
-    height:calc(100dvh - var(--tabbar-height) - env(safe-area-inset-bottom, 0px));
+    position:fixed; left:0; right:0;
+    top:calc(env(safe-area-inset-top, 0px) + var(--ad-banner-height));
+    bottom:calc(var(--tabbar-height) + env(safe-area-inset-bottom, 0px));
     overflow-y:auto; -webkit-overflow-scrolling:touch;
   }
   /* On phones using 3-button/gesture navigation instead of the OS nav being
@@ -310,7 +313,6 @@
 </style>
 </head>
 <body>
-<div id="adTopSpacer"></div>
 <div class="onboarding-overlay" id="onboardingOverlay" style="display:none;">
   <div class="onboarding-card">
 
@@ -2730,8 +2732,9 @@ const AD_UNIT_ID = 'ca-app-pub-3940256099942544/6300978111';
 if(ADS_ENABLED && window.Capacitor && Capacitor.isNativePlatform()){
   const { AdMob } = Capacitor.Plugins;
   // The banner is a native view stacked on top of the WebView, not part of
-  // the DOM, so the reserved CSS height (#adTopSpacer) is only a hint we
-  // keep in sync with the SDK's own reported size - it never draws itself.
+  // the DOM, so --ad-banner-height (which #scrollArea's top offset is
+  // computed from) is only a hint we keep in sync with the SDK's own
+  // reported size - it never draws itself.
   //
   // Root cause of the overlap: this used to hardcode a 50px guess (assuming
   // adSize:'BANNER' always renders at its nominal 320x50) instead of only
