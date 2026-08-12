@@ -9,8 +9,7 @@
   "dependencies": {
     "@capacitor/core": "latest",
     "@capacitor-community/admob": "latest",
-    "@capacitor/splash-screen": "latest",
-    "cordova-plugin-purchase": "^13"
+    "@capacitor/splash-screen": "latest"
   },
   "devDependencies": {
     "@capacitor/cli": "latest",

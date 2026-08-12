@@ -585,11 +585,6 @@
 
 <div class="tab-panel" data-tab="settings" style="display:none;">
 
-  <div class="card" id="removeAdsCard" style="display:none;">
-    <h2 data-i18n="remove_ads_title">Remove Ads</h2>
-    <div id="removeAdsCardBody"></div>
-  </div>
-
   <div class="card" id="settingsCard">
     <h2 data-i18n="card_settings">Settings</h2>
     <div class="field">
@@ -728,58 +723,8 @@
 
 <script src="sortable.min.js"></script>
 <script>
-// #scrollArea's CSS height is calc(100dvh - tab-bar height - safe-area-
-// inset-bottom) - correct on paper, but Android WebView's real-world
-// support for 100dvh/env(safe-area-inset-*) has already proven unreliable
-// twice this app cycle (the ad-banner-overlap and nav-bar-overlap bugs
-// were both this exact category of thing looking right in a desktop
-// browser preview and wrong on-device). Rather than trust that calc() a
-// third time for "can't scroll all the way down", this measures the
-// actual rendered pixel height of #adTopSpacer and the tab bar - whatever
-// they really take up, for whatever reason - and sets #scrollArea's
-// height to exactly fill what's left. It can't drift from reality because
-// it's reading reality, not predicting it. A ResizeObserver on both
-// elements means it stays correct automatically through ad load,
-// orientation change, or anything else that changes their size - no need
-// to hunt down every event that could affect them.
-function layoutScrollArea(){
-  const scrollArea = document.getElementById('scrollArea');
-  const topSpacer = document.getElementById('adTopSpacer');
-  const tabBar = document.getElementById('tabBar');
-  if(!scrollArea || !topSpacer || !tabBar) return;
-  const available = window.innerHeight - topSpacer.getBoundingClientRect().height - tabBar.getBoundingClientRect().height;
-  scrollArea.style.height = Math.max(0, available) + 'px';
-}
-// This script tag sits at the end of <body>, after #adTopSpacer/#scrollArea/
-// #tabBar in the source, so they already exist in the DOM by the time this
-// runs - a 'DOMContentLoaded' listener here could fire too late (or never,
-// if that event already passed) to be the only trigger. Set up the observer
-// and run the first layout pass immediately/synchronously instead.
-if('ResizeObserver' in window){
-  const scrollAreaLayoutObserver = new ResizeObserver(layoutScrollArea);
-  const topSpacerEl = document.getElementById('adTopSpacer');
-  const tabBarEl = document.getElementById('tabBar');
-  if(topSpacerEl) scrollAreaLayoutObserver.observe(topSpacerEl);
-  if(tabBarEl) scrollAreaLayoutObserver.observe(tabBarEl);
-}
-window.addEventListener('resize', layoutScrollArea);
-window.addEventListener('orientationchange', layoutScrollArea);
-// Belt-and-suspenders: layoutScrollArea() is also called directly at every
-// point in this file that changes --ad-banner-height, and ResizeObserver
-// should catch everything else, but this cheap periodic re-check (just a
-// few getBoundingClientRect() reads) means a missed/delayed trigger from
-// either of those can never leave #scrollArea wrong for more than a second.
-setInterval(layoutScrollArea, 1000);
-layoutScrollArea();
-
 const STORE_KEY = 'pesoBudget_v1';
 const BACKUP_KEY = 'pesoBudget_v1_backup';
-// Deliberately its own localStorage key instead of a field on `state`: the
-// Pro feature this app briefly had stored its unlock flag inside `state`,
-// and a build that shipped with it wiped a tester's budget data - root
-// cause was never nailed down, but keeping purchase status entirely outside
-// the state/save()/load()/normalize() cycle means it can't be involved.
-const ADS_REMOVED_KEY = 'pesoBudget_adsRemoved';
 
 // Only true while running in closed testing - flip to false before applying for production.
 const IS_TESTING_BUILD = true;
@@ -883,11 +828,6 @@ en: {
   reset_all_data: "Reset all data",
   reset_desc: "Permanently erases every entry, goal, cost, and setting on this device and starts over from scratch. This cannot be undone - export a backup first if you want to keep a copy.",
   footer_note: "Exchange rates refresh once every 24 hours (source: exchangerate-api.com), not continuously - that's normal, not a bug. Each entry stores the rate at the moment you log it, so past days never change when the rate updates. All data is saved on this device only.",
-  remove_ads_title: "Remove Ads", remove_ads_desc: "Support the app and enjoy it with no banner ads, forever. One-time purchase.",
-  remove_ads_owned: "Ads removed - thanks for the support!", remove_ads_btn: "Remove Ads - {price}",
-  restore_purchase_btn: "Restore purchase", remove_ads_price_placeholder: "purchase",
-  remove_ads_status_processing: "Processing…", remove_ads_status_restoring: "Checking for a previous purchase…",
-  remove_ads_status_error: "Something went wrong. Please try again.", remove_ads_status_not_found: "No previous purchase found on this account.",
   hide_amounts: "Hide amounts", show_amounts: "Show amounts",
   ob_choose_language: "Choose your language",
   ob_choose_language_desc: "You can change this later anytime in Settings.",
@@ -1021,11 +961,6 @@ es: {
   reset_all_data: "Restablecer todos los datos",
   reset_desc: "Borra permanentemente cada registro, meta, costo y ajuste en este dispositivo y empieza de cero. Esto no se puede deshacer - exporta una copia de seguridad primero si quieres conservar una copia.",
   footer_note: "El tipo de cambio se actualiza cada 24 horas (fuente: exchangerate-api.com), no continuamente - eso es normal, no un error. Cada registro guarda el tipo de cambio del momento en que lo agregaste, así que los días pasados nunca cambian cuando se actualiza el tipo. Todos los datos se guardan solo en este dispositivo.",
-  remove_ads_title: "Quitar anuncios", remove_ads_desc: "Apoya la app y disfrútala sin anuncios, para siempre. Compra única.",
-  remove_ads_owned: "Anuncios eliminados - ¡gracias por tu apoyo!", remove_ads_btn: "Quitar anuncios - {price}",
-  restore_purchase_btn: "Restaurar compra", remove_ads_price_placeholder: "comprar",
-  remove_ads_status_processing: "Procesando…", remove_ads_status_restoring: "Buscando una compra anterior…",
-  remove_ads_status_error: "Algo salió mal. Inténtalo de nuevo.", remove_ads_status_not_found: "No se encontró ninguna compra anterior en esta cuenta.",
   hide_amounts: "Ocultar montos", show_amounts: "Mostrar montos",
   ob_choose_language: "Elige tu idioma",
   ob_choose_language_desc: "Puedes cambiarlo después en cualquier momento desde Ajustes.",
@@ -1159,11 +1094,6 @@ fr: {
   reset_all_data: "Réinitialiser toutes les données",
   reset_desc: "Efface définitivement chaque entrée, objectif, charge et réglage sur cet appareil et repart de zéro. Ceci est irréversible - exportez d'abord une sauvegarde si vous voulez garder une copie.",
   footer_note: "Les taux de change se rafraîchissent une fois toutes les 24 heures (source : exchangerate-api.com), pas en continu - c'est normal, pas un bug. Chaque entrée enregistre le taux au moment où vous la créez, donc les jours passés ne changent jamais quand le taux est mis à jour. Toutes les données sont enregistrées uniquement sur cet appareil.",
-  remove_ads_title: "Supprimer les publicités", remove_ads_desc: "Soutenez l'application et profitez-en sans publicités, pour toujours. Achat unique.",
-  remove_ads_owned: "Publicités supprimées - merci pour votre soutien !", remove_ads_btn: "Supprimer les publicités - {price}",
-  restore_purchase_btn: "Restaurer l'achat", remove_ads_price_placeholder: "acheter",
-  remove_ads_status_processing: "Traitement en cours…", remove_ads_status_restoring: "Recherche d'un achat précédent…",
-  remove_ads_status_error: "Une erreur s'est produite. Veuillez réessayer.", remove_ads_status_not_found: "Aucun achat précédent trouvé sur ce compte.",
   hide_amounts: "Masquer les montants", show_amounts: "Afficher les montants",
   ob_choose_language: "Choisissez votre langue",
   ob_choose_language_desc: "Vous pourrez le changer plus tard à tout moment dans les Réglages.",
@@ -1297,11 +1227,6 @@ de: {
   reset_all_data: "Alle Daten Zurücksetzen",
   reset_desc: "Löscht dauerhaft jeden Eintrag, jedes Ziel, jede Kostenposition und Einstellung auf diesem Gerät und beginnt von vorne. Dies kann nicht rückgängig gemacht werden - exportiere zuerst eine Sicherung, wenn du eine Kopie behalten möchtest.",
   footer_note: "Wechselkurse werden alle 24 Stunden aktualisiert (Quelle: exchangerate-api.com), nicht fortlaufend - das ist normal, kein Fehler. Jeder Eintrag speichert den Kurs zum Zeitpunkt der Erfassung, sodass sich vergangene Tage nie ändern, wenn der Kurs aktualisiert wird. Alle Daten werden nur auf diesem Gerät gespeichert.",
-  remove_ads_title: "Werbung entfernen", remove_ads_desc: "Unterstütze die App und nutze sie für immer ohne Bannerwerbung. Einmaliger Kauf.",
-  remove_ads_owned: "Werbung entfernt - danke für deine Unterstützung!", remove_ads_btn: "Werbung entfernen - {price}",
-  restore_purchase_btn: "Kauf wiederherstellen", remove_ads_price_placeholder: "kaufen",
-  remove_ads_status_processing: "Wird verarbeitet…", remove_ads_status_restoring: "Suche nach einem früheren Kauf…",
-  remove_ads_status_error: "Etwas ist schiefgelaufen. Bitte versuche es erneut.", remove_ads_status_not_found: "Kein früherer Kauf für dieses Konto gefunden.",
   hide_amounts: "Beträge ausblenden", show_amounts: "Beträge anzeigen",
   ob_choose_language: "Wähle deine Sprache",
   ob_choose_language_desc: "Du kannst dies später jederzeit in den Einstellungen ändern.",
@@ -1435,11 +1360,6 @@ pt: {
   reset_all_data: "Redefinir todos os dados",
   reset_desc: "Apaga permanentemente cada registro, meta, custo e configuração neste dispositivo e recomeça do zero. Isso não pode ser desfeito - exporte um backup primeiro se quiser manter uma cópia.",
   footer_note: "As taxas de câmbio são atualizadas a cada 24 horas (fonte: exchangerate-api.com), não continuamente - isso é normal, não um bug. Cada registro guarda a taxa no momento em que foi feito, então dias passados nunca mudam quando a taxa é atualizada. Todos os dados são salvos apenas neste dispositivo.",
-  remove_ads_title: "Remover anúncios", remove_ads_desc: "Apoie o app e aproveite sem anúncios, para sempre. Compra única.",
-  remove_ads_owned: "Anúncios removidos - obrigado pelo apoio!", remove_ads_btn: "Remover anúncios - {price}",
-  restore_purchase_btn: "Restaurar compra", remove_ads_price_placeholder: "comprar",
-  remove_ads_status_processing: "Processando…", remove_ads_status_restoring: "Procurando uma compra anterior…",
-  remove_ads_status_error: "Algo deu errado. Tente novamente.", remove_ads_status_not_found: "Nenhuma compra anterior encontrada nesta conta.",
   hide_amounts: "Ocultar valores", show_amounts: "Mostrar valores",
   ob_choose_language: "Escolha seu idioma",
   ob_choose_language_desc: "Você pode mudar isso depois a qualquer momento nos Ajustes.",
@@ -1536,7 +1456,6 @@ function applyTranslations(){
     el.title = t(el.getAttribute('data-i18n-title'));
   });
   if(typeof updateEntryDateDisplay === 'function') updateEntryDateDisplay();
-  if(typeof renderRemoveAdsCard === 'function') renderRemoveAdsCard();
   renderRate();
 }
 
@@ -2808,15 +2727,7 @@ const ADS_ENABLED = true;
 // app is publicly listed on Play (AdMob can't link/review an app confined
 // to closed testing). Swap this back once the app goes public.
 const AD_UNIT_ID = 'ca-app-pub-3940256099942544/6300978111';
-
-function adsRemoved(){
-  return localStorage.getItem(ADS_REMOVED_KEY) === '1';
-}
-
-let adBannerShown = false;
-function showAdBanner(){
-  if(!(ADS_ENABLED && window.Capacitor && Capacitor.isNativePlatform())) return;
-  if(adsRemoved()) return;
+if(ADS_ENABLED && window.Capacitor && Capacitor.isNativePlatform()){
   const { AdMob } = Capacitor.Plugins;
   // The banner is a native view stacked on top of the WebView, not part of
   // the DOM, so the reserved CSS height (#adTopSpacer) is only a hint we
@@ -2841,7 +2752,6 @@ function showAdBanner(){
   AdMob.addListener('bannerAdSizeChanged', size=>{
     if(size && size.height){
       document.documentElement.style.setProperty('--ad-banner-height', size.height + 'px');
-      layoutScrollArea();
     }
   });
   AdMob.initialize().then(()=>{
@@ -2851,149 +2761,10 @@ function showAdBanner(){
       position: 'TOP_CENTER',
       margin: 0
     });
-  }).then(()=>{
-    adBannerShown = true;
   }).catch(err=>{
     console.log('AdMob banner failed to show:', err);
   });
 }
-showAdBanner();
-
-// Someone can restore/complete an ads-removal purchase after the banner is
-// already showing (e.g. tapping "Restore purchase" mid-session) - this
-// hides it immediately instead of making them restart the app.
-function hideAdBannerIfShown(){
-  document.documentElement.style.setProperty('--ad-banner-height', '0px');
-  layoutScrollArea();
-  if(!(adBannerShown && window.Capacitor && Capacitor.isNativePlatform())) return;
-  const { AdMob } = Capacitor.Plugins;
-  AdMob.hideBanner().catch(()=>{});
-  adBannerShown = false;
-}
-
-function setAdsRemoved(){
-  if(adsRemoved()) return;
-  localStorage.setItem(ADS_REMOVED_KEY, '1');
-  hideAdBannerIfShown();
-  renderRemoveAdsCard();
-}
-
-// --- Ads removal purchase (Google Play Billing via cordova-plugin-purchase) ---
-// A one-time, non-consumable purchase, kept intentionally minimal (unlike
-// the earlier "Pro" feature this app briefly had, which bundled ad removal
-// together with stats/export/theme features and was fully reverted after a
-// build shipped with it that wiped a tester's data - see ADS_REMOVED_KEY's
-// comment above for why purchase state now lives outside `state` entirely).
-//
-// NOTE: 'remove_ads' must exist as a real in-app product in Play Console
-// (Monetize > Products > In-app products) before a purchase can succeed -
-// creating it there is a manual step outside this codebase.
-const ADS_REMOVAL_PRODUCT_ID = 'remove_ads';
-let adsRemovalProduct = null;
-let adsRemovalStatus = '';
-
-function setAdsRemovalStatus(msg){
-  adsRemovalStatus = msg || '';
-  renderRemoveAdsCard();
-}
-
-function purchaseRemoveAds(){
-  if(!(window.Capacitor && Capacitor.isNativePlatform() && window.CdvPurchase)){
-    setAdsRemovalStatus(t('remove_ads_status_error'));
-    return;
-  }
-  setAdsRemovalStatus(t('remove_ads_status_processing'));
-  try{
-    const result = CdvPurchase.store.order(ADS_REMOVAL_PRODUCT_ID);
-    if(result && typeof result.catch === 'function'){
-      result.catch(err=>{
-        console.log('Ads removal order() rejected:', err);
-        setAdsRemovalStatus(t('remove_ads_status_error'));
-      });
-    }
-  }catch(err){
-    console.log('Ads removal order() threw:', err);
-    setAdsRemovalStatus(t('remove_ads_status_error'));
-  }
-}
-window.purchaseRemoveAds = purchaseRemoveAds;
-
-function restoreRemoveAdsPurchase(){
-  if(!(window.Capacitor && Capacitor.isNativePlatform() && window.CdvPurchase)){
-    setAdsRemovalStatus(t('remove_ads_status_error'));
-    return;
-  }
-  setAdsRemovalStatus(t('remove_ads_status_restoring'));
-  try{
-    const result = CdvPurchase.store.restorePurchases();
-    if(result && typeof result.then === 'function'){
-      result.then(()=>{
-        if(!adsRemoved()) setAdsRemovalStatus(t('remove_ads_status_not_found'));
-      }).catch(err=>{
-        console.log('Ads removal restore failed:', err);
-        setAdsRemovalStatus(t('remove_ads_status_error'));
-      });
-    }
-  }catch(err){
-    console.log('Ads removal restore threw:', err);
-    setAdsRemovalStatus(t('remove_ads_status_error'));
-  }
-}
-window.restoreRemoveAdsPurchase = restoreRemoveAdsPurchase;
-
-function renderRemoveAdsCard(){
-  const cardEl = document.getElementById('removeAdsCard');
-  const bodyEl = document.getElementById('removeAdsCardBody');
-  if(!cardEl || !bodyEl) return;
-  if(!(window.Capacitor && Capacitor.isNativePlatform())){
-    cardEl.style.display = 'none';
-    return;
-  }
-  cardEl.style.display = 'block';
-  if(adsRemoved()){
-    bodyEl.innerHTML = `<div style="display:flex; align-items:center; gap:8px; font-weight:700; color:var(--accent);">✓ <span data-i18n="remove_ads_owned">${t('remove_ads_owned')}</span></div>`;
-    return;
-  }
-  const priceLabel = (adsRemovalProduct && adsRemovalProduct.pricing && adsRemovalProduct.pricing.price) ? adsRemovalProduct.pricing.price : t('remove_ads_price_placeholder');
-  bodyEl.innerHTML = `
-    <div class="entry-preview" style="display:block; margin-bottom:10px;">${escapeAttr(t('remove_ads_desc'))}</div>
-    <button class="btn-primary" onclick="purchaseRemoveAds()">${escapeAttr(t('remove_ads_btn', {price: priceLabel}))}</button>
-    <button class="btn-primary" style="background:var(--card2); color:var(--accent); border:1px solid var(--border); margin-top:10px;" onclick="restoreRemoveAdsPurchase()">${escapeAttr(t('restore_purchase_btn'))}</button>
-    ${adsRemovalStatus ? `<div class="entry-preview" style="display:block; margin-top:10px;">${escapeAttr(adsRemovalStatus)}</div>` : ''}`;
-}
-
-function initAdRemovalBilling(){
-  if(!(window.Capacitor && Capacitor.isNativePlatform() && window.CdvPurchase)) return;
-  try{
-    const { store, ProductType, Platform } = CdvPurchase;
-    store.register({ id: ADS_REMOVAL_PRODUCT_ID, type: ProductType.NON_CONSUMABLE, platform: Platform.GOOGLE_PLAY });
-    store.when().productUpdated(p=>{
-      if(p.id === ADS_REMOVAL_PRODUCT_ID){
-        adsRemovalProduct = p;
-        renderRemoveAdsCard();
-      }
-    });
-    store.when().approved(transaction=> transaction.verify());
-    store.when().verified(receipt=> receipt.finish());
-    store.when().owned(p=>{
-      if(p.id === ADS_REMOVAL_PRODUCT_ID) setAdsRemoved();
-    });
-    store.initialize([Platform.GOOGLE_PLAY]).catch(err=>{
-      console.log('Ads removal store.initialize() rejected:', err);
-    });
-  }catch(err){
-    console.log('initAdRemovalBilling() threw:', err);
-  }
-}
-// CdvPurchase attaches to window once the Cordova plugin layer finishes its
-// own load, which can happen before or after this script runs - if it's not
-// there yet, wait for deviceready rather than assuming it's missing.
-if(window.CdvPurchase){
-  initAdRemovalBilling();
-}else if(window.Capacitor && Capacitor.isNativePlatform()){
-  document.addEventListener('deviceready', initAdRemovalBilling);
-}
-renderRemoveAdsCard();
 </script>
 </body>
 </html>
