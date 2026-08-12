@@ -1487,11 +1487,12 @@ function normalize(parsed){
   if(!parsed.language) parsed.language = 'en';
   if(!parsed.localCurrency) parsed.localCurrency = 'MXN';
   if(parsed.mascotEnabled==null) parsed.mascotEnabled = true;
+  if(parsed.trendRangeDays!==7 && parsed.trendRangeDays!==30) parsed.trendRangeDays = 7;
   return parsed;
 }
 
 function defaultState(){
-  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:{}, spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR', dragModeEnabled:false, autoSaveEnabled:false, autoSaveGoalId:'', manualRateOverride:false, accentColor:'#34d399', firstUseDate:localDateStr(new Date()), language:'en', localCurrency:'MXN', mascotEnabled:true };
+  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:{}, spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR', dragModeEnabled:false, autoSaveEnabled:false, autoSaveGoalId:'', manualRateOverride:false, accentColor:'#34d399', firstUseDate:localDateStr(new Date()), language:'en', localCurrency:'MXN', mascotEnabled:true, trendRangeDays:7 };
 }
 
 function load(){
@@ -1963,9 +1964,9 @@ function renderStreak(){
   wrap.innerHTML = html;
 }
 
-let trendRangeDays = 7;
 function setTrendRange(days){
-  trendRangeDays = days;
+  state.trendRangeDays = days;
+  save();
   renderSpendingTrend();
 }
 window.setTrendRange = setTrendRange;
@@ -1973,6 +1974,7 @@ window.setTrendRange = setTrendRange;
 function renderSpendingTrend(){
   const wrap = document.getElementById('spendingTrendChart');
   if(!wrap) return;
+  const trendRangeDays = state.trendRangeDays || 7;
   document.getElementById('trendRange7Btn').classList.toggle('active', trendRangeDays===7);
   document.getElementById('trendRange30Btn').classList.toggle('active', trendRangeDays===30);
   // One entry per date is the app's existing assumption everywhere else
