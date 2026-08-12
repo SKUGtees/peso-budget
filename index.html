@@ -650,6 +650,18 @@
         Shows a character on the Home tab that changes as your savings grow. Turn off to hide it.
       </div>
     </div>
+    <div class="field" id="dailyReminderField">
+      <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; margin-bottom:0;">
+        <span data-i18n="daily_reminder_toggle">Daily reminder</span>
+        <input type="checkbox" id="dailyReminderToggle" style="width:18px; height:18px; accent-color:var(--accent); cursor:pointer;">
+      </label>
+      <div class="entry-preview" style="display:block; margin-top:6px; margin-bottom:8px;" data-i18n="daily_reminder_toggle_desc">
+        Sends a notification each day at the time below, reminding you to log today's spending.
+      </div>
+      <div class="goal-add-row" id="dailyReminderFields" style="display:none;">
+        <input type="time" id="dailyReminderTime" value="20:00">
+      </div>
+    </div>
     <div class="field">
       <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; margin-bottom:0;">
         <span data-i18n="autosave_toggle">Auto-save towards a goal</span>
@@ -790,6 +802,9 @@ en: {
   mascot_tier_5: "Certified money mogul!",
   mascot_toggle: "Show savings mascot",
   mascot_toggle_desc: "Shows a character on the Home tab that changes as your savings grow. Turn off to hide it.",
+  daily_reminder_toggle: "Daily reminder",
+  daily_reminder_toggle_desc: "Sends a notification each day at the time below, reminding you to log today's spending.",
+  daily_reminder_title: "Budget Abroad", daily_reminder_body: "Don't forget to log today's spending.",
   no_entries_yet: "No entries yet - add your first day above.",
   monthly_income_label: "Monthly income ({cur})",
   days_in_period: "Days in period",
@@ -923,6 +938,9 @@ es: {
   mascot_tier_5: "¡Magnate del dinero certificado!",
   mascot_toggle: "Mostrar compañero de ahorro",
   mascot_toggle_desc: "Muestra un personaje en la pestaña de Inicio que cambia a medida que crecen tus ahorros. Desactívalo para ocultarlo.",
+  daily_reminder_toggle: "Recordatorio diario",
+  daily_reminder_toggle_desc: "Envía una notificación cada día a la hora indicada abajo, recordándote registrar el gasto de hoy.",
+  daily_reminder_title: "Budget Abroad", daily_reminder_body: "No olvides registrar el gasto de hoy.",
   no_entries_yet: "Aún no hay registros - agrega tu primer día arriba.",
   monthly_income_label: "Ingreso mensual ({cur})",
   days_in_period: "Días en el periodo",
@@ -1056,6 +1074,9 @@ fr: {
   mascot_tier_5: "Magnat de l'argent certifié !",
   mascot_toggle: "Afficher le copain d'épargne",
   mascot_toggle_desc: "Affiche un personnage dans l'onglet Accueil qui évolue avec tes économies. Désactive pour le masquer.",
+  daily_reminder_toggle: "Rappel quotidien",
+  daily_reminder_toggle_desc: "Envoie une notification chaque jour à l'heure ci-dessous, pour te rappeler d'enregistrer tes dépenses du jour.",
+  daily_reminder_title: "Budget Abroad", daily_reminder_body: "N'oublie pas d'enregistrer tes dépenses du jour.",
   no_entries_yet: "Aucune entrée pour l'instant - ajoutez votre premier jour ci-dessus.",
   monthly_income_label: "Revenu mensuel ({cur})",
   days_in_period: "Jours dans la période",
@@ -1189,6 +1210,9 @@ de: {
   mascot_tier_5: "Zertifizierter Geld-Mogul!",
   mascot_toggle: "Spar-Kumpel anzeigen",
   mascot_toggle_desc: "Zeigt einen Charakter im Home-Tab, der sich mit deinen Ersparnissen verändert. Schalte ihn aus, um ihn auszublenden.",
+  daily_reminder_toggle: "Tägliche Erinnerung",
+  daily_reminder_toggle_desc: "Sendet jeden Tag zur unten angegebenen Zeit eine Benachrichtigung, die dich erinnert, die heutigen Ausgaben einzutragen.",
+  daily_reminder_title: "Budget Abroad", daily_reminder_body: "Vergiss nicht, die heutigen Ausgaben einzutragen.",
   no_entries_yet: "Noch keine Einträge - füge oben deinen ersten Tag hinzu.",
   monthly_income_label: "Monatliches Einkommen ({cur})",
   days_in_period: "Tage im Zeitraum",
@@ -1322,6 +1346,9 @@ pt: {
   mascot_tier_5: "Magnata do dinheiro certificado!",
   mascot_toggle: "Mostrar amigo da economia",
   mascot_toggle_desc: "Mostra um personagem na aba Início que muda conforme suas economias crescem. Desative para ocultá-lo.",
+  daily_reminder_toggle: "Lembrete diário",
+  daily_reminder_toggle_desc: "Envia uma notificação todo dia no horário abaixo, lembrando você de registrar o gasto de hoje.",
+  daily_reminder_title: "Budget Abroad", daily_reminder_body: "Não esqueça de registrar o gasto de hoje.",
   no_entries_yet: "Ainda não há registros - adicione seu primeiro dia acima.",
   monthly_income_label: "Renda mensal ({cur})",
   days_in_period: "Dias no período",
@@ -1488,11 +1515,13 @@ function normalize(parsed){
   if(!parsed.localCurrency) parsed.localCurrency = 'MXN';
   if(parsed.mascotEnabled==null) parsed.mascotEnabled = true;
   if(parsed.trendRangeDays!==7 && parsed.trendRangeDays!==30) parsed.trendRangeDays = 7;
+  if(parsed.dailyReminderEnabled==null) parsed.dailyReminderEnabled = false;
+  if(!parsed.dailyReminderTime) parsed.dailyReminderTime = '20:00';
   return parsed;
 }
 
 function defaultState(){
-  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:{}, spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR', dragModeEnabled:false, autoSaveEnabled:false, autoSaveGoalId:'', manualRateOverride:false, accentColor:'#34d399', firstUseDate:localDateStr(new Date()), language:'en', localCurrency:'MXN', mascotEnabled:true, trendRangeDays:7 };
+  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:{}, spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR', dragModeEnabled:false, autoSaveEnabled:false, autoSaveGoalId:'', manualRateOverride:false, accentColor:'#34d399', firstUseDate:localDateStr(new Date()), language:'en', localCurrency:'MXN', mascotEnabled:true, trendRangeDays:7, dailyReminderEnabled:false, dailyReminderTime:'20:00' };
 }
 
 function load(){
@@ -1701,6 +1730,13 @@ function renderSettings(){
   document.getElementById('dailyMxnLabel').textContent = t('daily_spending_budget_mxn', {cur: localCur});
   document.getElementById('dragModeToggle').checked = !!state.dragModeEnabled;
   document.getElementById('mascotToggle').checked = state.mascotEnabled !== false;
+  // Notifications only work in the native app - there's no local-notification
+  // API on the regular web/PWA build, so the whole field is hidden there
+  // rather than showing a toggle that can't do anything.
+  document.getElementById('dailyReminderField').style.display = (window.Capacitor && Capacitor.isNativePlatform()) ? 'block' : 'none';
+  document.getElementById('dailyReminderToggle').checked = !!state.dailyReminderEnabled;
+  document.getElementById('dailyReminderFields').style.display = state.dailyReminderEnabled ? 'flex' : 'none';
+  document.getElementById('dailyReminderTime').value = state.dailyReminderTime || '20:00';
   if(state.autoSaveGoalId && !state.goals.some(g=>g.id===state.autoSaveGoalId)){
     state.autoSaveGoalId = '';
     save();
@@ -2658,6 +2694,72 @@ document.getElementById('mascotToggle').addEventListener('change', e=>{
   save();
   renderMascot();
 });
+
+// --- Daily reminder (native local notification, no server/billing involved) ---
+const DAILY_REMINDER_NOTIFICATION_ID = 1001;
+
+function scheduleDailyReminder(){
+  if(!(window.Capacitor && Capacitor.isNativePlatform())) return;
+  const { LocalNotifications } = Capacitor.Plugins;
+  if(!LocalNotifications) return;
+  const [hourStr, minuteStr] = (state.dailyReminderTime || '20:00').split(':');
+  LocalNotifications.schedule({
+    notifications: [{
+      id: DAILY_REMINDER_NOTIFICATION_ID,
+      title: t('daily_reminder_title'),
+      body: t('daily_reminder_body'),
+      schedule: { on: { hour: Number(hourStr), minute: Number(minuteStr) }, repeats: true, allowWhileIdle: true }
+    }]
+  }).catch(err=>{
+    console.log('Daily reminder scheduling failed:', err);
+  });
+}
+
+function cancelDailyReminder(){
+  if(!(window.Capacitor && Capacitor.isNativePlatform())) return;
+  const { LocalNotifications } = Capacitor.Plugins;
+  if(!LocalNotifications) return;
+  LocalNotifications.cancel({ notifications: [{ id: DAILY_REMINDER_NOTIFICATION_ID }] }).catch(()=>{});
+}
+
+document.getElementById('dailyReminderToggle').addEventListener('change', e=>{
+  const enable = e.target.checked;
+  const fieldsEl = document.getElementById('dailyReminderFields');
+  if(!(window.Capacitor && Capacitor.isNativePlatform() && Capacitor.Plugins.LocalNotifications)){
+    state.dailyReminderEnabled = enable;
+    save();
+    fieldsEl.style.display = enable ? 'flex' : 'none';
+    return;
+  }
+  if(enable){
+    // Only ask for permission when the user actually turns this on, not on
+    // every app launch - if they say no, revert the toggle rather than
+    // leaving it checked with nothing actually scheduled.
+    Capacitor.Plugins.LocalNotifications.requestPermissions().then(res=>{
+      if(res.display === 'granted'){
+        state.dailyReminderEnabled = true;
+        save();
+        fieldsEl.style.display = 'flex';
+        scheduleDailyReminder();
+      } else {
+        e.target.checked = false;
+      }
+    }).catch(()=>{ e.target.checked = false; });
+  } else {
+    state.dailyReminderEnabled = false;
+    save();
+    fieldsEl.style.display = 'none';
+    cancelDailyReminder();
+  }
+});
+document.getElementById('dailyReminderTime').addEventListener('change', e=>{
+  state.dailyReminderTime = e.target.value || '20:00';
+  save();
+  if(state.dailyReminderEnabled) scheduleDailyReminder();
+});
+// Keep the native schedule in sync with saved state on every app launch -
+// covers cases like an OS update clearing previously scheduled alarms.
+if(state.dailyReminderEnabled) scheduleDailyReminder();
 document.getElementById('dataMgmtChevron').innerHTML = ICON_CHEVRON_DOWN;
 document.getElementById('dataMgmtToggle').addEventListener('click', ()=>{
   const body = document.getElementById('dataMgmtBody');
