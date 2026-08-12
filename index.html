@@ -178,6 +178,19 @@
   .streak-circle.missed{ background:var(--danger); color:#3a0d0d; }
   .streak-circle.filled{ background:var(--accent); color:var(--accent-text); }
   .streak-circle.today{ box-shadow:0 0 0 2px var(--text); }
+  .trend-range-toggle{ display:flex; gap:8px; margin-bottom:14px; }
+  .trend-range-btn{
+    flex:1; padding:8px; border-radius:8px; background:var(--card2); color:var(--muted);
+    font-weight:700; font-size:0.8rem; border:1px solid var(--border);
+  }
+  .trend-range-btn.active{ background:var(--accent); color:var(--accent-text); border-color:var(--accent); }
+  .trend-chart{ display:flex; align-items:flex-start; gap:3px; }
+  .trend-bar-wrap{ display:flex; flex-direction:column; align-items:center; flex:1; gap:4px; min-width:0; }
+  .trend-bar-value{ font-size:0.55rem; color:var(--muted); white-space:nowrap; }
+  .trend-bar-track{ width:100%; height:90px; display:flex; align-items:flex-end; }
+  .trend-bar{ width:100%; min-height:2px; border-radius:3px 3px 0 0; background:var(--accent); }
+  .trend-bar.over{ background:var(--danger); }
+  .trend-bar-label{ font-size:0.6rem; color:var(--muted); }
   #celebrationOverlay{ position:fixed; inset:0; pointer-events:none; z-index:150; overflow:hidden; }
   .confetti-piece{
     position:absolute; top:-20px; width:8px; height:14px; opacity:0.95;
@@ -516,6 +529,15 @@
 <div class="tab-panel" data-tab="history" style="display:none;">
 <div id="tab-history-widgets" class="widgets-list">
 
+  <div class="card" data-widget-id="spendingTrend">
+    <h2 data-i18n="card_spending_trend">Spending Trend</h2>
+    <div class="trend-range-toggle">
+      <button type="button" class="trend-range-btn" id="trendRange7Btn" onclick="setTrendRange(7)" data-i18n="trend_range_7d">7 days</button>
+      <button type="button" class="trend-range-btn" id="trendRange30Btn" onclick="setTrendRange(30)" data-i18n="trend_range_30d">30 days</button>
+    </div>
+    <div id="spendingTrendChart"></div>
+  </div>
+
   <div class="card" data-widget-id="history">
     <h2 data-i18n="card_history">History</h2>
     <div id="historyWrap">
@@ -738,6 +760,8 @@ en: {
   card_log_spending: "Log Today's Spending",
   card_this_week: "This Week",
   card_savings_goals: "Savings Goals",
+  card_spending_trend: "Spending Trend", trend_range_7d: "7 days", trend_range_30d: "30 days",
+  trend_no_data: "No spending logged in this period.",
   card_history: "History",
   card_income_settings: "Income Settings",
   card_monthly_costs: "Monthly Fixed Costs ({cur})",
@@ -869,6 +893,8 @@ es: {
   card_log_spending: "Registrar Gasto de Hoy",
   card_this_week: "Esta Semana",
   card_savings_goals: "Metas de Ahorro",
+  card_spending_trend: "Tendencia de Gastos", trend_range_7d: "7 días", trend_range_30d: "30 días",
+  trend_no_data: "No hay gastos registrados en este período.",
   card_history: "Historial",
   card_income_settings: "Ajustes de Ingresos",
   card_monthly_costs: "Costos Fijos Mensuales ({cur})",
@@ -1000,6 +1026,8 @@ fr: {
   card_log_spending: "Enregistrer la Dépense du Jour",
   card_this_week: "Cette Semaine",
   card_savings_goals: "Objectifs d'Épargne",
+  card_spending_trend: "Tendance des Dépenses", trend_range_7d: "7 jours", trend_range_30d: "30 jours",
+  trend_no_data: "Aucune dépense enregistrée pour cette période.",
   card_history: "Historique",
   card_income_settings: "Réglages des Revenus",
   card_monthly_costs: "Charges Fixes Mensuelles ({cur})",
@@ -1131,6 +1159,8 @@ de: {
   card_log_spending: "Heutige Ausgaben Erfassen",
   card_this_week: "Diese Woche",
   card_savings_goals: "Sparziele",
+  card_spending_trend: "Ausgabenverlauf", trend_range_7d: "7 Tage", trend_range_30d: "30 Tage",
+  trend_no_data: "In diesem Zeitraum wurden keine Ausgaben erfasst.",
   card_history: "Verlauf",
   card_income_settings: "Einkommenseinstellungen",
   card_monthly_costs: "Monatliche Fixkosten ({cur})",
@@ -1262,6 +1292,8 @@ pt: {
   card_log_spending: "Registrar Gasto de Hoje",
   card_this_week: "Esta Semana",
   card_savings_goals: "Metas de Economia",
+  card_spending_trend: "Tendência de Gastos", trend_range_7d: "7 dias", trend_range_30d: "30 dias",
+  trend_no_data: "Nenhum gasto registrado neste período.",
   card_history: "Histórico",
   card_income_settings: "Configurações de Renda",
   card_monthly_costs: "Custos Fixos Mensais ({cur})",
@@ -1429,6 +1461,7 @@ function applyTranslations(){
     el.title = t(el.getAttribute('data-i18n-title'));
   });
   if(typeof updateEntryDateDisplay === 'function') updateEntryDateDisplay();
+  if(typeof renderSpendingTrend === 'function') renderSpendingTrend();
   renderRate();
 }
 
@@ -1930,6 +1963,53 @@ function renderStreak(){
   wrap.innerHTML = html;
 }
 
+let trendRangeDays = 7;
+function setTrendRange(days){
+  trendRangeDays = days;
+  renderSpendingTrend();
+}
+window.setTrendRange = setTrendRange;
+
+function renderSpendingTrend(){
+  const wrap = document.getElementById('spendingTrendChart');
+  if(!wrap) return;
+  document.getElementById('trendRange7Btn').classList.toggle('active', trendRangeDays===7);
+  document.getElementById('trendRange30Btn').classList.toggle('active', trendRangeDays===30);
+  // One entry per date is the app's existing assumption everywhere else
+  // (history table, streak widget) - if a date somehow has more than one,
+  // last one wins here too, matching that precedent rather than inventing
+  // a new rule just for this chart.
+  const entryByDate = {};
+  state.entries.forEach(e=>{ entryByDate[e.date] = e; });
+  const days = [];
+  for(let i=trendRangeDays-1;i>=0;i--){
+    const d = new Date();
+    d.setDate(d.getDate()-i);
+    const dateStr = localDateStr(d);
+    const e = entryByDate[dateStr];
+    days.push({ date: dateStr, d, spent: e ? e.spent : null, budget: e ? e.budget : null, currency: e ? (e.currency||'MXN') : (state.localCurrency||'MXN') });
+  }
+  if(!days.some(v=>v.spent!=null)){
+    wrap.innerHTML = `<div class="empty">${t('trend_no_data')}</div>`;
+    return;
+  }
+  const maxVal = Math.max(1, ...days.map(v=>v.spent||0));
+  const showLabels = trendRangeDays<=7;
+  const weekdayFmt = new Intl.DateTimeFormat(currentDateLocale(), { weekday:'short' });
+  const bars = days.map(v=>{
+    const pct = v.spent!=null ? Math.max(2, Math.round((v.spent/maxVal)*100)) : 0;
+    const over = v.spent!=null && v.budget!=null && v.spent>v.budget;
+    const dayLabel = showLabels ? weekdayFmt.format(v.d) : (v.d.getDate()%5===0 ? String(v.d.getDate()) : '');
+    const valueLabel = showLabels && v.spent!=null ? fmtCur(v.spent, v.currency) : '';
+    return `<div class="trend-bar-wrap" title="${escapeAttr(v.date)}">
+      <span class="trend-bar-value">${valueLabel ? escapeAttr(valueLabel) : '&nbsp;'}</span>
+      <div class="trend-bar-track"><div class="trend-bar${over?' over':''}" style="height:${v.spent!=null?pct:0}%"></div></div>
+      <span class="trend-bar-label">${escapeAttr(dayLabel)}</span>
+    </div>`;
+  }).join('');
+  wrap.innerHTML = `<div class="trend-chart">${bars}</div>`;
+}
+
 function renderPreview(){
   const mxnToday = dailyBudgetMXNToday();
   document.getElementById('previewBudget').textContent = mxnToday!=null ? fmtMXN(mxnToday) : t('rate_unavailable');
@@ -2131,6 +2211,7 @@ function renderAll(){
   renderStreak();
   renderForecast();
   renderMascot();
+  renderSpendingTrend();
 }
 
 function deleteEntry(id){
