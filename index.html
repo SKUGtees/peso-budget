@@ -728,6 +728,50 @@
 
 <script src="sortable.min.js"></script>
 <script>
+// #scrollArea's CSS height is calc(100dvh - tab-bar height - safe-area-
+// inset-bottom) - correct on paper, but Android WebView's real-world
+// support for 100dvh/env(safe-area-inset-*) has already proven unreliable
+// twice this app cycle (the ad-banner-overlap and nav-bar-overlap bugs
+// were both this exact category of thing looking right in a desktop
+// browser preview and wrong on-device). Rather than trust that calc() a
+// third time for "can't scroll all the way down", this measures the
+// actual rendered pixel height of #adTopSpacer and the tab bar - whatever
+// they really take up, for whatever reason - and sets #scrollArea's
+// height to exactly fill what's left. It can't drift from reality because
+// it's reading reality, not predicting it. A ResizeObserver on both
+// elements means it stays correct automatically through ad load,
+// orientation change, or anything else that changes their size - no need
+// to hunt down every event that could affect them.
+function layoutScrollArea(){
+  const scrollArea = document.getElementById('scrollArea');
+  const topSpacer = document.getElementById('adTopSpacer');
+  const tabBar = document.getElementById('tabBar');
+  if(!scrollArea || !topSpacer || !tabBar) return;
+  const available = window.innerHeight - topSpacer.getBoundingClientRect().height - tabBar.getBoundingClientRect().height;
+  scrollArea.style.height = Math.max(0, available) + 'px';
+}
+// This script tag sits at the end of <body>, after #adTopSpacer/#scrollArea/
+// #tabBar in the source, so they already exist in the DOM by the time this
+// runs - a 'DOMContentLoaded' listener here could fire too late (or never,
+// if that event already passed) to be the only trigger. Set up the observer
+// and run the first layout pass immediately/synchronously instead.
+if('ResizeObserver' in window){
+  const scrollAreaLayoutObserver = new ResizeObserver(layoutScrollArea);
+  const topSpacerEl = document.getElementById('adTopSpacer');
+  const tabBarEl = document.getElementById('tabBar');
+  if(topSpacerEl) scrollAreaLayoutObserver.observe(topSpacerEl);
+  if(tabBarEl) scrollAreaLayoutObserver.observe(tabBarEl);
+}
+window.addEventListener('resize', layoutScrollArea);
+window.addEventListener('orientationchange', layoutScrollArea);
+// Belt-and-suspenders: layoutScrollArea() is also called directly at every
+// point in this file that changes --ad-banner-height, and ResizeObserver
+// should catch everything else, but this cheap periodic re-check (just a
+// few getBoundingClientRect() reads) means a missed/delayed trigger from
+// either of those can never leave #scrollArea wrong for more than a second.
+setInterval(layoutScrollArea, 1000);
+layoutScrollArea();
+
 const STORE_KEY = 'pesoBudget_v1';
 const BACKUP_KEY = 'pesoBudget_v1_backup';
 // Deliberately its own localStorage key instead of a field on `state`: the
@@ -2797,6 +2841,7 @@ function showAdBanner(){
   AdMob.addListener('bannerAdSizeChanged', size=>{
     if(size && size.height){
       document.documentElement.style.setProperty('--ad-banner-height', size.height + 'px');
+      layoutScrollArea();
     }
   });
   AdMob.initialize().then(()=>{
@@ -2819,6 +2864,7 @@ showAdBanner();
 // hides it immediately instead of making them restart the app.
 function hideAdBannerIfShown(){
   document.documentElement.style.setProperty('--ad-banner-height', '0px');
+  layoutScrollArea();
   if(!(adBannerShown && window.Capacitor && Capacitor.isNativePlatform())) return;
   const { AdMob } = Capacitor.Plugins;
   AdMob.hideBanner().catch(()=>{});
