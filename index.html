@@ -540,6 +540,7 @@
 
   <div class="card" data-widget-id="history">
     <h2 data-i18n="card_history">History</h2>
+    <button class="btn-primary" id="exportCsvBtn" style="background:var(--card2); color:var(--accent); border:1px solid var(--border); margin-top:0; margin-bottom:12px;" data-i18n="export_csv">Export as CSV</button>
     <div id="historyWrap">
       <div class="empty" data-i18n="no_entries_yet">No entries yet - add your first day above.</div>
     </div>
@@ -880,6 +881,7 @@ en: {
   invalid_backup_shape: "That file doesn't look like a Budget Abroad backup.",
   invalid_rate: "Enter a valid rate greater than 0.",
   th_cost: "Cost", th_amount: "Amount", th_date: "Date", th_spent: "Spent", th_saved: "Saved", th_total: "Total",
+  th_budget: "Budget", th_currency: "Currency", export_csv: "Export as CSV",
   show_less: "Show less", show_more: "Show {n} more",
   no_conversion_needed: "No conversion needed",
   budgeting_directly_pesos: "You're budgeting directly in {cur}.",
@@ -1016,6 +1018,7 @@ es: {
   invalid_backup_shape: "Ese archivo no parece ser una copia de seguridad de Budget Abroad.",
   invalid_rate: "Ingresa un tipo de cambio válido mayor a 0.",
   th_cost: "Costo", th_amount: "Monto", th_date: "Fecha", th_spent: "Gastado", th_saved: "Ahorrado", th_total: "Total",
+  th_budget: "Presupuesto", th_currency: "Moneda", export_csv: "Exportar como CSV",
   show_less: "Mostrar menos", show_more: "Mostrar {n} más",
   no_conversion_needed: "No se necesita conversión",
   budgeting_directly_pesos: "Estás presupuestando directamente en {cur}.",
@@ -1152,6 +1155,7 @@ fr: {
   invalid_backup_shape: "Ce fichier ne ressemble pas à une sauvegarde Budget Abroad.",
   invalid_rate: "Entrez un taux valide supérieur à 0.",
   th_cost: "Charge", th_amount: "Montant", th_date: "Date", th_spent: "Dépensé", th_saved: "Épargné", th_total: "Total",
+  th_budget: "Budget", th_currency: "Devise", export_csv: "Exporter en CSV",
   show_less: "Afficher moins", show_more: "Afficher {n} de plus",
   no_conversion_needed: "Aucune conversion nécessaire",
   budgeting_directly_pesos: "Vous établissez votre budget directement en {cur}.",
@@ -1288,6 +1292,7 @@ de: {
   invalid_backup_shape: "Diese Datei scheint keine Budget-Abroad-Sicherung zu sein.",
   invalid_rate: "Gib einen gültigen Kurs größer als 0 ein.",
   th_cost: "Kosten", th_amount: "Betrag", th_date: "Datum", th_spent: "Ausgegeben", th_saved: "Gespart", th_total: "Gesamt",
+  th_budget: "Budget", th_currency: "Währung", export_csv: "Als CSV exportieren",
   show_less: "Weniger anzeigen", show_more: "{n} mehr anzeigen",
   no_conversion_needed: "Keine Umrechnung nötig",
   budgeting_directly_pesos: "Du budgetierst direkt in {cur}.",
@@ -1424,6 +1429,7 @@ pt: {
   invalid_backup_shape: "Esse arquivo não parece ser um backup do Budget Abroad.",
   invalid_rate: "Insira uma taxa válida maior que 0.",
   th_cost: "Custo", th_amount: "Valor", th_date: "Data", th_spent: "Gasto", th_saved: "Economizado", th_total: "Total",
+  th_budget: "Orçamento", th_currency: "Moeda", export_csv: "Exportar como CSV",
   show_less: "Mostrar menos", show_more: "Mostrar mais {n}",
   no_conversion_needed: "Nenhuma conversão necessária",
   budgeting_directly_pesos: "Você está orçando diretamente em {cur}.",
@@ -2318,6 +2324,39 @@ document.getElementById('exportBtn').addEventListener('click', ()=>{
   const stamp = new Date().toISOString().slice(0,10);
   a.href = url;
   a.download = `budget-abroad-backup-${stamp}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+});
+function csvEscape(val){
+  const s = String(val ?? '');
+  return /[",\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s;
+}
+document.getElementById('exportCsvBtn').addEventListener('click', ()=>{
+  if(state.entries.length===0){
+    alert(t('no_entries_yet'));
+    return;
+  }
+  // Same running-total logic as renderHistory() (oldest-to-newest
+  // accumulation) so the CSV matches what's shown in the app - deliberately
+  // NOT masked by privacy mode, unlike the in-app table: exporting is an
+  // explicit request for the real data, same as the JSON backup export
+  // above, which also always writes the raw state regardless of that toggle.
+  const entriesAsc = [...state.entries].sort((a,b)=> a.date.localeCompare(b.date));
+  let running = Number(state.startingBalance)||0;
+  const header = [t('th_date'), t('th_spent'), t('th_budget'), t('th_saved'), t('th_total'), t('th_currency')];
+  const rows = entriesAsc.map(e=>{
+    running += e.saved;
+    return [e.date, e.spent, e.budget, e.saved, running.toFixed(2), e.currency||'MXN'];
+  });
+  const csv = [header, ...rows].map(row=>row.map(csvEscape).join(',')).join('\r\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const stamp = new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = `budget-abroad-history-${stamp}.csv`;
   document.body.appendChild(a);
   a.click();
   a.remove();
