@@ -191,6 +191,14 @@
   .trend-bar{ width:100%; min-height:2px; border-radius:3px 3px 0 0; background:var(--accent); }
   .trend-bar.over{ background:var(--danger); }
   .trend-bar-label{ font-size:0.6rem; color:var(--muted); }
+  .month-summary-select{
+    width:100%; padding:10px; border-radius:8px; background:var(--card2); color:var(--text);
+    border:1px solid var(--border); font-weight:700; font-size:0.85rem; margin-bottom:14px;
+  }
+  .category-bar-row{ margin-bottom:10px; }
+  .category-bar-row-top{ display:flex; justify-content:space-between; font-size:0.78rem; margin-bottom:4px; }
+  .category-bar-track{ width:100%; height:8px; border-radius:4px; background:var(--card2); overflow:hidden; }
+  .category-bar-fill{ height:100%; background:var(--accent); border-radius:4px; }
   #celebrationOverlay{ position:fixed; inset:0; pointer-events:none; z-index:150; overflow:hidden; }
   .confetti-piece{
     position:absolute; top:-20px; width:8px; height:14px; opacity:0.95;
@@ -545,6 +553,12 @@
     <div id="spendingTrendChart"></div>
   </div>
 
+  <div class="card" data-widget-id="monthSummary">
+    <h2 data-i18n="card_month_summary">Month-End Summary</h2>
+    <select id="monthSummarySelect" class="month-summary-select" onchange="renderMonthSummary()"></select>
+    <div id="monthSummaryWrap"></div>
+  </div>
+
   <div class="card" data-widget-id="history">
     <h2 data-i18n="card_history">History</h2>
     <button class="btn-primary" id="exportCsvBtn" style="background:var(--card2); color:var(--accent); border:1px solid var(--border); margin-top:0; margin-bottom:12px;" data-i18n="export_csv">Export as CSV</button>
@@ -797,6 +811,10 @@ en: {
   card_savings_goals: "Savings Goals",
   card_spending_trend: "Spending Trend", trend_range_7d: "7 days", trend_range_30d: "30 days",
   trend_no_data: "No spending logged in this period.",
+  card_month_summary: "Month-End Summary", month_summary_no_data: "No spending logged for this month.",
+  month_summary_total_spent: "Total spent", month_summary_total_saved: "Total saved",
+  month_summary_days_logged: "Days logged", month_summary_avg_daily: "Average saved per day",
+  month_summary_by_category: "By category",
   card_history: "History",
   card_income_settings: "Income Settings",
   card_monthly_costs: "Monthly Fixed Costs ({cur})",
@@ -941,6 +959,10 @@ es: {
   card_savings_goals: "Metas de Ahorro",
   card_spending_trend: "Tendencia de Gastos", trend_range_7d: "7 días", trend_range_30d: "30 días",
   trend_no_data: "No hay gastos registrados en este período.",
+  card_month_summary: "Resumen de Fin de Mes", month_summary_no_data: "No hay gastos registrados este mes.",
+  month_summary_total_spent: "Total gastado", month_summary_total_saved: "Total ahorrado",
+  month_summary_days_logged: "Días registrados", month_summary_avg_daily: "Ahorro promedio por día",
+  month_summary_by_category: "Por categoría",
   card_history: "Historial",
   card_income_settings: "Ajustes de Ingresos",
   card_monthly_costs: "Costos Fijos Mensuales ({cur})",
@@ -1085,6 +1107,10 @@ fr: {
   card_savings_goals: "Objectifs d'Épargne",
   card_spending_trend: "Tendance des Dépenses", trend_range_7d: "7 jours", trend_range_30d: "30 jours",
   trend_no_data: "Aucune dépense enregistrée pour cette période.",
+  card_month_summary: "Résumé de Fin de Mois", month_summary_no_data: "Aucune dépense enregistrée ce mois-ci.",
+  month_summary_total_spent: "Total dépensé", month_summary_total_saved: "Total économisé",
+  month_summary_days_logged: "Jours enregistrés", month_summary_avg_daily: "Économie moyenne par jour",
+  month_summary_by_category: "Par catégorie",
   card_history: "Historique",
   card_income_settings: "Réglages des Revenus",
   card_monthly_costs: "Charges Fixes Mensuelles ({cur})",
@@ -1229,6 +1255,10 @@ de: {
   card_savings_goals: "Sparziele",
   card_spending_trend: "Ausgabenverlauf", trend_range_7d: "7 Tage", trend_range_30d: "30 Tage",
   trend_no_data: "In diesem Zeitraum wurden keine Ausgaben erfasst.",
+  card_month_summary: "Monatsabschluss", month_summary_no_data: "Für diesen Monat wurden keine Ausgaben erfasst.",
+  month_summary_total_spent: "Gesamt ausgegeben", month_summary_total_saved: "Gesamt gespart",
+  month_summary_days_logged: "Erfasste Tage", month_summary_avg_daily: "Durchschnittlich gespart pro Tag",
+  month_summary_by_category: "Nach Kategorie",
   card_history: "Verlauf",
   card_income_settings: "Einkommenseinstellungen",
   card_monthly_costs: "Monatliche Fixkosten ({cur})",
@@ -1373,6 +1403,10 @@ pt: {
   card_savings_goals: "Metas de Economia",
   card_spending_trend: "Tendência de Gastos", trend_range_7d: "7 dias", trend_range_30d: "30 dias",
   trend_no_data: "Nenhum gasto registrado neste período.",
+  card_month_summary: "Resumo de Fim de Mês", month_summary_no_data: "Nenhum gasto registrado neste mês.",
+  month_summary_total_spent: "Total gasto", month_summary_total_saved: "Total economizado",
+  month_summary_days_logged: "Dias registrados", month_summary_avg_daily: "Economia média por dia",
+  month_summary_by_category: "Por categoria",
   card_history: "Histórico",
   card_income_settings: "Configurações de Renda",
   card_monthly_costs: "Custos Fixos Mensais ({cur})",
@@ -1552,6 +1586,7 @@ function applyTranslations(){
   });
   if(typeof updateEntryDateDisplay === 'function') updateEntryDateDisplay();
   if(typeof renderSpendingTrend === 'function') renderSpendingTrend();
+  if(typeof renderMonthSummary === 'function') renderMonthSummary();
   if(typeof renderBackupReminder === 'function') renderBackupReminder();
   if(typeof populateCategorySelects === 'function') populateCategorySelects();
   renderRate();
@@ -2115,6 +2150,80 @@ function renderSpendingTrend(){
   wrap.innerHTML = `<div class="trend-chart">${bars}</div>`;
 }
 
+function monthKey(dateStr){ return dateStr.slice(0,7); }
+
+function renderMonthSummary(){
+  const select = document.getElementById('monthSummarySelect');
+  const wrap = document.getElementById('monthSummaryWrap');
+  if(!select || !wrap) return;
+  const currentMonth = monthKey(localDateStr(new Date()));
+  const months = Array.from(new Set(state.entries.map(e=>monthKey(e.date))));
+  if(!months.includes(currentMonth)) months.push(currentMonth);
+  months.sort().reverse();
+  const monthFmt = new Intl.DateTimeFormat(currentDateLocale(), { year:'numeric', month:'long' });
+  const prevValue = select.value;
+  select.innerHTML = months.map(m=>
+    `<option value="${m}">${escapeAttr(monthFmt.format(new Date(m+'-02T00:00:00')))}</option>`
+  ).join('');
+  select.value = months.includes(prevValue) ? prevValue : currentMonth;
+
+  const selectedMonth = select.value;
+  const monthEntries = state.entries.filter(e=>monthKey(e.date)===selectedMonth);
+  if(monthEntries.length===0){
+    wrap.innerHTML = `<div class="empty">${t('month_summary_no_data')}</div>`;
+    return;
+  }
+  const totalSpent = monthEntries.reduce((sum,e)=> sum + (Number(e.spent)||0), 0);
+  const totalSaved = monthEntries.reduce((sum,e)=> sum + (Number(e.saved)||0), 0);
+  const daysLogged = new Set(monthEntries.map(e=>e.date)).size;
+  const avgDailySaved = totalSaved / daysLogged;
+  const savedCls = totalSaved>=0 ? 'saved-pos' : 'saved-neg';
+
+  const categoryTotals = {};
+  monthEntries.forEach(e=>{
+    const cat = e.category || 'other';
+    categoryTotals[cat] = (categoryTotals[cat]||0) + (Number(e.spent)||0);
+  });
+  const maxCatSpent = Math.max(1, ...Object.values(categoryTotals));
+  const categoryRows = Object.keys(categoryTotals)
+    .sort((a,b)=> categoryTotals[b]-categoryTotals[a])
+    .map(catId=>{
+      const cat = SPENDING_CATEGORIES.find(c=>c.id===catId) || SPENDING_CATEGORIES[SPENDING_CATEGORIES.length-1];
+      const amt = categoryTotals[catId];
+      const pct = Math.max(2, Math.round((amt/maxCatSpent)*100));
+      return `<div class="category-bar-row">
+        <div class="category-bar-row-top">
+          <span>${cat.emoji} ${escapeAttr(t('category_'+catId))}</span>
+          <span>${fmtMXN(amt)}</span>
+        </div>
+        <div class="category-bar-track"><div class="category-bar-fill" style="width:${pct}%"></div></div>
+      </div>`;
+    }).join('');
+
+  wrap.innerHTML = `
+    <div class="stat">
+      <span class="label">${t('month_summary_total_spent')}</span>
+      <span class="value">${fmtMXN(totalSpent)}</span>
+    </div>
+    <div class="stat">
+      <span class="label">${t('month_summary_total_saved')}</span>
+      <span class="value ${savedCls}">${fmtMXN(totalSaved)}</span>
+    </div>
+    <div class="stat">
+      <span class="label">${t('month_summary_days_logged')}</span>
+      <span class="value">${daysLogged}</span>
+    </div>
+    <div class="stat">
+      <span class="label">${t('month_summary_avg_daily')}</span>
+      <span class="value">${fmtMXN(avgDailySaved)}</span>
+    </div>
+    <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:12px;">
+      <div style="font-size:0.8rem; color:var(--muted); margin-bottom:8px;">${t('month_summary_by_category')}</div>
+      ${categoryRows}
+    </div>`;
+}
+window.renderMonthSummary = renderMonthSummary;
+
 function renderPreview(){
   const mxnToday = dailyBudgetMXNToday();
   document.getElementById('previewBudget').textContent = mxnToday!=null ? fmtMXN(mxnToday) : t('rate_unavailable');
@@ -2336,6 +2445,7 @@ function renderAll(){
   renderForecast();
   renderMascot();
   renderSpendingTrend();
+  renderMonthSummary();
   renderBackupReminder();
 }
 
