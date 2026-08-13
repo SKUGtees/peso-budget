@@ -2198,14 +2198,27 @@ window.cancelEntryEdit = cancelEntryEdit;
 function saveEntryEdit(id){
   const entry = state.entries.find(e=>e.id===id);
   if(!entry) return;
+  const oldDate = entry.date;
+  const oldBudget = entry.budget;
   const date = document.getElementById('editEntryDate-'+id).value || entry.date;
   const spent = Number(document.getElementById('editEntrySpent-'+id).value)||0;
   const categoryEl = document.getElementById('editEntryCategory-'+id);
+  const dateChanged = date !== oldDate;
   entry.date = date;
   entry.spent = spent;
+  if(dateChanged){
+    // Moving to a different day: this entry only keeps carrying a budget if it's
+    // the first entry logged on the new date; otherwise it becomes an "extra" log
+    // there (budget 0), same rule as a brand-new log. It keeps its own historical
+    // budget value rather than recomputing today's rate, consistent with entries
+    // elsewhere keeping the rate/budget they were originally logged with.
+    const alreadyLoggedOnNewDate = state.entries.some(e=>e.id!==id && e.date===date);
+    entry.budget = alreadyLoggedOnNewDate ? 0 : oldBudget;
+  }
   entry.saved = entry.budget - spent;
   entry.category = categoryEl ? categoryEl.value : (entry.category || 'other');
   editingEntryId = null;
+  if(dateChanged) rebalanceDateBudget(oldDate, oldBudget);
   save();
   autoAllocateSavings();
   renderAll();
@@ -2326,9 +2339,29 @@ function renderAll(){
   renderBackupReminder();
 }
 
+// After a date's budget-carrying entry is removed (deleted, or edited to a
+// different date), one remaining entry for that date needs to pick up the
+// budget so the day's total "saved" still reflects budget minus total spent.
+// The carried value is the removed entry's own historical budget rather than
+// a fresh dailyBudgetMXNToday() recompute, so past days aren't reshuffled by
+// today's income/settings.
+function rebalanceDateBudget(date, carriedBudget){
+  const dayEntries = state.entries.filter(e=>e.date===date);
+  if(dayEntries.length===0) return;
+  if(dayEntries.some(e=>e.budget>0)) return;
+  if(carriedBudget==null) return;
+  const carrier = dayEntries[0];
+  carrier.budget = carriedBudget;
+  carrier.saved = carriedBudget - carrier.spent;
+}
+
 function deleteEntry(id){
   if(!confirm(t('confirm_delete_entry'))) return;
+  const entry = state.entries.find(e=>e.id===id);
+  const date = entry ? entry.date : null;
+  const carriedBudget = entry ? entry.budget : null;
   state.entries = state.entries.filter(e=>e.id!==id);
+  if(date) rebalanceDateBudget(date, carriedBudget);
   save();
   renderAll();
 }
