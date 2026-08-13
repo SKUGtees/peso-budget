@@ -433,6 +433,12 @@
 <div class="wrap">
 
 <div class="tab-panel" data-tab="home" style="display:block;">
+<div class="card" id="backupReminderBanner" style="display:none; border-color:var(--accent);">
+  <h2 data-i18n="backup_reminder_title">Back up your data</h2>
+  <div class="entry-preview" style="display:block; margin-bottom:10px;" id="backupReminderText"></div>
+  <button class="btn-primary" id="backupReminderExportBtn" data-i18n="export_backup">Export backup file</button>
+  <button class="btn-primary" id="backupReminderDismissBtn" style="background:var(--card2); color:var(--muted); border:1px solid var(--border); margin-top:10px;" data-i18n="backup_reminder_dismiss">Remind me later</button>
+</div>
 <div id="tab-home-widgets" class="widgets-list">
 
   <div class="card" data-widget-id="rate">
@@ -843,6 +849,9 @@ en: {
   backup_restore: "Backup & Restore",
   data_management: "Data Management",
   export_backup: "Export backup file",
+  backup_reminder_title: "Back up your data", backup_reminder_dismiss: "Remind me later",
+  backup_reminder_text_since_export: "It's been {days} days since your last backup. All your data lives only on this device - export a fresh copy just in case.",
+  backup_reminder_text_never: "You've been using Budget Abroad for {days} days without ever exporting a backup. All your data lives only on this device - export a copy just in case.",
   restore_backup: "Restore from backup file",
   backup_desc: "Your data lives only on this device's browser storage. Updates to the app never touch it, but clearing browser data, switching phones, or reinstalling will. Export a backup file now and then to be safe - Restore reads one back in.",
   danger_zone: "Danger Zone",
@@ -981,6 +990,9 @@ es: {
   backup_restore: "Copia de Seguridad y Restauración",
   data_management: "Gestión de Datos",
   export_backup: "Exportar copia de seguridad",
+  backup_reminder_title: "Haz una copia de seguridad", backup_reminder_dismiss: "Recordar más tarde",
+  backup_reminder_text_since_export: "Han pasado {days} días desde tu última copia de seguridad. Todos tus datos viven solo en este dispositivo - exporta una copia nueva por si acaso.",
+  backup_reminder_text_never: "Llevas {days} días usando Budget Abroad sin exportar nunca una copia de seguridad. Todos tus datos viven solo en este dispositivo - exporta una copia por si acaso.",
   restore_backup: "Restaurar desde copia de seguridad",
   backup_desc: "Tus datos viven solo en el almacenamiento del navegador de este dispositivo. Las actualizaciones de la app nunca los tocan, pero borrar los datos del navegador, cambiar de teléfono o reinstalar sí lo hará. Exporta una copia de seguridad de vez en cuando - Restaurar la vuelve a cargar.",
   danger_zone: "Zona de Peligro",
@@ -1119,6 +1131,9 @@ fr: {
   backup_restore: "Sauvegarde et Restauration",
   data_management: "Gestion des Données",
   export_backup: "Exporter une sauvegarde",
+  backup_reminder_title: "Sauvegarde tes données", backup_reminder_dismiss: "Me le rappeler plus tard",
+  backup_reminder_text_since_export: "Cela fait {days} jours depuis ta dernière sauvegarde. Toutes tes données ne vivent que sur cet appareil - exporte une copie récente au cas où.",
+  backup_reminder_text_never: "Tu utilises Budget Abroad depuis {days} jours sans jamais avoir exporté de sauvegarde. Toutes tes données ne vivent que sur cet appareil - exporte une copie au cas où.",
   restore_backup: "Restaurer depuis une sauvegarde",
   backup_desc: "Vos données ne vivent que dans le stockage du navigateur de cet appareil. Les mises à jour de l'app n'y touchent jamais, mais effacer les données du navigateur, changer de téléphone ou réinstaller le fera. Exportez une sauvegarde de temps en temps par sécurité - Restaurer la recharge.",
   danger_zone: "Zone de Danger",
@@ -1257,6 +1272,9 @@ de: {
   backup_restore: "Sicherung & Wiederherstellung",
   data_management: "Datenverwaltung",
   export_backup: "Sicherungsdatei Exportieren",
+  backup_reminder_title: "Sichere deine Daten", backup_reminder_dismiss: "Später erinnern",
+  backup_reminder_text_since_export: "Es sind {days} Tage seit deiner letzten Sicherung vergangen. Alle deine Daten liegen nur auf diesem Gerät - exportiere sicherheitshalber eine aktuelle Kopie.",
+  backup_reminder_text_never: "Du nutzt Budget Abroad seit {days} Tagen, ohne jemals eine Sicherung exportiert zu haben. Alle deine Daten liegen nur auf diesem Gerät - exportiere sicherheitshalber eine Kopie.",
   restore_backup: "Aus Sicherungsdatei Wiederherstellen",
   backup_desc: "Deine Daten leben nur im Browser-Speicher dieses Geräts. App-Updates berühren sie nie, aber das Löschen von Browserdaten, ein Telefonwechsel oder eine Neuinstallation schon. Exportiere ab und zu eine Sicherungsdatei zur Sicherheit - Wiederherstellen liest sie wieder ein.",
   danger_zone: "Gefahrenzone",
@@ -1395,6 +1413,9 @@ pt: {
   backup_restore: "Backup e Restauração",
   data_management: "Gerenciamento de Dados",
   export_backup: "Exportar arquivo de backup",
+  backup_reminder_title: "Faça backup dos seus dados", backup_reminder_dismiss: "Lembrar mais tarde",
+  backup_reminder_text_since_export: "Já se passaram {days} dias desde o seu último backup. Todos os seus dados ficam apenas neste dispositivo - exporte uma cópia nova por precaução.",
+  backup_reminder_text_never: "Você usa o Budget Abroad há {days} dias sem nunca ter exportado um backup. Todos os seus dados ficam apenas neste dispositivo - exporte uma cópia por precaução.",
   restore_backup: "Restaurar de arquivo de backup",
   backup_desc: "Seus dados vivem apenas no armazenamento do navegador deste dispositivo. Atualizações do app nunca os tocam, mas limpar dados do navegador, trocar de telefone ou reinstalar sim. Exporte um backup de vez em quando por segurança - Restaurar o carrega de volta.",
   danger_zone: "Zona de Perigo",
@@ -1500,6 +1521,7 @@ function applyTranslations(){
   });
   if(typeof updateEntryDateDisplay === 'function') updateEntryDateDisplay();
   if(typeof renderSpendingTrend === 'function') renderSpendingTrend();
+  if(typeof renderBackupReminder === 'function') renderBackupReminder();
   renderRate();
 }
 
@@ -1528,11 +1550,13 @@ function normalize(parsed){
   if(parsed.trendRangeDays!==7 && parsed.trendRangeDays!==30) parsed.trendRangeDays = 7;
   if(parsed.dailyReminderEnabled==null) parsed.dailyReminderEnabled = false;
   if(!parsed.dailyReminderTime) parsed.dailyReminderTime = '20:00';
+  if(parsed.lastBackupExportDate===undefined) parsed.lastBackupExportDate = null;
+  if(parsed.backupReminderSnoozedUntil===undefined) parsed.backupReminderSnoozedUntil = null;
   return parsed;
 }
 
 function defaultState(){
-  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:{}, spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR', dragModeEnabled:false, autoSaveEnabled:false, autoSaveGoalId:'', manualRateOverride:false, accentColor:'#34d399', firstUseDate:localDateStr(new Date()), language:'en', localCurrency:'MXN', mascotEnabled:true, trendRangeDays:7, dailyReminderEnabled:false, dailyReminderTime:'20:00' };
+  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:{}, spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR', dragModeEnabled:false, autoSaveEnabled:false, autoSaveGoalId:'', manualRateOverride:false, accentColor:'#34d399', firstUseDate:localDateStr(new Date()), language:'en', localCurrency:'MXN', mascotEnabled:true, trendRangeDays:7, dailyReminderEnabled:false, dailyReminderTime:'20:00', lastBackupExportDate:null, backupReminderSnoozedUntil:null };
 }
 
 function load(){
@@ -2261,6 +2285,7 @@ function renderAll(){
   renderForecast();
   renderMascot();
   renderSpendingTrend();
+  renderBackupReminder();
 }
 
 function deleteEntry(id){
@@ -2322,7 +2347,7 @@ document.getElementById('privacyToggle').addEventListener('click', ()=>{
   save();
   renderAll();
 });
-document.getElementById('exportBtn').addEventListener('click', ()=>{
+function exportBackupJson(){
   const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -2333,7 +2358,45 @@ document.getElementById('exportBtn').addEventListener('click', ()=>{
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
+  // Not part of the same write as the rest of state on purpose - this is
+  // bookkeeping for the reminder banner, not budget data, but there's no
+  // real risk in keeping it in state the way there was with Pro's isPro
+  // flag (see ADS_REMOVED_KEY's comment): it's just a date, exported in
+  // every future backup, which is harmless and arguably useful context.
+  state.lastBackupExportDate = localDateStr(new Date());
+  save();
+  renderBackupReminder();
+}
+document.getElementById('exportBtn').addEventListener('click', exportBackupJson);
+document.getElementById('backupReminderExportBtn').addEventListener('click', exportBackupJson);
+document.getElementById('backupReminderDismissBtn').addEventListener('click', ()=>{
+  const snoozeUntil = new Date();
+  snoozeUntil.setDate(snoozeUntil.getDate() + 7);
+  state.backupReminderSnoozedUntil = localDateStr(snoozeUntil);
+  save();
+  renderBackupReminder();
 });
+const BACKUP_REMINDER_INTERVAL_DAYS = 30;
+function renderBackupReminder(){
+  const banner = document.getElementById('backupReminderBanner');
+  if(!banner) return;
+  const todayStr = localDateStr(new Date());
+  // Nothing to protect yet, or already reminded recently and not due again.
+  if(state.entries.length===0 || (state.backupReminderSnoozedUntil && state.backupReminderSnoozedUntil > todayStr)){
+    banner.style.display = 'none';
+    return;
+  }
+  const sinceStr = state.lastBackupExportDate || state.firstUseDate;
+  const daysSince = Math.floor((new Date(todayStr) - new Date(sinceStr)) / 86400000);
+  if(daysSince < BACKUP_REMINDER_INTERVAL_DAYS){
+    banner.style.display = 'none';
+    return;
+  }
+  banner.style.display = 'block';
+  document.getElementById('backupReminderText').textContent = state.lastBackupExportDate
+    ? t('backup_reminder_text_since_export', {days: daysSince})
+    : t('backup_reminder_text_never', {days: daysSince});
+}
 function csvEscape(val){
   const s = String(val ?? '');
   return /[",\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s;
