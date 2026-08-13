@@ -2677,8 +2677,20 @@ document.getElementById('addBtn').addEventListener('click', ()=>{
   const categoryEl = document.getElementById('entryCategory');
   const date = dateEl.value || localDateStr(new Date());
   const spent = Number(spentEl.value)||0;
-  const budgetMXN = dailyBudgetMXNToday();
-  if(budgetMXN==null) return;
+  const dailyBudget = dailyBudgetMXNToday();
+  if(dailyBudget==null) return;
+  // A day's budget is granted once, not once per log. Without this, logging
+  // spending twice for the same date counted the full daily budget against
+  // each log, so two logs of MXN 20 and MXN 30 against a MXN 420 budget
+  // added up to MXN 790 saved instead of the correct MXN 370 (420 - 50).
+  // The fix: only the first log for a given date carries the real budget;
+  // every additional log that day gets budget 0, so its "saved" is simply
+  // -spent - extra spending on a day that already has its budget applied
+  // elsewhere. Each log still stays its own row (not merged), but the sum
+  // of saved across a day's logs now equals budget minus that day's total
+  // spending, same as if it had all been logged in one entry.
+  const alreadyLoggedToday = state.entries.some(e=>e.date===date);
+  const budgetMXN = alreadyLoggedToday ? 0 : dailyBudget;
   const saved = budgetMXN - spent;
   state.entries.push({
     id: Date.now().toString(36)+Math.random().toString(36).slice(2,6),
