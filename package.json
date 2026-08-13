@@ -10,7 +10,9 @@
     "@capacitor/core": "latest",
     "@capacitor-community/admob": "latest",
     "@capacitor/splash-screen": "latest",
-    "@capacitor/local-notifications": "latest"
+    "@capacitor/local-notifications": "latest",
+    "@capacitor/filesystem": "latest",
+    "@capacitor/share": "latest"
   },
   "devDependencies": {
     "@capacitor/cli": "latest",

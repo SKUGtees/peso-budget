@@ -882,6 +882,7 @@ en: {
   invalid_rate: "Enter a valid rate greater than 0.",
   th_cost: "Cost", th_amount: "Amount", th_date: "Date", th_spent: "Spent", th_saved: "Saved", th_total: "Total",
   th_budget: "Budget", th_currency: "Currency", export_csv: "Export as CSV",
+  export_csv_failed: "Couldn't export the CSV file. Please try again.",
   show_less: "Show less", show_more: "Show {n} more",
   no_conversion_needed: "No conversion needed",
   budgeting_directly_pesos: "You're budgeting directly in {cur}.",
@@ -1019,6 +1020,7 @@ es: {
   invalid_rate: "Ingresa un tipo de cambio válido mayor a 0.",
   th_cost: "Costo", th_amount: "Monto", th_date: "Fecha", th_spent: "Gastado", th_saved: "Ahorrado", th_total: "Total",
   th_budget: "Presupuesto", th_currency: "Moneda", export_csv: "Exportar como CSV",
+  export_csv_failed: "No se pudo exportar el archivo CSV. Inténtalo de nuevo.",
   show_less: "Mostrar menos", show_more: "Mostrar {n} más",
   no_conversion_needed: "No se necesita conversión",
   budgeting_directly_pesos: "Estás presupuestando directamente en {cur}.",
@@ -1156,6 +1158,7 @@ fr: {
   invalid_rate: "Entrez un taux valide supérieur à 0.",
   th_cost: "Charge", th_amount: "Montant", th_date: "Date", th_spent: "Dépensé", th_saved: "Épargné", th_total: "Total",
   th_budget: "Budget", th_currency: "Devise", export_csv: "Exporter en CSV",
+  export_csv_failed: "Impossible d'exporter le fichier CSV. Veuillez réessayer.",
   show_less: "Afficher moins", show_more: "Afficher {n} de plus",
   no_conversion_needed: "Aucune conversion nécessaire",
   budgeting_directly_pesos: "Vous établissez votre budget directement en {cur}.",
@@ -1293,6 +1296,7 @@ de: {
   invalid_rate: "Gib einen gültigen Kurs größer als 0 ein.",
   th_cost: "Kosten", th_amount: "Betrag", th_date: "Datum", th_spent: "Ausgegeben", th_saved: "Gespart", th_total: "Gesamt",
   th_budget: "Budget", th_currency: "Währung", export_csv: "Als CSV exportieren",
+  export_csv_failed: "CSV-Datei konnte nicht exportiert werden. Bitte versuche es erneut.",
   show_less: "Weniger anzeigen", show_more: "{n} mehr anzeigen",
   no_conversion_needed: "Keine Umrechnung nötig",
   budgeting_directly_pesos: "Du budgetierst direkt in {cur}.",
@@ -1430,6 +1434,7 @@ pt: {
   invalid_rate: "Insira uma taxa válida maior que 0.",
   th_cost: "Custo", th_amount: "Valor", th_date: "Data", th_spent: "Gasto", th_saved: "Economizado", th_total: "Total",
   th_budget: "Orçamento", th_currency: "Moeda", export_csv: "Exportar como CSV",
+  export_csv_failed: "Não foi possível exportar o arquivo CSV. Tente novamente.",
   show_less: "Mostrar menos", show_more: "Mostrar mais {n}",
   no_conversion_needed: "Nenhuma conversão necessária",
   budgeting_directly_pesos: "Você está orçando diretamente em {cur}.",
@@ -2333,7 +2338,7 @@ function csvEscape(val){
   const s = String(val ?? '');
   return /[",\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s;
 }
-document.getElementById('exportCsvBtn').addEventListener('click', ()=>{
+document.getElementById('exportCsvBtn').addEventListener('click', async ()=>{
   if(state.entries.length===0){
     alert(t('no_entries_yet'));
     return;
@@ -2351,12 +2356,34 @@ document.getElementById('exportCsvBtn').addEventListener('click', ()=>{
     return [e.date, e.spent, e.budget, e.saved, running.toFixed(2), e.currency||'MXN'];
   });
   const csv = [header, ...rows].map(row=>row.map(csvEscape).join(',')).join('\r\n');
+  const stamp = new Date().toISOString().slice(0,10);
+  const filename = `budget-abroad-history-${stamp}.csv`;
+
+  if(window.Capacitor && Capacitor.isNativePlatform() && Capacitor.Plugins.Filesystem && Capacitor.Plugins.Share){
+    // blob URL + <a download> is a browser-only pattern - Android's WebView
+    // has no DownloadListener wired up for it, so the click silently does
+    // nothing instead of erroring (exactly the "nothing happens" bug this
+    // fixes), rather than the JSON backup export above which apparently
+    // does work here for whatever WebView-specific reason. Writing the file
+    // into the app's own cache dir and handing it to the OS share sheet is
+    // the standard, reliable way to get a file out of a Capacitor app on
+    // Android - the user picks "Save to Files"/Drive/email/etc. from there.
+    try{
+      const { Filesystem, Share } = Capacitor.Plugins;
+      const written = await Filesystem.writeFile({ path: filename, data: csv, directory: 'CACHE', encoding: 'utf8' });
+      await Share.share({ title: filename, url: written.uri });
+    }catch(err){
+      console.log('CSV export failed:', err);
+      alert(t('export_csv_failed'));
+    }
+    return;
+  }
+
   const blob = new Blob([csv], {type:'text/csv'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  const stamp = new Date().toISOString().slice(0,10);
   a.href = url;
-  a.download = `budget-abroad-history-${stamp}.csv`;
+  a.download = filename;
   document.body.appendChild(a);
   a.click();
   a.remove();
