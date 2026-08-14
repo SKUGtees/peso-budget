@@ -2335,6 +2335,7 @@ function saveEntryEdit(id){
   save();
   autoAllocateSavings();
   renderAll();
+  if(state.dailyReminderEnabled) scheduleDailyReminder();
 }
 window.saveEntryEdit = saveEntryEdit;
 
@@ -2477,6 +2478,7 @@ function deleteEntry(id){
   if(date) rebalanceDateBudget(date, carriedBudget);
   save();
   renderAll();
+  if(state.dailyReminderEnabled) scheduleDailyReminder();
 }
 window.deleteEntry = deleteEntry;
 
@@ -2848,6 +2850,7 @@ document.getElementById('addBtn').addEventListener('click', ()=>{
   spentEl.value = '';
   renderAll();
   celebrateSavings(saved, budgetMXN);
+  if(state.dailyReminderEnabled) scheduleDailyReminder();
 });
 
 document.getElementById('entryDate').value = localDateStr(new Date());
@@ -3030,12 +3033,26 @@ function scheduleDailyReminder(){
   const { LocalNotifications } = Capacitor.Plugins;
   if(!LocalNotifications) return;
   const [hourStr, minuteStr] = (state.dailyReminderTime || '20:00').split(':');
+  const now = new Date();
+  const next = new Date(now.getFullYear(), now.getMonth(), now.getDate(), Number(hourStr), Number(minuteStr), 0, 0);
+  const loggedToday = state.entries.some(e=>e.date===localDateStr(now));
+  // A single one-shot notification (not repeats:true) instead of a recurring
+  // alarm, specifically so today's reminder can be skipped once spending is
+  // already logged - an OS-level repeating alarm has no way to consult app
+  // state before firing. Pushed to tomorrow if today's occurrence already
+  // passed or today is already logged; re-scheduled for the day after every
+  // time the app opens (see the launch call below) or a new entry is logged
+  // (see addBtn/saveEntryEdit/deleteEntry), which is what keeps a one-shot
+  // schedule effectively behaving like a smart recurring one.
+  if(loggedToday || next <= now){
+    next.setDate(next.getDate() + 1);
+  }
   LocalNotifications.schedule({
     notifications: [{
       id: DAILY_REMINDER_NOTIFICATION_ID,
       title: t('daily_reminder_title'),
       body: t('daily_reminder_body'),
-      schedule: { on: { hour: Number(hourStr), minute: Number(minuteStr) }, repeats: true, allowWhileIdle: true }
+      schedule: { at: next, allowWhileIdle: true }
     }]
   }).catch(err=>{
     console.log('Daily reminder scheduling failed:', err);
