@@ -24,9 +24,12 @@
   header{
     padding:20px 16px 12px; text-align:center;
   }
+  .header-row{ display:flex; align-items:center; justify-content:center; gap:10px; }
   header h1{ margin:0; font-size:1.9rem; font-weight:800; letter-spacing:-0.02em; }
   header h1 span{ color:var(--accent); }
   header p{ margin:4px 0 0; color:var(--muted); font-size:0.85rem; }
+  header .mascot-wrap img{ width:48px; max-width:48px; margin:0; }
+  header .mascot-wrap .mascot-caption{ display:none; }
   .wrap{ max-width:480px; margin:0 auto; padding:0 14px; }
   .card{
     background:var(--card); border:1px solid var(--border); border-radius:14px;
@@ -434,7 +437,10 @@
 <div id="celebrationOverlay"></div>
 <div id="scrollArea">
 <header>
-  <h1>Budget <span>Abroad</span></h1>
+  <div class="header-row">
+    <h1>Budget <span>Abroad</span></h1>
+    <div class="mascot-wrap" id="mascotWrap"></div>
+  </div>
   <p data-i18n="tagline">Foreign income, daily spending budget, tracked automatically</p>
 </header>
 
@@ -506,12 +512,6 @@
       <div class="amount" id="totalSaved">$0</div>
       <div class="label" style="margin-top:4px;" data-i18n="total_saved_note">Available - money added to goals is set aside separately</div>
     </div>
-  </div>
-
-  <div class="card" data-widget-id="mascot">
-    <span class="drag-handle" title="Drag to reorder">⠿</span>
-    <h2 data-i18n="card_mascot">Your Savings Buddy</h2>
-    <div class="mascot-wrap" id="mascotWrap"></div>
   </div>
 
 </div>
@@ -2343,13 +2343,12 @@ const MASCOT_TIERS = [
 ];
 
 function renderMascot(){
-  const card = document.querySelector('[data-widget-id="mascot"]');
+  const wrap = document.getElementById('mascotWrap');
   if(state.mascotEnabled === false){
-    card.style.display = 'none';
+    wrap.style.display = 'none';
     return;
   }
-  card.style.display = '';
-  const wrap = document.getElementById('mascotWrap');
+  wrap.style.display = '';
   const available = totalSavedAvailable();
   const dailyBudget = dailyBudgetMXNToday();
   const daysBanked = (dailyBudget && dailyBudget > 0) ? available / dailyBudget : 0;
