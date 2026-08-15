@@ -3052,7 +3052,13 @@ function scheduleDailyReminder(){
       id: DAILY_REMINDER_NOTIFICATION_ID,
       title: t('daily_reminder_title'),
       body: t('daily_reminder_body'),
-      schedule: { at: next, allowWhileIdle: true }
+      // No allowWhileIdle: that requests Android's exact-alarm delivery,
+      // which on Android 12+ needs the special "Alarms & reminders"
+      // permission and surfaces an OS prompt the moment this runs - a jarring
+      // thing to hit on a routine app open. This is a low-priority daily
+      // nudge, not a time-critical alarm, so a plain inexact schedule (which
+      // can be delivered a few minutes late under Doze) is the right trade.
+      schedule: { at: next }
     }]
   }).catch(err=>{
     console.log('Daily reminder scheduling failed:', err);
