@@ -105,6 +105,10 @@
   }
   .tab-bar-btn .icon-svg{ width:22px; height:22px; }
   .tab-bar-btn.active{ color:var(--accent); }
+  /* Six tabs share the bar, so labels get a hard cap instead of being allowed
+     to push into their neighbours (long ones like "Einstellungen"/"Presupuesto"). */
+  .tab-bar-btn{ min-width:0; padding-left:1px; padding-right:1px; font-size:0.62rem; }
+  .tab-bar-btn span{ max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .row{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:10px;}
   .row:last-child{ margin-bottom:0; }
   .row label{ font-size:0.92rem; color:var(--text); flex-shrink:0; }
@@ -283,6 +287,17 @@
     background:none; color:var(--accent); font-size:1.05rem; padding:2px 6px; line-height:1;
   }
   .actions-cell{ white-space:nowrap; }
+  /* Editable rows shared by the multi-currency income list and the
+     Simulation tab's income/cost lists. */
+  .src-row{ display:flex; gap:8px; align-items:center; margin-bottom:8px; }
+  .src-row input, .src-row select{
+    background:var(--input-bg); border:1px solid var(--border); color:var(--text);
+    border-radius:8px; padding:8px 10px; font-size:0.95rem; min-width:0; box-sizing:border-box;
+  }
+  .src-row .src-amount, .src-row .src-name{ flex:1; width:auto; }
+  .src-row .src-currency{ width:46%; max-width:160px; }
+  .src-row .src-cost-amount{ width:34%; max-width:120px; text-align:right; }
+  .sim-label{ display:block; font-size:0.82rem; color:var(--muted); margin-bottom:6px; }
   .inline-edit-input{
     width:100%; background:var(--input-bg); border:1px solid var(--border); color:var(--text);
     border-radius:6px; padding:5px 7px; font-size:0.85rem;
@@ -580,13 +595,27 @@
   <div class="card" data-widget-id="incomeSettings">
     <span class="drag-handle" title="Drag to reorder">⠿</span>
     <h2 data-i18n="card_income_settings">Income Settings</h2>
-    <div class="row">
+    <div class="row" id="singleIncomeRow">
       <label id="incomeRowLabel">Monthly income (<span id="incomeCurrencyLabel">EUR</span>)</label>
       <input type="number" id="income" inputmode="decimal" placeholder="1500">
+    </div>
+    <div id="incomeSourcesBlock" style="display:none; margin-bottom:12px;">
+      <label class="sim-label" data-i18n="income_sources_label">Monthly income sources</label>
+      <div id="incomeSourcesWrap"></div>
+      <button class="btn-small" id="addIncomeSourceBtn" data-i18n="add_income_source">Add income source</button>
     </div>
     <div class="row">
       <label data-i18n="days_in_period">Days in period</label>
       <input type="number" id="days" inputmode="numeric" placeholder="30">
+    </div>
+    <div style="margin-top:12px;">
+      <label style="display:flex; align-items:center; justify-content:space-between; cursor:pointer; margin-bottom:0;">
+        <span data-i18n="advanced_income_toggle">Multiple income currencies</span>
+        <input type="checkbox" id="advancedIncomeToggle" style="width:18px; height:18px; accent-color:var(--accent); cursor:pointer;">
+      </label>
+      <div class="entry-preview" style="display:block; margin-top:6px;" data-i18n="advanced_income_desc">
+        Add several incomes in different currencies, like 100 EUR plus 200 USD plus 24,000 MXN. Each one is converted at the live rate and added together.
+      </div>
     </div>
     <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:12px;">
       <div class="stat">
@@ -624,6 +653,73 @@
 </div>
 </div>
 
+<div class="tab-panel" data-tab="sim" style="display:none;">
+
+  <div class="card" style="border-color:var(--accent);">
+    <h2 data-i18n="card_sim_title">Simulation</h2>
+    <div class="entry-preview" style="display:block; margin-bottom:12px;" data-i18n="sim_intro">
+      Try different currencies, incomes and costs to see how your daily budget would change. Nothing here touches your real budget.
+    </div>
+    <button class="btn-primary" id="simResetBtn" style="background:var(--card2); color:var(--accent); border:1px solid var(--border); margin-top:0;" data-i18n="sim_reset_btn">Reset to my real budget</button>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="sim_scenario_title">Scenario</h2>
+    <div class="field" style="margin-bottom:12px;">
+      <label data-i18n="sim_spending_currency">Spending currency</label>
+      <select id="simLocalCurrency"></select>
+    </div>
+    <div style="margin-bottom:12px;">
+      <label class="sim-label" data-i18n="income_sources_label">Monthly income sources</label>
+      <div id="simSourcesWrap"></div>
+      <button class="btn-small" id="simAddSourceBtn" data-i18n="add_income_source">Add income source</button>
+    </div>
+    <div class="field" style="margin-bottom:12px;">
+      <label data-i18n="days_in_period">Days in period</label>
+      <input type="number" id="simDays" inputmode="numeric" placeholder="30">
+    </div>
+    <div class="field">
+      <label data-i18n="sim_rate_shift">Exchange rate change (%)</label>
+      <input type="number" id="simRateShift" inputmode="decimal" placeholder="0" step="0.1">
+      <div class="entry-preview" style="display:block; margin-top:6px;" data-i18n="sim_rate_shift_desc">
+        For example -10 means your foreign income converts at a 10% worse rate. Spending-currency income is not affected.
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 id="simCostsTitle">Monthly Fixed Costs</h2>
+    <div id="simCostsWrap"></div>
+    <button class="btn-small" id="simAddCostBtn" data-i18n="add_cost">Add Cost</button>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="sim_result_title">Result</h2>
+    <div class="entry-preview" id="simRatesNote" style="display:none; margin-bottom:10px;"></div>
+    <div class="stat">
+      <span class="label" id="simIncomeLabel">Monthly income</span>
+      <span class="value" id="simIncomeValue">-</span>
+    </div>
+    <div class="stat">
+      <span class="label" id="simCostsLabel">Total monthly costs</span>
+      <span class="value" id="simCostsValue">-</span>
+    </div>
+    <div class="stat">
+      <span class="label" id="simLeftLabel">Left after costs</span>
+      <span class="value" id="simLeftValue">-</span>
+    </div>
+    <div class="stat">
+      <span class="label" id="simDailyLabel">Daily spending budget</span>
+      <span class="value big" id="simDailyValue">-</span>
+    </div>
+    <div class="stat" id="simDiffRow" style="display:none;">
+      <span class="label" data-i18n="sim_vs_real_label">Difference vs your real daily budget</span>
+      <span class="value" id="simDiffValue">-</span>
+    </div>
+  </div>
+
+</div>
+
 <div class="tab-panel" data-tab="settings" style="display:none;">
 
   <div class="card" id="settingsCard">
@@ -639,7 +735,7 @@
         The currency you spend day-to-day and track your budget and savings in. Changing this does not convert past entries.
       </div>
     </div>
-    <div class="field">
+    <div class="field" id="incomeCurrencyField">
       <label data-i18n="income_currency">Income currency</label>
       <select id="incomeCurrency"></select>
     </div>
@@ -761,6 +857,7 @@
   <button class="tab-bar-btn" data-tab="budget"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg><span data-i18n="tab_budget">Budget</span></button>
   <button class="tab-bar-btn" data-tab="goals"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"></circle></svg><span data-i18n="tab_goals">Goals</span></button>
   <button class="tab-bar-btn" data-tab="history"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 16 14"></polyline></svg><span data-i18n="tab_history">History</span></button>
+  <button class="tab-bar-btn" data-tab="sim"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg><span data-i18n="tab_sim">Simulate</span></button>
   <button class="tab-bar-btn" data-tab="settings"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg><span data-i18n="tab_settings">Settings</span></button>
 </nav>
 
@@ -860,6 +957,27 @@ en: {
   cost_name_ph: "e.g. Rent",
   cost_amount_ph: "Amount ({cur})",
   add_cost: "Add Cost",
+  tab_sim: "Simulate",
+  card_sim_title: "Simulation",
+  sim_intro: "Try different currencies, incomes and costs to see how your daily budget would change. Nothing here touches your real budget.",
+  sim_reset_btn: "Reset to my real budget",
+  sim_confirm_reset: "Reset the simulation to your real budget? Your changes in the simulation will be lost.",
+  sim_scenario_title: "Scenario",
+  sim_spending_currency: "Spending currency",
+  sim_rate_shift: "Exchange rate change (%)",
+  sim_rate_shift_desc: "For example -10 means your foreign income converts at a 10% worse rate. Income in your spending currency is not affected.",
+  sim_result_title: "Result",
+  sim_vs_real_label: "Difference vs your real daily budget",
+  sim_rates_loading: "Loading exchange rates…",
+  sim_rates_unavailable: "Exchange rates unavailable right now. Check your connection.",
+  sim_rates_stale: "Offline: using the last saved exchange rates.",
+  income_sources_label: "Monthly income sources",
+  add_income_source: "Add income source",
+  income_source_amount_ph: "Amount",
+  remove_label: "Remove",
+  no_income_sources: "No income sources yet.",
+  advanced_income_toggle: "Multiple income currencies",
+  advanced_income_desc: "Add several incomes in different currencies, like 100 EUR plus 200 USD plus 24,000 MXN. Each one is converted at the live rate and added together.",
   no_costs_yet: "No fixed costs added yet.",
   income_currency: "Income currency",
   local_currency_label: "Local currency",
@@ -1008,6 +1126,27 @@ es: {
   cost_name_ph: "ej. Renta",
   cost_amount_ph: "Monto ({cur})",
   add_cost: "Agregar Costo",
+  tab_sim: "Simular",
+  card_sim_title: "Simulación",
+  sim_intro: "Prueba distintas monedas, ingresos y costos para ver cómo cambiaría tu presupuesto diario. Nada de esto afecta tu presupuesto real.",
+  sim_reset_btn: "Restablecer a mi presupuesto real",
+  sim_confirm_reset: "¿Restablecer la simulación a tu presupuesto real? Se perderán los cambios hechos en la simulación.",
+  sim_scenario_title: "Escenario",
+  sim_spending_currency: "Moneda de gasto",
+  sim_rate_shift: "Cambio en el tipo de cambio (%)",
+  sim_rate_shift_desc: "Por ejemplo, -10 significa que tus ingresos extranjeros se convierten a un tipo 10% peor. Los ingresos en tu moneda de gasto no se ven afectados.",
+  sim_result_title: "Resultado",
+  sim_vs_real_label: "Diferencia con tu presupuesto diario real",
+  sim_rates_loading: "Cargando tipos de cambio…",
+  sim_rates_unavailable: "Tipos de cambio no disponibles ahora. Revisa tu conexión.",
+  sim_rates_stale: "Sin conexión: usando los últimos tipos de cambio guardados.",
+  income_sources_label: "Fuentes de ingreso mensual",
+  add_income_source: "Agregar fuente de ingreso",
+  income_source_amount_ph: "Monto",
+  remove_label: "Quitar",
+  no_income_sources: "Aún no hay fuentes de ingreso.",
+  advanced_income_toggle: "Varias monedas de ingreso",
+  advanced_income_desc: "Agrega varios ingresos en distintas monedas, como 100 EUR más 200 USD más 24,000 MXN. Cada uno se convierte al tipo de cambio actual y luego se suman.",
   no_costs_yet: "Aún no hay costos fijos.",
   income_currency: "Moneda de ingresos",
   local_currency_label: "Moneda local",
@@ -1156,6 +1295,27 @@ fr: {
   cost_name_ph: "ex. Loyer",
   cost_amount_ph: "Montant ({cur})",
   add_cost: "Ajouter une Charge",
+  tab_sim: "Simuler",
+  card_sim_title: "Simulation",
+  sim_intro: "Essayez différentes devises, revenus et charges pour voir comment votre budget quotidien changerait. Rien ici ne touche à votre budget réel.",
+  sim_reset_btn: "Revenir à mon budget réel",
+  sim_confirm_reset: "Remettre la simulation sur votre budget réel ? Les modifications faites dans la simulation seront perdues.",
+  sim_scenario_title: "Scénario",
+  sim_spending_currency: "Devise de dépense",
+  sim_rate_shift: "Variation du taux de change (%)",
+  sim_rate_shift_desc: "Par exemple, -10 signifie que vos revenus étrangers sont convertis à un taux 10 % moins bon. Les revenus dans votre devise de dépense ne sont pas affectés.",
+  sim_result_title: "Résultat",
+  sim_vs_real_label: "Écart avec votre budget quotidien réel",
+  sim_rates_loading: "Chargement des taux de change…",
+  sim_rates_unavailable: "Taux de change indisponibles pour le moment. Vérifiez votre connexion.",
+  sim_rates_stale: "Hors ligne : utilisation des derniers taux enregistrés.",
+  income_sources_label: "Sources de revenu mensuel",
+  add_income_source: "Ajouter une source de revenu",
+  income_source_amount_ph: "Montant",
+  remove_label: "Supprimer",
+  no_income_sources: "Aucune source de revenu pour l'instant.",
+  advanced_income_toggle: "Plusieurs devises de revenu",
+  advanced_income_desc: "Ajoutez plusieurs revenus dans différentes devises, par exemple 100 EUR plus 200 USD plus 24 000 MXN. Chacun est converti au taux actuel, puis le tout est additionné.",
   no_costs_yet: "Aucune charge fixe pour l'instant.",
   income_currency: "Devise des revenus",
   local_currency_label: "Devise locale",
@@ -1252,7 +1412,7 @@ fr: {
 },
 de: {
   tagline: "Ausländisches Einkommen, tägliches Ausgabenbudget, automatisch erfasst",
-  tab_home: "Start", tab_budget: "Budget", tab_goals: "Ziele", tab_history: "Verlauf", tab_settings: "Einstellungen",
+  tab_home: "Start", tab_budget: "Budget", tab_goals: "Ziele", tab_history: "Verlauf", tab_settings: "Optionen",
   card_rate: "Aktueller Wechselkurs",
   card_log_spending: "Heutige Ausgaben Erfassen",
   card_this_week: "Diese Woche",
@@ -1304,6 +1464,27 @@ de: {
   cost_name_ph: "z.B. Miete",
   cost_amount_ph: "Betrag ({cur})",
   add_cost: "Kosten Hinzufügen",
+  tab_sim: "Simulation",
+  card_sim_title: "Simulation",
+  sim_intro: "Probiere verschiedene Währungen, Einkommen und Kosten aus, um zu sehen, wie sich dein Tagesbudget ändern würde. Nichts davon betrifft dein echtes Budget.",
+  sim_reset_btn: "Auf mein echtes Budget zurücksetzen",
+  sim_confirm_reset: "Simulation auf dein echtes Budget zurücksetzen? Änderungen in der Simulation gehen verloren.",
+  sim_scenario_title: "Szenario",
+  sim_spending_currency: "Ausgabenwährung",
+  sim_rate_shift: "Wechselkursänderung (%)",
+  sim_rate_shift_desc: "Zum Beispiel bedeutet -10, dass dein ausländisches Einkommen zu einem 10 % schlechteren Kurs umgerechnet wird. Einkommen in deiner Ausgabenwährung bleibt unberührt.",
+  sim_result_title: "Ergebnis",
+  sim_vs_real_label: "Unterschied zu deinem echten Tagesbudget",
+  sim_rates_loading: "Wechselkurse werden geladen…",
+  sim_rates_unavailable: "Wechselkurse derzeit nicht verfügbar. Prüfe deine Verbindung.",
+  sim_rates_stale: "Offline: Es werden die zuletzt gespeicherten Wechselkurse verwendet.",
+  income_sources_label: "Monatliche Einkommensquellen",
+  add_income_source: "Einkommensquelle hinzufügen",
+  income_source_amount_ph: "Betrag",
+  remove_label: "Entfernen",
+  no_income_sources: "Noch keine Einkommensquellen.",
+  advanced_income_toggle: "Mehrere Einkommenswährungen",
+  advanced_income_desc: "Füge mehrere Einkommen in verschiedenen Währungen hinzu, zum Beispiel 100 EUR plus 200 USD plus 24.000 MXN. Jedes wird zum aktuellen Kurs umgerechnet und alles zusammengerechnet.",
   no_costs_yet: "Noch keine Fixkosten hinzugefügt.",
   income_currency: "Einkommenswährung",
   local_currency_label: "Lokale Währung",
@@ -1452,6 +1633,27 @@ pt: {
   cost_name_ph: "ex. Aluguel",
   cost_amount_ph: "Valor ({cur})",
   add_cost: "Adicionar Custo",
+  tab_sim: "Simular",
+  card_sim_title: "Simulação",
+  sim_intro: "Teste diferentes moedas, rendas e custos para ver como seu orçamento diário mudaria. Nada aqui afeta seu orçamento real.",
+  sim_reset_btn: "Voltar ao meu orçamento real",
+  sim_confirm_reset: "Voltar a simulação ao seu orçamento real? As alterações feitas na simulação serão perdidas.",
+  sim_scenario_title: "Cenário",
+  sim_spending_currency: "Moeda de gastos",
+  sim_rate_shift: "Variação da taxa de câmbio (%)",
+  sim_rate_shift_desc: "Por exemplo, -10 significa que sua renda estrangeira é convertida a uma taxa 10% pior. Rendas na sua moeda de gastos não são afetadas.",
+  sim_result_title: "Resultado",
+  sim_vs_real_label: "Diferença para seu orçamento diário real",
+  sim_rates_loading: "Carregando taxas de câmbio…",
+  sim_rates_unavailable: "Taxas de câmbio indisponíveis agora. Verifique sua conexão.",
+  sim_rates_stale: "Offline: usando as últimas taxas salvas.",
+  income_sources_label: "Fontes de renda mensal",
+  add_income_source: "Adicionar fonte de renda",
+  income_source_amount_ph: "Valor",
+  remove_label: "Remover",
+  no_income_sources: "Ainda não há fontes de renda.",
+  advanced_income_toggle: "Várias moedas de renda",
+  advanced_income_desc: "Adicione várias rendas em moedas diferentes, como 100 EUR mais 200 USD mais 24.000 MXN. Cada uma é convertida pela taxa atual e depois todas são somadas.",
   no_costs_yet: "Ainda não há custos fixos adicionados.",
   income_currency: "Moeda da renda",
   local_currency_label: "Moeda local",
@@ -1566,7 +1768,7 @@ function populateLanguageSelects(){
 
 function populateCurrencySelects(){
   const optionsHtml = Object.keys(CURRENCIES).map(code=>`<option value="${code}">${CURRENCIES[code]} (${code})</option>`).join('');
-  ['onboardingCurrency','onboardingLocalCurrency','incomeCurrency','localCurrencySelect'].forEach(id=>{
+  ['onboardingCurrency','onboardingLocalCurrency','incomeCurrency','localCurrencySelect','simLocalCurrency'].forEach(id=>{
     const el = document.getElementById(id);
     if(el) el.innerHTML = optionsHtml;
   });
@@ -1593,13 +1795,37 @@ function applyTranslations(){
   if(typeof renderMonthSummary === 'function') renderMonthSummary();
   if(typeof renderBackupReminder === 'function') renderBackupReminder();
   if(typeof populateCategorySelects === 'function') populateCategorySelects();
+  if(typeof renderSim === 'function') renderSim();
   renderRate();
 }
 
 let state = load();
 applyAccentColor(state.accentColor);
 
+function newId(){
+  return Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+}
+function safeId(id){
+  return (typeof id === 'string' && /^[a-z0-9]{1,32}$/i.test(id)) ? id : newId();
+}
+function isKnownCurrency(code){
+  return typeof code === 'string' && Object.prototype.hasOwnProperty.call(CURRENCIES, code);
+}
+// Used on restore/load (and for the Simulation tab's own storage) so a
+// hand-edited or older backup can never put an unknown currency or a
+// non-numeric amount into the income math.
+function sanitizeIncomeSources(list){
+  if(!Array.isArray(list)) return [];
+  return list.filter(s=> s && typeof s === 'object' && isKnownCurrency(s.currency)).map(s=>({
+    id: safeId(s.id),
+    amount: (s.amount==='' || s.amount==null) ? '' : (Number.isFinite(Number(s.amount)) ? Number(s.amount) : 0),
+    currency: s.currency
+  }));
+}
+
 function normalize(parsed){
+  parsed.advancedIncome = !!parsed.advancedIncome;
+  parsed.incomeSources = sanitizeIncomeSources(parsed.incomeSources);
   if(!parsed.costs) parsed.costs = [];
   if(parsed.startingBalance==null) parsed.startingBalance = 0;
   if(!parsed.goals) parsed.goals = [];
@@ -1627,7 +1853,7 @@ function normalize(parsed){
 }
 
 function defaultState(){
-  return { income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:{}, spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR', dragModeEnabled:false, autoSaveEnabled:false, autoSaveGoalId:'', manualRateOverride:false, accentColor:'#34d399', firstUseDate:localDateStr(new Date()), language:'en', localCurrency:'MXN', mascotEnabled:true, trendRangeDays:7, dailyReminderEnabled:false, dailyReminderTime:'20:00', lastBackupExportDate:null, backupReminderSnoozedUntil:null };
+  return { advancedIncome:false, incomeSources:[], income:1500, days:30, entries:[], costs:[], liveRate:null, rateTime:null, nextRateUpdate:null, startingBalance:0, goals:[], widgetOrder:{}, spentFromSavings:0, privacyMode:false, onboardingComplete:false, incomeCurrency:'EUR', dragModeEnabled:false, autoSaveEnabled:false, autoSaveGoalId:'', manualRateOverride:false, accentColor:'#34d399', firstUseDate:localDateStr(new Date()), language:'en', localCurrency:'MXN', mascotEnabled:true, trendRangeDays:7, dailyReminderEnabled:false, dailyReminderTime:'20:00', lastBackupExportDate:null, backupReminderSnoozedUntil:null };
 }
 
 function load(){
@@ -1676,7 +1902,112 @@ let editingCostId = null;
 let editingGoalId = null;
 let editingEntryId = null;
 
+// --- Rate cache for multi-currency income and the Simulation tab ---
+// Kept in its own localStorage key, not in `state`, so it never bloats
+// backups and can't interfere with the single-currency liveRate fields.
+// Shape: { [localCurrency]: { map:{ [CUR]: value of 1 CUR in localCurrency }, at, next } }
+const RATE_CACHE_KEY = 'pesoBudget_ratecache_v1';
+const RATE_CACHE_TTL_MS = 60*60*1000;
+let rateCache = (function(){
+  try{
+    const parsed = JSON.parse(localStorage.getItem(RATE_CACHE_KEY));
+    return (parsed && typeof parsed === 'object') ? parsed : {};
+  }catch(e){ return {}; }
+})();
+function saveRateCache(){
+  try{ localStorage.setItem(RATE_CACHE_KEY, JSON.stringify(rateCache)); }catch(e){}
+}
+function cachedRateMap(base){
+  const entry = rateCache[base];
+  return entry && entry.map ? entry.map : null;
+}
+function rateCacheIsFresh(base){
+  const entry = rateCache[base];
+  return !!(entry && entry.at && Date.now() - new Date(entry.at).getTime() < RATE_CACHE_TTL_MS);
+}
+const rateFetchInFlight = {};
+// One request per spending currency returns every other currency's rate at
+// once (1 base = r X, so 1 X = 1/r base), which is why this fetches by the
+// spending currency instead of once per income currency.
+function fetchRateMap(base, force){
+  if(!force && rateCacheIsFresh(base)) return Promise.resolve({map: cachedRateMap(base), failed:false});
+  if(rateFetchInFlight[base]) return rateFetchInFlight[base];
+  const promise = (async ()=>{
+    let result = null;
+    try{
+      const res = await fetch('https://open.er-api.com/v6/latest/' + base, {cache:'no-store'});
+      if(!res.ok) throw new Error('bad response');
+      const data = await res.json();
+      if(!data.rates) throw new Error('no rates');
+      result = { rates: data.rates, next: data.time_next_update_utc || null };
+    }catch(e){
+      try{
+        const res2 = await fetch('https://api.frankfurter.app/latest?from=' + base, {cache:'no-store'});
+        if(!res2.ok) throw new Error('bad response');
+        const data2 = await res2.json();
+        if(!data2.rates) throw new Error('no rates');
+        result = { rates: data2.rates, next: null };
+      }catch(e2){}
+    }
+    delete rateFetchInFlight[base];
+    if(result){
+      const map = {};
+      Object.keys(CURRENCIES).forEach(cur=>{
+        if(cur === base){ map[cur] = 1; return; }
+        const r = Number(result.rates[cur]);
+        if(r > 0) map[cur] = 1 / r;
+      });
+      rateCache[base] = { map, at: new Date().toISOString(), next: result.next };
+      saveRateCache();
+      return { map, failed:false };
+    }
+    return { map: cachedRateMap(base), failed:true };
+  })();
+  rateFetchInFlight[base] = promise;
+  return promise;
+}
+
+// Sums income sources into the spending currency. Returns null when a
+// non-zero foreign source has no rate yet, so callers show "-" / "rate
+// unavailable" instead of silently under-counting income. `factor` is the
+// Simulation tab's what-if exchange rate shift (1 = no change); it only
+// applies to foreign sources.
+function convertIncomeSources(sources, localCur, map, factor){
+  let total = 0;
+  for(const s of sources){
+    const amount = Number(s.amount) || 0;
+    if(amount === 0) continue;
+    if(s.currency === localCur){ total += amount; continue; }
+    const rate = map && map[s.currency];
+    if(!rate) return null;
+    total += amount * rate * (factor == null ? 1 : factor);
+  }
+  return total;
+}
+
+function nextFreeCurrency(sources){
+  const used = new Set(sources.map(s=>s.currency));
+  const order = ['USD','EUR'].concat(Object.keys(CURRENCIES));
+  return order.find(c=> !used.has(c)) || 'USD';
+}
+
+async function fetchAdvancedRates(){
+  const localCur = state.localCurrency || 'MXN';
+  if(!state.incomeSources.some(s=>s.currency !== localCur)){
+    renderRate();
+    return;
+  }
+  if(!rateCacheIsFresh(localCur)){
+    document.getElementById('rateMeta').textContent = t('fetching_rate');
+  }
+  const result = await fetchRateMap(localCur);
+  renderRate(result.failed);
+}
+
 async function fetchRate(){
+  if(state.advancedIncome){
+    return fetchAdvancedRates();
+  }
   const currency = state.incomeCurrency || 'EUR';
   const localCur = state.localCurrency || 'MXN';
   if(currency === localCur){
@@ -1731,6 +2062,29 @@ function renderRate(failed){
   const rateValueEl = document.getElementById('rateValue');
   const rateMetaEl = document.getElementById('rateMeta');
   const localCur = state.localCurrency || 'MXN';
+  if(state.advancedIncome){
+    const foreign = [...new Set(state.incomeSources.map(s=>s.currency).filter(c=>c !== localCur))];
+    const entry = rateCache[localCur];
+    if(foreign.length === 0){
+      rateValueEl.textContent = t('no_conversion_needed');
+      rateMetaEl.textContent = t('budgeting_directly_pesos', {cur: localCur});
+    } else if(entry && entry.map && foreign.every(c=>entry.map[c])){
+      rateValueEl.innerHTML = foreign.map(c=>`<div>1 ${c} = ${Number(entry.map[c]).toFixed(3)} ${localCur}</div>`).join('');
+      const timeStr = entry.at ? new Date(entry.at).toLocaleString() : '';
+      if(failed){
+        rateMetaEl.textContent = t('offline_last_saved', {time: timeStr});
+      } else {
+        const next = entry.next ? new Date(entry.next) : null;
+        rateMetaEl.textContent = t('checked_at', {time: timeStr})
+          + (next ? t('next_rate_update', {time: next.toLocaleString()}) : '');
+      }
+    } else {
+      rateValueEl.textContent = t('no_rate_available');
+      rateMetaEl.textContent = t('check_connection');
+    }
+    renderAll();
+    return;
+  }
   if((state.incomeCurrency || 'EUR') === localCur){
     rateValueEl.textContent = t('no_conversion_needed');
     rateMetaEl.textContent = t('budgeting_directly_pesos', {cur: localCur});
@@ -1758,6 +2112,10 @@ function totalMonthlyCosts(){
   return state.costs.reduce((sum,c)=> sum + (Number(c.amount)||0), 0);
 }
 function monthlyIncomeMXN(){
+  if(state.advancedIncome){
+    const localCur = state.localCurrency || 'MXN';
+    return convertIncomeSources(state.incomeSources, localCur, cachedRateMap(localCur), 1);
+  }
   if(!state.liveRate) return null;
   return (Number(state.income)||0) * state.liveRate;
 }
@@ -1857,8 +2215,11 @@ function renderSettings(){
   document.querySelectorAll('.color-swatch').forEach(sw=>{
     sw.classList.toggle('active', sw.dataset.color.toLowerCase() === (state.accentColor||'').toLowerCase());
   });
+  // A manual rate is a single number for the single income currency, so it
+  // has nothing to apply to while income is split across several currencies.
   const noConversionNeeded = (state.incomeCurrency || 'EUR') === localCur;
-  document.getElementById('manualRateField').style.display = noConversionNeeded ? 'none' : 'block';
+  document.getElementById('manualRateField').style.display = (noConversionNeeded || state.advancedIncome) ? 'none' : 'block';
+  renderIncomeSources();
   document.getElementById('manualRateToggle').checked = !!state.manualRateOverride;
   document.getElementById('manualRateFields').style.display = state.manualRateOverride ? 'flex' : 'none';
   document.getElementById('manualRateValue').placeholder = t('manual_rate_ph', {cur: state.incomeCurrency || 'EUR', local: localCur});
@@ -2667,6 +3028,8 @@ document.getElementById('resetDataBtn').addEventListener('click', ()=>{
   if(!confirm(t('confirm_reset_all'))) return;
   localStorage.removeItem(STORE_KEY);
   localStorage.removeItem(BACKUP_KEY);
+  localStorage.removeItem(SIM_KEY);
+  sim = null;
   state = defaultState();
   save();
   applyAccentColor(state.accentColor);
@@ -3200,9 +3563,340 @@ function switchTab(tab){
     b.classList.toggle('active', b.dataset.tab===tab);
   });
   document.getElementById('scrollArea').scrollTop = 0;
+  if(tab === 'sim'){
+    ensureSimLoaded();
+    renderSim();
+    ensureSimRates();
+  }
 }
 document.querySelectorAll('.tab-bar-btn').forEach(btn=>{
   btn.addEventListener('click', ()=> switchTab(btn.dataset.tab));
+});
+
+// --- Editable rows shared by multi-currency income and the Simulation tab ---
+function currencyOptionsHtml(selected){
+  return Object.keys(CURRENCIES).map(c=>`<option value="${c}"${c===selected?' selected':''}>${c} - ${CURRENCIES[c]}</option>`).join('');
+}
+
+// Event-delegated list editor. The rows are rebuilt only when their shape
+// changes (items added/removed, a currency changed, language changed);
+// typing in an amount never rebuilds, so the field keeps focus. Controls
+// opt in with data-field (and data-type="number" for numeric ones); a
+// [data-remove] button deletes its row. `onChange(structural)` runs after
+// every edit, and the caller decides how to save/re-render.
+function createListEditor(wrap, getList, rowHtml, sigPart, emptyKey, onChange){
+  let sig = null;
+  function render(){
+    const list = getList();
+    const nextSig = state.language + '|' + list.map(it=> it.id + ':' + sigPart(it)).join(',');
+    if(nextSig !== sig){
+      sig = nextSig;
+      wrap.innerHTML = list.length ? list.map(rowHtml).join('') : `<div class="empty">${t(emptyKey)}</div>`;
+    } else {
+      list.forEach(it=>{
+        const row = wrap.querySelector(`[data-item-id="${it.id}"]`);
+        if(!row) return;
+        row.querySelectorAll('[data-field]').forEach(inp=>{
+          if(inp.tagName === 'SELECT' || document.activeElement === inp) return;
+          const v = it[inp.dataset.field];
+          inp.value = v == null ? '' : v;
+        });
+      });
+    }
+  }
+  function itemFor(el){
+    const row = el.closest('[data-item-id]');
+    if(!row) return null;
+    return getList().find(it=> it.id === row.dataset.itemId) || null;
+  }
+  function onEdit(e){
+    const el = e.target;
+    if(!el.dataset || !el.dataset.field) return;
+    const isSelect = el.tagName === 'SELECT';
+    // Selects commit on "change", text/number inputs on every "input".
+    if((e.type === 'change') !== isSelect) return;
+    const item = itemFor(el);
+    if(!item) return;
+    item[el.dataset.field] = el.dataset.type === 'number' ? (el.value === '' ? '' : Number(el.value)) : el.value;
+    onChange(isSelect);
+  }
+  wrap.addEventListener('input', onEdit);
+  wrap.addEventListener('change', onEdit);
+  wrap.addEventListener('click', e=>{
+    const btn = e.target.closest('[data-remove]');
+    if(!btn) return;
+    const item = itemFor(btn);
+    if(!item) return;
+    const list = getList();
+    list.splice(list.indexOf(item), 1);
+    onChange(true);
+  });
+  return { render };
+}
+
+function incomeSourceRowHtml(s){
+  return `<div class="src-row" data-item-id="${s.id}">
+    <input type="number" class="src-amount" data-field="amount" data-type="number" inputmode="decimal" placeholder="${escapeAttr(t('income_source_amount_ph'))}" value="${escapeAttr(s.amount ?? '')}">
+    <select class="src-currency" data-field="currency">${currencyOptionsHtml(s.currency)}</select>
+    <button type="button" class="del-btn" data-remove aria-label="${escapeAttr(t('remove_label'))}">${ICON_X}</button>
+  </div>`;
+}
+
+// --- Multi-currency income (Budget tab) ---
+const mainIncomeEditor = createListEditor(
+  document.getElementById('incomeSourcesWrap'),
+  ()=> state.incomeSources,
+  incomeSourceRowHtml,
+  s=> s.currency,
+  'no_income_sources',
+  structural=>{
+    save();
+    if(structural) fetchRate();
+    renderAll();
+  }
+);
+
+function renderIncomeSources(){
+  const advanced = !!state.advancedIncome;
+  document.getElementById('advancedIncomeToggle').checked = advanced;
+  document.getElementById('singleIncomeRow').style.display = advanced ? 'none' : '';
+  document.getElementById('incomeSourcesBlock').style.display = advanced ? 'block' : 'none';
+  // The single "Income currency" setting has nothing to do while each
+  // source carries its own currency.
+  document.getElementById('incomeCurrencyField').style.display = advanced ? 'none' : '';
+  if(advanced) mainIncomeEditor.render();
+}
+
+document.getElementById('advancedIncomeToggle').addEventListener('change', e=>{
+  state.advancedIncome = e.target.checked;
+  // Seed the list from the current single income so turning this on never
+  // starts from a blank slate. The single income value itself is left
+  // untouched, so turning it back off returns to exactly what was there.
+  if(state.advancedIncome && state.incomeSources.length === 0){
+    state.incomeSources.push({
+      id: newId(),
+      amount: state.income === '' ? '' : (Number(state.income) || 0),
+      currency: isKnownCurrency(state.incomeCurrency) ? state.incomeCurrency : 'EUR'
+    });
+  }
+  save();
+  renderAll();
+  fetchRate();
+});
+document.getElementById('addIncomeSourceBtn').addEventListener('click', ()=>{
+  state.incomeSources.push({ id: newId(), amount: '', currency: nextFreeCurrency(state.incomeSources) });
+  save();
+  renderAll();
+  fetchRate();
+});
+
+// --- Simulation tab ---
+// A scratch copy of the budget inputs. It lives in its own localStorage key
+// and only ever READS `state`, so nothing done here can change the real
+// budget, history, goals, or backups.
+const SIM_KEY = 'pesoBudget_sim_v1';
+// Per spending currency ('loading' | 'ok' | 'failed'), so a failed fetch for
+// one currency never leaves a stale "offline" note on another.
+const simRatesStatus = {};
+
+function simFromReal(){
+  const sources = (state.advancedIncome && state.incomeSources.length)
+    ? state.incomeSources.map(s=>({ id: newId(), amount: s.amount, currency: s.currency }))
+    : [{
+        id: newId(),
+        amount: state.income === '' ? '' : (Number(state.income) || 0),
+        currency: isKnownCurrency(state.incomeCurrency) ? state.incomeCurrency : 'EUR'
+      }];
+  return {
+    local: isKnownCurrency(state.localCurrency) ? state.localCurrency : 'MXN',
+    days: state.days === '' ? '' : (Number(state.days) || 30),
+    sources,
+    costs: state.costs.map(c=>({ id: newId(), name: c.name || '', amount: Number(c.amount) || 0 })),
+    rateShift: 0
+  };
+}
+
+function normalizeSim(p){
+  const out = simFromReal();
+  if(!p || typeof p !== 'object') return out;
+  if(isKnownCurrency(p.local)) out.local = p.local;
+  if(p.days === '' || p.days == null){
+    out.days = '';
+  } else if(Number.isFinite(Number(p.days))){
+    out.days = Number(p.days);
+  }
+  if(Array.isArray(p.sources)) out.sources = sanitizeIncomeSources(p.sources);
+  if(Array.isArray(p.costs)){
+    out.costs = p.costs.filter(c=> c && typeof c === 'object').map(c=>({
+      id: safeId(c.id),
+      name: typeof c.name === 'string' ? c.name.slice(0, 60) : '',
+      amount: (c.amount === '' || c.amount == null) ? '' : (Number.isFinite(Number(c.amount)) ? Number(c.amount) : 0)
+    }));
+  }
+  out.rateShift = Number.isFinite(Number(p.rateShift)) ? Number(p.rateShift) : 0;
+  return out;
+}
+
+function loadSim(){
+  try{
+    const raw = localStorage.getItem(SIM_KEY);
+    if(raw) return normalizeSim(JSON.parse(raw));
+  }catch(e){}
+  return null;
+}
+function saveSim(){
+  try{ localStorage.setItem(SIM_KEY, JSON.stringify(sim)); }catch(e){}
+}
+// Created on first visit to the tab (not at app start) so it copies the
+// budget as it is when the person actually opens it, e.g. after onboarding.
+let sim = loadSim();
+function ensureSimLoaded(){
+  if(!sim){
+    sim = simFromReal();
+    saveSim();
+  }
+}
+
+function simCostRowHtml(c){
+  return `<div class="src-row" data-item-id="${c.id}">
+    <input type="text" class="src-name" data-field="name" maxlength="60" placeholder="${escapeAttr(t('cost_name_ph'))}" value="${escapeAttr(c.name ?? '')}">
+    <input type="number" class="src-cost-amount" data-field="amount" data-type="number" inputmode="decimal" placeholder="${escapeAttr(t('cost_amount_ph', {cur: sim.local}))}" value="${escapeAttr(c.amount ?? '')}">
+    <button type="button" class="del-btn" data-remove aria-label="${escapeAttr(t('remove_label'))}">${ICON_X}</button>
+  </div>`;
+}
+
+const simIncomeEditor = createListEditor(
+  document.getElementById('simSourcesWrap'),
+  ()=> sim.sources,
+  incomeSourceRowHtml,
+  s=> s.currency,
+  'no_income_sources',
+  structural=>{
+    saveSim();
+    renderSim();
+    if(structural) ensureSimRates();
+  }
+);
+const simCostEditor = createListEditor(
+  document.getElementById('simCostsWrap'),
+  ()=> sim.costs,
+  simCostRowHtml,
+  ()=> sim.local,
+  'no_costs_yet',
+  ()=>{
+    saveSim();
+    renderSim();
+  }
+);
+
+function ensureSimRates(){
+  if(!sim) return;
+  const local = sim.local;
+  if(!sim.sources.some(s=> s.currency !== local)) return;
+  if(rateCacheIsFresh(local)) return;
+  simRatesStatus[local] = 'loading';
+  renderSim();
+  fetchRateMap(local).then(result=>{
+    simRatesStatus[local] = result.failed ? 'failed' : 'ok';
+    renderSim();
+  });
+}
+
+function renderSim(){
+  if(!sim) return;
+  const local = sim.local;
+  simIncomeEditor.render();
+  simCostEditor.render();
+  const localSel = document.getElementById('simLocalCurrency');
+  if(localSel.value !== local) localSel.value = local;
+  const daysEl = document.getElementById('simDays');
+  if(document.activeElement !== daysEl) daysEl.value = sim.days === '' ? '' : sim.days;
+  const shiftEl = document.getElementById('simRateShift');
+  if(document.activeElement !== shiftEl) shiftEl.value = sim.rateShift ? sim.rateShift : '';
+
+  document.getElementById('simCostsTitle').textContent = t('card_monthly_costs', {cur: local});
+  document.getElementById('simIncomeLabel').textContent = t('monthly_income_mxn', {cur: local});
+  document.getElementById('simCostsLabel').textContent = t('total_monthly_costs_mxn', {cur: local});
+  document.getElementById('simLeftLabel').textContent = t('left_after_costs_mxn', {cur: local});
+  document.getElementById('simDailyLabel').textContent = t('daily_spending_budget_mxn', {cur: local});
+
+  const factor = Math.max(0, 1 + (Number(sim.rateShift) || 0) / 100);
+  const income = convertIncomeSources(sim.sources, local, cachedRateMap(local), factor);
+  const costs = sim.costs.reduce((sum, c)=> sum + (Number(c.amount) || 0), 0);
+
+  const status = rateCacheIsFresh(local) ? 'ok' : (simRatesStatus[local] || 'idle');
+  let noteText = '';
+  if(income == null){
+    noteText = status === 'loading' ? t('sim_rates_loading') : t('sim_rates_unavailable');
+  } else if(status === 'failed' && sim.sources.some(s=> s.currency !== local && Number(s.amount))){
+    noteText = t('sim_rates_stale');
+  }
+  const noteEl = document.getElementById('simRatesNote');
+  noteEl.textContent = noteText;
+  noteEl.style.display = noteText ? 'block' : 'none';
+
+  document.getElementById('simCostsValue').textContent = fmtCur(costs, local);
+  const diffRow = document.getElementById('simDiffRow');
+  if(income == null){
+    document.getElementById('simIncomeValue').textContent = '-';
+    document.getElementById('simLeftValue').textContent = '-';
+    document.getElementById('simDailyValue').textContent = '-';
+    diffRow.style.display = 'none';
+    return;
+  }
+  const left = income - costs;
+  const daily = left / (Number(sim.days) || 1);
+  document.getElementById('simIncomeValue').textContent = fmtCur(income, local);
+  document.getElementById('simLeftValue').textContent = fmtCur(left, local);
+  document.getElementById('simDailyValue').textContent = fmtCur(daily, local);
+
+  // Only comparable when both budgets are in the same spending currency.
+  const realDaily = dailyBudgetMXNToday();
+  if(realDaily != null && local === (state.localCurrency || 'MXN')){
+    const diff = daily - realDaily;
+    const valueEl = document.getElementById('simDiffValue');
+    valueEl.textContent = (diff >= 0 ? '+' : '-') + fmtCur(Math.abs(diff), local);
+    valueEl.className = 'value ' + (diff >= 0 ? 'saved-pos' : 'saved-neg');
+    diffRow.style.display = '';
+  } else {
+    diffRow.style.display = 'none';
+  }
+}
+window.renderSim = renderSim;
+
+document.getElementById('simLocalCurrency').addEventListener('change', e=>{
+  sim.local = e.target.value;
+  saveSim();
+  renderSim();
+  ensureSimRates();
+});
+document.getElementById('simDays').addEventListener('input', e=>{
+  sim.days = e.target.value === '' ? '' : Number(e.target.value);
+  saveSim();
+  renderSim();
+});
+document.getElementById('simRateShift').addEventListener('input', e=>{
+  sim.rateShift = e.target.value === '' ? 0 : Number(e.target.value);
+  saveSim();
+  renderSim();
+});
+document.getElementById('simAddSourceBtn').addEventListener('click', ()=>{
+  sim.sources.push({ id: newId(), amount: '', currency: nextFreeCurrency(sim.sources) });
+  saveSim();
+  renderSim();
+  ensureSimRates();
+});
+document.getElementById('simAddCostBtn').addEventListener('click', ()=>{
+  sim.costs.push({ id: newId(), name: '', amount: '' });
+  saveSim();
+  renderSim();
+});
+document.getElementById('simResetBtn').addEventListener('click', ()=>{
+  if(!confirm(t('sim_confirm_reset'))) return;
+  sim = simFromReal();
+  saveSim();
+  renderSim();
+  ensureSimRates();
 });
 
 populateLanguageSelects();
