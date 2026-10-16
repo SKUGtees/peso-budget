@@ -66,6 +66,13 @@ jobs:
         run: npx cap sync android
 
       - uses: android-actions/setup-android@v3
+        with:
+          # The action's default is "tools platform-tools". The legacy "tools"
+          # package no longer exists in Google's SDK repository, so asking for
+          # it fails the step ("Failed to find package 'tools'") before
+          # anything is built. Gradle only needs the licenses accepted, which
+          # the action still does.
+          packages: 'platform-tools'
 
       - name: Reconstruct signing keystore from secret
         run: |
